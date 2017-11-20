@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Calculator | WeabOOPP</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/prettyPhoto.css" rel="stylesheet">
+        <link href="css/animate.min.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/responsive.css" rel="stylesheet">   
+        <link rel="shortcut icon" href="images/ico/favicon.ico">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    </head><!--/head-->
+
+    <body>
+
+        <header id="header">
+
+            <nav class="navbar navbar-inverse" role="banner">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="index.html">WeabOOPP</a>
+                    </div>
+                    
+                    <div class="collapse navbar-collapse navbar-right">
+                        <ul class="nav navbar-nav">
+                            <li><a href="index.html">Home</a></li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fitness <i class="fa fa-angle-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="gym_fitness.html">Gym and Fitness Corners</a></li>
+                                    <li class="active"><a href="#">BMI and Calories Calculator</a></li>
+                                    <li><a href="workouts.html">Workouts</a></li>
+                                    <li><a href="food_recipes.html">Food and Recipes</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Medical <i class="fa fa-angle-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="medshop.html">Medical Stocks </a></li>
+                                    <li><a href="amenities.html">Medical Ammenities</a></li>
+                                </ul>
+                            </li>    
+                            <li><a href="">Campaigns</a></li>
+                            <li><a href="about_us.html">About Us</a></li> 
+                            <li><a href="contact_us.html">Contact Us</a></li> 
+                            <li><a href="my_profile.html">Login / Register</a></li>                       
+                        </ul>
+                    </div>
+                </div><!--/.container-->
+            </nav><!--/nav-->
+            
+        </header><!--/header-->
+
+        <section class="container">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">BMI Calculator</div>
+                    <div class="panel-body">
+                        <p><strong>Here is a BMI calculator to check how health are you?</strong></p>
+                        <p>A BMI value of 23 and above indicates that your weight is outside of the healthy weight range for your height.</p>
+                        <img src="images/BMI.gif">
+                        <div class="form-group">
+                            <label for="inputdefault">Weight</label>
+                            <input class="form-control" id="inputdefault" type="text" placeholder="Kg">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputdefault">Height</label>
+                            <input class="form-control" id="inputdefault" type="text" placeholder="cm">
+                        </div>
+                        <button type="button" class="btn btn-primary">calculate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">calories intake Calculator</div>
+                    <div class="panel-body">
+                        <h2>Calculate Your Caloric Intake</h2>
+                        <p>Not everybody needs 2,000 calories a day. Your needs are highly individual and determined by much more than your workouts. Use this calculator to find out how many calories you really need.</p>
+                        <div class="form-group">
+                            <label for="inputsm">Age</label>
+                            <input class="form-control input-sm" id="inputsm" type="text" placeholder="Years">
+                            <form>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optradio">Male
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optradio">Female
+                                </label>
+                            </form>
+                        </div>
+                        <h3><strong>Height</strong></h3>
+                        <div class="form-group row">
+                            <div class="col-xs-4">
+                                <input class="form-control" id="ex1" type="text" placeholder="m">
+                            </div>
+                            <div class="col-xs-4">
+                                <input class="form-control" id="ex3" type="text" placeholder="cm">
+                            </div>
+                        </div>
+                        <label for="inputsm">Weight</label>
+                        <input class="form-control input-sm" id="inputsm" type="text" placeholder="Kg">
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Fat loss</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Maintance</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio" disabled>Muscle Gain</label>
+                        </div>
+                        <h2>Activity Level</h2>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Lightly active</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Moderately active</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio" disabled>very active</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="optradio" disabled>extra active</label>
+                        </div>
+                         <button type="button" class="btn btn-primary">calculate</button>
+                    </div>
+                </div>
+            </div>
+
+        </section><!--/#calculator-->
+
+        <footer id="footer" class="midnight-blue">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <ul class="pull-right">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Faq</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer><!--/#footer-->
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.prettyPhoto.js"></script>
+        <script src="js/jquery.isotope.min.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/wow.min.js"></script>
+
+    </body>
+
+</html>
