@@ -1,30 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>Home | WeabOOPP</title>
-        
-        <!-- core CSS -->
-        <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/font-awesome.min.css')}}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/animate.min.css')}}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/prettyPhoto.css')}}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/responsive.css')}}" rel="stylesheet">
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/ico/favicon.ico')}}">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ url_for('static', filename='images/ico/apple-touch-icon-144-precomposed.png')}}">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='images/ico/apple-touch-icon-114-precomposed.png')}}">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='images/ico/apple-touch-icon-72-precomposed.png')}}">
-        <link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/ico/apple-touch-icon-57-precomposed.png')}}">
-    </head><!--/head -->
-
-    <body class="homepage">
-
-
+        {% extends 'layout.html' %}
+        {% block body %}
         <section id="main-slider" class="no-margin">
             <div class="carousel slide">
                 <ol class="carousel-indicators">
@@ -34,20 +9,20 @@
                 </ol>
                 <div class="carousel-inner">
 
-                    <div class="item active" style="background-image: url(images/slider/health1.jpg)">
+                    <div class="item active" style="background-image: url({{ url_for('static', filename='images/slider/health1.jpg')}}">
                         <div class="container">
                             <div class="row slide-margin">
                                 <div class="col-sm-6">
                                     <div class="carousel-content">
                                         <h1 class="animation animated-item-1" style="color:black">We are a group of weaboos looking to promote healthy living</h1>
                                         <h2 class="animation animated-item-2" style="color:black">Join our cause!</h2>
-                                        <a class="btn-slide animation animated-item-3" href="about_us.html">Read More</a>
+                                        <a class="btn-slide animation animated-item-3" href="{{ url_for('static', filename='about_us.html')}}">Read More</a>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6 hidden-xs animation animated-item-4">
                                     <div class="slider-img">
-                                        <img src="images/slider/img1.png" class="img-responsive">
+                                        <img src="{{ url_for('static', filename='images/slider/img1.png')}}" class="img-responsive">
                                     </div>
                                 </div>
 
@@ -55,7 +30,7 @@
                         </div>
                     </div><!--/.item-->
 
-                    <div class="item" style="background-image: url(images/slider/bg2.jpg)">
+                    <div class="item" style="background-image: url({{ url_for('static', filename='images/slider/bg2.jpg')}}">
                         <div class="container">
                             <div class="row slide-margin">
                                 <div class="col-sm-6">
@@ -68,7 +43,7 @@
 
                                 <div class="col-sm-6 hidden-xs animation animated-item-4">
                                     <div class="slider-img">
-                                        <img src="images/slider/img2.png" class="img-responsive">
+                                        <img src="{{ url_for('static', filename='images/slider/img2.png')}}" class="img-responsive">
                                     </div>
                                 </div>
 
@@ -76,7 +51,7 @@
                         </div>
                     </div><!--/.item-->
 
-                    <div class="item" style="background-image: url(images/slider/bg3.jpg)">
+                    <div class="item" style="background-image: url({{ url_for('static', filename='images/slider/bg3.jpg')}}">
                         <div class="container">
                             <div class="row slide-margin">
                                 <div class="col-sm-6">
@@ -88,7 +63,7 @@
                                 </div>
                                 <div class="col-sm-6 hidden-xs animation animated-item-4">
                                     <div class="slider-img">
-                                        <img src="images/slider/img3.png" class="img-responsive">
+                                        <img src="{{ url_for('static', filename='images/slider/img3.png')}}" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +111,7 @@
                                 <h3>Be able to calculate your BMI and calorie intake online</h3>
                             </div>
                         </div><!--/.col-md-4-->
-                    
+
                         <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
                             <div class="feature-wrap">
                                 <i class="fa fa-search"></i>
@@ -161,7 +136,7 @@
                             </div>
                         </div><!--/.col-md-4-->
                     </div><!--/.services-->
-                </div><!--/.row-->    
+                </div><!--/.row-->
             </div><!--/.container-->
         </section><!--/#feature-->
 
@@ -169,42 +144,23 @@
             <div class="container">
                 <div class="center wow fadeInDown">
                     <h2>Our Partners</h2>
-                </div>    
+                </div>
 
                 <div class="partners">
                     <ul>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="300ms" src="images/partners/partner1.png"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms" src="images/partners/partner2.png"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="900ms" src="images/partners/partner3.png"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1200ms" src="images/partners/partner4.png"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1500ms" src="images/partners/partner5.png"></a></li>
+                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="300ms" src="{{ url_for('static', filename='images/partners/partner1.png')}}"></a></li>
+                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms" src="{{ url_for('static', filename='images/partners/partner2.png')}}"></a></li>
+                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="900ms" src="{{ url_for('static', filename='images/partners/partner3.png')}}"></a></li>
+                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1200ms" src="{{ url_for('static', filename='images/partners/partner4.png')}}"></a></li>
+                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1500ms" src="{{ url_for('static', filename='images/partners/partner5.png')}}"></a></li>
                     </ul>
-                </div>        
+                </div>
             </div><!--/.container-->
         </section><!--/#partner-->
+        {% endblock %}
+{% block addtionalscripts %}
+    <script>
+        $("body").addClass(newClass);
+    </script>
+{% endblock %}
 
-        <footer id="footer" class="midnight-blue">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <ul class="pull-right">
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Faq</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </footer><!--/#footer-->
-
-        <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/jquery.isotope.min.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/wow.min.js"></script>
-
-    </body>
-
-</html>

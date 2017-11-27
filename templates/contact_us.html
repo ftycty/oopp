@@ -23,52 +23,7 @@
     </head><!--/head-->
 
     <body>
-
-        <header id="header">
-
-                <nav class="navbar navbar-inverse" role="banner">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="index.html">WeabOOPP</a>
-                        </div>
-                        
-                        <div class="collapse navbar-collapse navbar-right">
-                            <ul class="nav navbar-nav">
-                                <li><a href="index.html">Home</a></li>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fitness <i class="fa fa-angle-down"></i></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="gym_fitness.html">Gym and Fitness Corners</a></li>
-                                        <li><a href="">BMI and Calories Calculator</a></li>
-                                        <li><a href="workouts.html">Workouts</a></li>
-                                        <li><a href="food_recipes.html">Food and Recipes</a></li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Medical <i class="fa fa-angle-down"></i></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="medshop.html">Medical Stocks </a></li>
-                                        <li><a href="">Check Queuelist</a></li>
-                                        <li><a href="amenities.html">Medical Ammenities</a></li>
-                                        <li><a href="">Booking</a></li>
-                                    </ul>
-                                </li>    
-                                <li><a href="">Campaigns</a></li>
-                                <li><a href="about_us.html">About Us</a></li> 
-                                <li class="active"><a href="#">Contact Us</a></li> 
-                                <li><a href="my_profile.html">Login / Register</a></li>                       
-                            </ul>
-                        </div>
-                    </div><!--/.container-->
-                </nav><!--/nav-->
-                
-        </header><!--/header-->
+        {% include 'includes/_navbar.html' %}
 
         <iframe id="contactwrap" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.9760193574853!2d139.77227026525938!3d35.702207730189436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188ea73ea6f4ff%3A0x5eb9f1e50fe061e3!2sAkihabara%2C+Taito%2C+Tokyo+110-0006%2C+Japan!5e0!3m2!1sen!2ssg!4v1509943360637" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe><!--/gmap_area -->
 
@@ -127,14 +82,7 @@
                 </div>
             </div>
         </footer><!--/#footer-->
-
-        <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/jquery.isotope.min.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/wow.min.js"></script>
-
+        {% include 'includes/_footer.html' %}
     </body>
 
 </html>
