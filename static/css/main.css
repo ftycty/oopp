@@ -1519,10 +1519,12 @@ ul.social_icons li  a i{
 }
 
 .footer {
+  position:absolute;
   background: none repeat scroll 0 0 #2E2E2E;
   border-top: 5px solid #C52D2F;
   height: 84px;
   margin-top: 110px;
+  padding-bottom: 84px;
 }
 
 .footer_left {
@@ -2563,6 +2565,38 @@ shortcodes page css
 	font-size: 15px;
 }
 
+#blue {
+	background: #00b3fe;
+	margin-bottom: 60px;
+  	padding-top: 25px;
+	padding-bottom: 25px;
+}
 
+#blue h2 {
+	color: white;
+	margin-left: 15px;
+}
+
+.mtb {
+	margin-top: 80px;
+	margin-bottom: 80px;
+}
+
+.mb {
+	margin-bottom: 60px;
+}
+
+.mt {
+	margin-top: 60px;
+}
+
+.hline {
+	border-bottom: 2px solid #384452;
+}
+
+.hline-w {
+	border-bottom: 2px solid #ffffff;
+	margin-bottom: 25px;
+}
 
 

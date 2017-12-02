@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block title %}Login{% endblock %}
+{% block body %}
+
+<div id="blue">
+    <div class="container">
+        <div class="row text-center">
+            <h2>Login</h2>
+        </div><!-- /row -->
+    </div> <!-- /container -->
+</div><!-- /blue -->
+
+<div class="container mtb" style="padding-bottom: 225px">
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-3">
+            <h4>Login Here!</h4>
+            <div class="hline"></div>
+            </br>
+            <form class="form-horizontal" role="form" method="get">
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="InputNRIC">Your NRIC:</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="nric" style="text-transform: uppercase;" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="InputPass">Your Password:</label>
+                    <div class="col-md-4">
+                        <input type="password" class="form-control" id="pass" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-theme">Login</button>
+                    <div class="hline-w"></div>
+                    <p>Dont have an account?<a style="padding-left:10px;" href="/register">Sign Up Here</a></p>
+                </div>
+            </form>
+        </div><!-- /col-lg-6 -->
+    </div><!--/row -->
+</div><!--/container -->
+{% endblock %}

@@ -1,0 +1,153 @@
+        {% extends 'layout.html' %}
+        {% block title %}Registration{% endblock %}
+        {% block topscript %}
+        <script>
+            function checkPass() {
+                //Store the password field objects into variables ...
+                var pass1 = document.getElementById('pass');
+                var pass2 = document.getElementById('passc');
+                //Store the Confimation Message Object ...
+                var message = document.getElementById('confirmMessage');
+                //Set the colors we will be using ...
+                var goodColor = "#66cc66";
+                var badColor = "#ff6666";
+                //Compare the values in the password field
+                //and the confirmation field
+                if (pass1.value == pass2.value) {
+                    //The passwords match.
+                    //Set the color to the good color and inform
+                    //the user that they have entered the correct password
+                    pass2.style.backgroundColor = goodColor;
+                    message.style.color = goodColor;
+                    message.innerHTML = "Passwords Match!"
+                } else {
+                    //The passwords do not match.
+                    //Set the color to the bad color and
+                    //notify the user.
+                    pass2.style.backgroundColor = badColor;
+                    message.style.color = badColor;
+                    message.innerHTML = "Passwords Do Not Match!"
+                }
+            }
+            function checkEmail() {
+                //Store the email field objects into variables ...
+                var email1 = document.getElementById('email');
+                var email2 = document.getElementById('emailc');
+                //Store the Confimation Message Object ...
+                var message = document.getElementById('confirmMessageE');
+                //Set the colors we will be using ...
+                var goodColor = "#66cc66";
+                var badColor = "#ff6666";
+                //Compare the values in the email field
+                //and the confirmation field
+                if (email1.value == email2.value) {
+                    //The emails match.
+                    //Set the color to the good color and inform
+                    //the user that they have entered the correct email
+                    email2.style.backgroundColor = goodColor;
+                    message.style.color = goodColor;
+                    message.innerHTML = "Emails Match!"
+                } else {
+                    //The emails do not match.
+                    //Set the color to the bad color and
+                    //notify the user.
+                    email2.style.backgroundColor = badColor;
+                    message.style.color = badColor;
+                    message.innerHTML = "Emails Do Not Match!"
+                }
+            }
+        </script>
+        {% endblock %}
+        {% block body %}
+
+        <div id="blue">
+            <div class="container">
+                <div class="row text-center">
+                    <h2>Registration Page</h2>
+                </div><!-- /row -->
+            </div> <!-- /container -->
+        </div><!-- /blue -->
+
+        <div class="container mtb">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h4 class="text-center">Register Here!</h4>
+                    <div class="hline"></div>
+                    <br />
+                    <form id="form1" name="form1" class="form-horizontal" role="form" action="/login" method="get">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="name">Your Name:</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="nric">Your NRIC:</label>
+                            <div class="col-md-4">
+                                <input type="text" maxlength="9" class="form-control input-md" id="nric" name="nric" style="text-transform: uppercase;"required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="enterpass">Enter a Password:</label>
+                            <div class="col-md-4">
+                                <input type="password" class="form-control" id="pass" name="pass" required>
+                                <span id="confirmMessage2" class="confirmMessage2"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="enterpassc">Confirm Password:</label>
+                            <div class="col-md-4">
+                                <input type="password" class="form-control" id="passc" name="passc" onkeyup="checkPass(); return false;" required>
+                                <span id="confirmMessage" class="confirmMessage"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="email">Your Email Address:</label>
+                            <div class="col-md-4">
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="emailc">Confirm Email Address:</label>
+                            <div class="col-md-4">
+                                <input type="email" class="form-control" id="emailc" name="emailc" onkeyup="checkEmail(); return false;" required>
+                                <span id="confirmMessageE" class="confirmMessageE"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="phone">Your Phone Number:</label>
+                            <div class="col-md-4">
+                                Home No. <input type="tel" maxlength="8" class="form-control" id="hphone" name="hphone">
+                            </div>
+                            <div class="col-md-4">
+                                Mobile No. <input type="tel" maxlength="8" class="form-control" id="mphone" name="mphone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="address">Your Address:</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="saddress" style="text-transform: uppercase;" placeholder="Yishun St 12" name="saddress">
+                                <input type="text" class="form-control" id="baddress" style="text-transform: uppercase;" placeholder="Blk 123" name="baddress">
+                                <input type="text" class="form-control" id="uaddress" style="text-transform: uppercase;" placeholder="#01-234" name="uaddress">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="news">Would you like to receive monthly newsletters from us through email?</label>
+                            <div class="col-md-4">
+                                <label class="radio-inline" for="news-0">
+                                    <input type="radio" name="news" id="news-0" value="news_yes" checked="checked">
+                                    Yes
+                                </label>
+                                <label class="radio-inline" for="Dinner-1">
+                                    <input type="radio" name="news" id="news-1" value="news_no">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-theme">Register</button>
+                    </form>
+                </div><!-- /col-lg-8 -->
+            </div><!--/row -->
+        </div><!--/container -->
+        {% endblock %}

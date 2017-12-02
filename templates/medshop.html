@@ -1,29 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>Medical Stocks | WeabOOPP</title>
-        
-        <!-- core CSS -->
-        <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-        <link href="../static/css/font-awesome.min.css" rel="stylesheet">
-        <link href="../static/css/prettyPhoto.css" rel="stylesheet">
-        <link href="../static/css/animate.min.css" rel="stylesheet">
-        <link href="../static/css/main.css" rel="stylesheet">
-        <link href="../static/css/responsive.css" rel="stylesheet">
-        <link rel="shortcut icon" href="../static/images/ico/favicon.ico">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../static/images/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../static/images/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/images/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="../static/images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
-
-    <body>
-        {% include 'includes/_navbar.html' %}
+        {% extends 'layout.html' %}
+        {% block title %}Medical Shop{% endblock %}
+        {% block body %}
         <section class="pricing-page">
             <div class="container">
                 <div class="center wow fadeInDown">  
@@ -147,25 +124,9 @@
             </div>
             </div><!--/container-->
         </section><!--/pricing-page-->
-
-        <footer id="footer" class="midnight-blue">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <ul class="pull-right">
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Faq</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </footer><!--/#footer-->
-        {% include 'includes/_footer.html' %}
+        {% endblock %}
+        {% block botscript %}
         <script type="text/javascript">
             $('.carousel').carousel()
         </script>
-    </body>
-
-</html>
+        {% endblock %}

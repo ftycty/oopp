@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{% block title %}{% endblock %}</title>
     <!-- core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/font-awesome.min.css')}}" rel="stylesheet">
@@ -18,18 +18,23 @@
 </head>
 <body>
 
-{% block addtionalscripts %}{% endblock %}
+{% block topscript %}{% endblock %}
 
 {% include 'includes/_navbar.html' %}
+
 {% block body %}{% endblock %}
 
 
 {% include 'includes/_footer.html' %}
+
 <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
 <script src="{{ url_for('static', filename='js/jquery.prettyPhoto.js')}}"></script>
 <script src="{{ url_for('static', filename='js/jquery.isotope.min.js')}}"></script>
 <script src="{{ url_for('static', filename='js/main.js')}}"></script>
 <script src="{{ url_for('static', filename='js/wow.min.js')}}"></script>
+
+{% block botscript %}{% endblock %}
+
 </body>
 </html>

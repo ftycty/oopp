@@ -1,5 +1,7 @@
         {% extends 'layout.html' %}
+        {% block title %}Home{% endblock %}
         {% block body %}
+        <body class="homepage">
         <section id="main-slider" class="no-margin">
             <div class="carousel slide">
                 <ol class="carousel-indicators">
@@ -16,7 +18,7 @@
                                     <div class="carousel-content">
                                         <h1 class="animation animated-item-1" style="color:black">We are a group of weaboos looking to promote healthy living</h1>
                                         <h2 class="animation animated-item-2" style="color:black">Join our cause!</h2>
-                                        <a class="btn-slide animation animated-item-3" href="{{ url_for('static', filename='about_us.html')}}">Read More</a>
+                                        <a class="btn-slide animation animated-item-3" href="/about_us">Read More</a>
                                     </div>
                                 </div>
 
@@ -157,10 +159,7 @@
                 </div>
             </div><!--/.container-->
         </section><!--/#partner-->
+        </body>
         {% endblock %}
-{% block addtionalscripts %}
-    <script>
-        $("body").addClass(newClass);
-    </script>
-{% endblock %}
+
 
