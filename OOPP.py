@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField
 import firebase_admin
 from firebase_admin import credentials, db
 
@@ -97,9 +97,54 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/illnessinput')
+class RequiredIf(object):
+
+    def __init__(self, *args, **kwargs):
+        self.conditions = kwargs
+
+    def __call__(self, form, field):
+        for name, data in self.conditions.items():
+            if name not in form._fields:
+                validators.Optional()(field)
+            else:
+                condition_field = form._fields.get(name)
+                if condition_field.data == data:
+                    validators.DataRequired().__call__(form, field)
+                else:
+                    validators.Optional().__call__(form, field)
+
+
+class IllnessForm(Form):
+    medtype = RadioField('Which to edit ', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='spast')
+    cmedical = SelectField('Current Illness', [validators.DataRequired(), RequiredIf(medtype='scurrent')], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
+    pmedical = SelectField('Past Illness', [validators.DataRequired(), RequiredIf(medtype='pcurrent')], choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),('DIABETES', 'Diabetes')], default='')
+
+
+@app.route('/illnessinput', methods=['GET','POST'])
 def illnessinput():
-    return render_template('IllnessInput.html')
+    form = IllnessForm(request.form)
+    if request == 'POST' and form.validate():
+        if form.medtype.data == 'scurrent':
+            current = form.cmedical.data
+
+            current_db = root.child('publications')
+            current_db.push({
+                    'current': current,
+            })
+
+            flash('Currant Medical History Inserted Sucessfully.', 'success')
+
+        elif form.medtype.data == 'spast':
+            past = form.pmedical.data
+
+            past_db = root.child('publications')
+            past_db.push({
+                'title': form.pmedical.data,
+            })
+
+            flash('Past Medical History Inserted Sucessfully.', 'success')
+        return render_template('IllnessInput.html', form=form)
+    return render_template('IllnessInput.html', form=form)
 
 
 if __name__ == '__main__':
