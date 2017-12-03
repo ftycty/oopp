@@ -2565,18 +2565,6 @@ shortcodes page css
 	font-size: 15px;
 }
 
-#blue {
-	background: #00b3fe;
-	margin-bottom: 60px;
-  	padding-top: 25px;
-	padding-bottom: 25px;
-}
-
-#blue h2 {
-	color: white;
-	margin-left: 15px;
-}
-
 .mtb {
 	margin-top: 80px;
 	margin-bottom: 80px;
@@ -2599,4 +2587,16 @@ shortcodes page css
 	margin-bottom: 25px;
 }
 
+#healthdiv {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+	height: auto;
+    width: auto;
+	background-color: rgba(176,224,230,0.8);
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+    z-index: 2;
+}
 
