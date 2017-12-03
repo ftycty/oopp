@@ -49,10 +49,14 @@ def medshop():
 def my_profile():
     return render_template('my_profile.html')
 
-@app.route('/workouts')
-def workouts():
-    return render_template('workouts.html')
+@app.route('/forumInput')
+def foruminput():
+    return render_template('forumInput.html')
 
+
+@app.route('/forum')
+def forum():
+    return render_template('forum.html')
 
 class RegistrationForm(Form):
     name = StringField('Your Full Name:', [validators.Length(min=1)])

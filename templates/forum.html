@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block title %}Workouts{% endblock %}
+{% block body %}
+<section id="blog" class="container">
+    <div class="row">
+        <div class="float-left col-sm-8">
+            <img src="../static/images/forumMain.png" style="width:100%; height: 40%" >
+        </div>
+        <div class="col-sm-4">
+            <div class="widget search">
+                <form role="form">
+                    <input type="text" class="form-control search_box" autocomplete="off" placeholder="Search Here">
+                </form>
+                <div class="panel panel-info" style="margin-top: 50px">
+                    <div class="panel-heading">What is this?</div>
+                    <div class="panel-body">A community of people coming together to share thoughts on health and wellness.</div>
+                    <div class="panel-body">Want to add a now post?<a href="/forumInput">Click here</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="blog">
+
+    </div>
+</section>
+{% endblock %}
