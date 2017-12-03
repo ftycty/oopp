@@ -120,6 +120,7 @@ class IllnessForm(Form):
     pmedical = SelectField('Past Illness', [validators.DataRequired(), RequiredIf(medtype='pcurrent')], choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),('DIABETES', 'Diabetes')], default='')
 
 
+
 @app.route('/illnessinput', methods=['GET','POST'])
 def illnessinput():
     form = IllnessForm(request.form)
