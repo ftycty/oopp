@@ -1,4 +1,14 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash, redirect, url_for
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField
+import firebase_admin
+from firebase_admin import credentials, db
+
+cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
+default_app = firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://oopp-53405.firebaseio.com'
+})
+
+root = db.reference()
 
 app = Flask(__name__)
 
@@ -43,13 +53,34 @@ def my_profile():
 def workouts():
     return render_template('workouts.html')
 
-@app.route('/register')
+
+class RegistrationForm(Form):
+    name = StringField('Your Full Name:', [validators.Length(min=1)])
+    nric = StringField('Your NRIC:')
+    email = StringField('Your Email Address:', [validators.Length(min=6, max=50),
+                                          validators.DataRequired(),
+                                          validators.EqualTo('confirmemail',message='Email must match')])
+    confirmemail = StringField('Confirm Email Address:')
+    password = PasswordField('Enter a Password:', [
+        validators.DataRequired(),
+        validators.EqualTo('confirmpass', message='Passwords must match')
+    ])
+    confirmpass = PasswordField('Confirm Password:')
+    phone = IntegerField('Your Phone Number:')
+    newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
+
+@app.route('/register', methods=['GET','POST'])
 def register():
-    return render_template('register.html')
+    form = RegistrationForm(request.form)
+    if request == 'POST' and form.validate():
+        return render_template('register.html',form=form)
+    return render_template('register.html',form=form)
+
 
 @app.route('/login')
 def login():
     return render_template('login.html')
 
 if __name__ == '__main__':
+    app.secret_key = 'secret123'
     app.run()
