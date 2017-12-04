@@ -68,25 +68,27 @@ def forum():
     return render_template('forum.html')
 
 
-class RegistrationForm(Form):
-    name = StringField('Your Full Name:', [validators.Length(min=1)])
-    nric = StringField('Your NRIC:')
+class newuser(Form):
+    name = StringField('Your Full Name:', [validators.Length(min=1),validators.DataRequired()])
+    nric = StringField('Your NRIC:',[validators.DataRequired()])
     email = StringField('Your Email Address:', [validators.Length(min=6, max=50),
                                           validators.DataRequired(),
                                           validators.EqualTo('confirmemail',message='Email must match')])
-    confirmemail = StringField('Confirm Email Address:')
+    confirmemail = StringField('Confirm Email Address:',validators.DataRequired())
     password = PasswordField('Enter a Password:', [
         validators.DataRequired(),
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
-    confirmpass = PasswordField('Confirm Password:')
-    phone = IntegerField('Your Phone Number:')
+    confirmpass = PasswordField('Confirm Password:',[validators.DataRequired()])
+    homephone = IntegerField('Your Home Phone Number:', [validators.DataRequired()])
+    mobilephone = IntegerField('Your Mobile Phone Number', [validators.DataRequired()])
+    address = StringField('Address:', [validators.DataRequired()])
+    postalcode = IntegerField('Postal Code:', [validators.Length(min=6,max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
-
 
 @app.route('/register', methods=['GET','POST'])
 def register():
-    form = RegistrationForm(request.form)
+    form = newuser(request.form)
     if request == 'POST' and form.validate():
         return render_template('register.html',form=form)
     return render_template('register.html',form=form)
