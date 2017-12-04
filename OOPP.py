@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField
 import firebase_admin
 from firebase_admin import credentials, db
+import registration as regist
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -68,29 +69,52 @@ def forum():
     return render_template('forum.html')
 
 
-class newuser(Form):
+class RegistrationForm(Form):
     name = StringField('Your Full Name:', [validators.Length(min=1),validators.DataRequired()])
     nric = StringField('Your NRIC:',[validators.DataRequired()])
     email = StringField('Your Email Address:', [validators.Length(min=6, max=50),
                                           validators.DataRequired(),
                                           validators.EqualTo('confirmemail',message='Email must match')])
-    confirmemail = StringField('Confirm Email Address:',validators.DataRequired())
+    confirmemail = StringField('Confirm Email Address:',[validators.DataRequired()])
     password = PasswordField('Enter a Password:', [
         validators.DataRequired(),
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
     confirmpass = PasswordField('Confirm Password:',[validators.DataRequired()])
-    homephone = IntegerField('Your Home Phone Number:', [validators.DataRequired()])
-    mobilephone = IntegerField('Your Mobile Phone Number', [validators.DataRequired()])
+    homephone = StringField('Your Home Phone Number:', [validators.DataRequired()])
+    mobilephone = StringField('Your Mobile Phone Number', [validators.DataRequired()])
     address = StringField('Address:', [validators.DataRequired()])
-    postalcode = IntegerField('Postal Code:', [validators.Length(min=6,max=6)])
+    postalcode = StringField('Postal Code:', [validators.Length(min=6,max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
 
 @app.route('/register', methods=['GET','POST'])
 def register():
-    form = newuser(request.form)
+    form = RegistrationForm(request.form)
     if request == 'POST' and form.validate():
-        return render_template('register.html',form=form)
+        name = form.name.data
+        nric = form.nric.data
+        email = form.email.data
+        password = form.password.data
+        homephone = form.homephone.data
+        mobilephone = form.mobilephone.data
+        address = form.address.data
+        postalcode = form.postalcode.data
+        newsletter = form.newsletter.data
+        user = regist.User(name,nric,email,password,homephone,mobilephone,address,postalcode,newsletter)
+        mag_db = root.child('userbase')
+        mag_db.push({
+            'name': user.get_name(),
+            'nric': user.get_nric(),
+            'email': user.get_email(),
+            'password': user.get_password(),
+            'homephone': user.get_homephone(),
+            'mobilephone': user.get_mobilephone(),
+            'address': user.get_address(),
+            'postalcode': user.get_postalcode(),
+            'newsletter': user.get_newsletter()
+        })
+        flash('You have successfully created an account','regsuccess')
+        return redirect(url_for('login.html'))
     return render_template('register.html',form=form)
 
 

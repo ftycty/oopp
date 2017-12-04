@@ -69,7 +69,7 @@
                     <h4 class="text-center">Register Here!</h4>
                     <div class="hline"></div>
                     <br />
-                    <form id="register" name="register" class="form-horizontal" role="form" action="/login" method="get">
+                    <form id="registerform" name="registerform" class="form-horizontal" role="form" action="" method="POST">
 
                         <div class="form-group">
                             {{ form.name.label(class_="col-md-4 control-label") }}
@@ -81,7 +81,7 @@
                         <div class="form-group">
                             {{ form.nric.label(class_="col-md-4 control-label") }}
                             <div class="col-md-4">
-                                {{ form.nric(class_="form-control",maxlength_="9",style_="text-transform: uppercase;") }}
+                                {{ form.nric(class_="form-control",maxlength="9",style="text-transform: uppercase;") }}
                             </div>
                         </div>
 
@@ -114,26 +114,37 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.phone.label(class_="col-md-4 control-label") }}
-                            <div class="col-md-4">
-                                Home No. {{ form.phone(name_='hphone',class_='form-control') }}
-                            </div>
-                            <div class="col-md-4">
-                                Mobile No. {{ form.phone(name_='mphone',class_='form-control') }}
-                            </div>
+                            {{ form.homephone.label(class_='col-md-4 control-label') }}
+                             <div class="col-md-4">
+                                 {{ form.homephone(class_='form-control') }}
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.mobilephone.label(class_='col-md-4 control-label') }}
+                             <div class="col-md-4">
+                                 {{ form.mobilephone(class_='form-control') }}
+                             </div>
                         </div>
 
                         <div class="form-group">
                             {{ form.address.label(class_='col-md-4 control-label') }}
                              <div class="col-md-4">
-                                 {{ form.address(class='form_control') }}
+                                 {{ form.address(class_='form-control') }}
                              </div>
                         </div>
 
                         <div class="form-group">
-                            {{ form.newsletter.label(class='col-md-4 control-label') }}
+                            {{ form.postalcode.label(class_='col-md-4 control-label') }}
+                             <div class="col-md-4">
+                                 {{ form.postalcode(class_='form-control') }}
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.newsletter.label(class_='col-md-4 control-label') }}
                             <div class="col-md-4">
-                                {{ form.newsletter(class_='form-group') }}
+                                {{ form.newsletter }}
                             </div>
                         </div>
                         <button type="submit" class="btn btn-theme">Register</button>
@@ -142,14 +153,5 @@
             </div><!--/row -->
         </div><!--/container -->
         {% endblock %}
-{% from "includes/_formhelper.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.username) }}
-    {{ render_field(form.email) }}
-    {{ render_field(form.password) }}
-    {{ render_field(form.confirm) }}
-    {{ render_field(form.accept_tos) }}
-  </dl>
-  <p><input type=submit value=Register>
-</form>
+
+
