@@ -1,6 +1,8 @@
 {% macro render_field(field) %}
-  {{ field.label }}
-  {{ field(**kwargs)|safe }}
+  {{ field.label(class_="col-md-4 control-label") }}
+   <div class="col-md-4">
+       {{ field(**kwargs)|safe }}
+   </div>
   {% if field.errors %}
     {% for error in field.errors %}
       <span class="help-inline">{{ error }}</span>

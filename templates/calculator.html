@@ -1,81 +1,81 @@
-        {% extends 'layout.html' %}
-        {% block title %}Calculators{% endblock %}
-        {% block body %}
-        <section class="container">
-            <div class="col-lg-4 col-md-6 col-sm-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">BMI Calculator</div>
-                    <div class="panel-body">
-                        <p><strong>Here is a BMI calculator to check how health are you?</strong></p>
-                        <p>A BMI value of 23 and above indicates that your weight is outside of the healthy weight range for your height.</p>
-                        <img src="../static/images/BMI.gif">
-                        <div class="form-group">
-                            <label for="inputdefault">Weight</label>
-                            <input class="form-control" id="inputdefault" type="text" placeholder="Kg">
-                        </div>
-                        <div class="form-group">
-                            <label for="inputdefault">Height</label>
-                            <input class="form-control" id="inputdefault" type="text" placeholder="cm">
-                        </div>
-                        <button type="button" class="btn btn-primary">calculate</button>
+{% extends 'layout.html' %}
+{% block title %}Calculators{% endblock %}
+{% block body %}
+<section class="container">
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">BMI Calculator</div>
+            <div class="panel-body">
+                <p><strong>Here is a BMI calculator to check how health are you?</strong></p>
+                <p>A BMI value of 23 and above indicates that your weight is outside of the healthy weight range for your height.</p>
+                <img src="../static/images/BMI.gif">
+                <div class="form-group">
+                    <label for="inputdefault">Weight</label>
+                    <input class="form-control" id="inputdefault" type="text" placeholder="Kg">
+                </div>
+                <div class="form-group">
+                    <label for="inputdefault">Height</label>
+                    <input class="form-control" id="inputdefault" type="text" placeholder="cm">
+                </div>
+                <button type="button" class="btn btn-primary">calculate</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">calories intake Calculator</div>
+            <div class="panel-body">
+                <h2>Calculate Your Caloric Intake</h2>
+                <p>Not everybody needs 2,000 calories a day. Your needs are highly individual and determined by much more than your workouts. Use this calculator to find out how many calories you really need.</p>
+                <div class="form-group">
+                    <label for="inputsm">Age</label>
+                    <input class="form-control input-sm" id="inputsm" type="text" placeholder="Years">
+                    <form>
+                        <label class="radio-inline">
+                            <input type="radio" name="optradio">Male
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optradio">Female
+                        </label>
+                    </form>
+                </div>
+                <h3><strong>Height</strong></h3>
+                <div class="form-group row">
+                    <div class="col-xs-4">
+                        <input class="form-control" id="ex1" type="text" placeholder="m">
+                    </div>
+                    <div class="col-xs-4">
+                        <input class="form-control" id="ex3" type="text" placeholder="cm">
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">calories intake Calculator</div>
-                    <div class="panel-body">
-                        <h2>Calculate Your Caloric Intake</h2>
-                        <p>Not everybody needs 2,000 calories a day. Your needs are highly individual and determined by much more than your workouts. Use this calculator to find out how many calories you really need.</p>
-                        <div class="form-group">
-                            <label for="inputsm">Age</label>
-                            <input class="form-control input-sm" id="inputsm" type="text" placeholder="Years">
-                            <form>
-                                <label class="radio-inline">
-                                    <input type="radio" name="optradio">Male
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="optradio">Female
-                                </label>
-                            </form>
-                        </div>
-                        <h3><strong>Height</strong></h3>
-                        <div class="form-group row">
-                            <div class="col-xs-4">
-                                <input class="form-control" id="ex1" type="text" placeholder="m">
-                            </div>
-                            <div class="col-xs-4">
-                                <input class="form-control" id="ex3" type="text" placeholder="cm">
-                            </div>
-                        </div>
-                        <label for="inputsm">Weight</label>
-                        <input class="form-control input-sm" id="inputsm" type="text" placeholder="Kg">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio">Fat loss</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="optradio">Maintance</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" disabled>Muscle Gain</label>
-                        </div>
-                        <h2>Activity Level</h2>
-                        <div class="radio">
-                            <label><input type="radio" name="optradio">Lightly active</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="optradio">Moderately active</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" disabled>very active</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" disabled>extra active</label>
-                        </div>
-                         <button type="button" class="btn btn-primary">calculate</button>
-                    </div>
+                <label for="inputsm">Weight</label>
+                <input class="form-control input-sm" id="inputsm" type="text" placeholder="Kg">
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Fat loss</label>
                 </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Maintance</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio" disabled>Muscle Gain</label>
+                </div>
+                <h2>Activity Level</h2>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Lightly active</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio">Moderately active</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio" disabled>very active</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio" disabled>extra active</label>
+                </div>
+                 <button type="button" class="btn btn-primary">calculate</button>
             </div>
+        </div>
+    </div>
 
-        </section><!--/#calculator-->
-        {% endblock %}
+</section><!--/#calculator-->
+{% endblock %}

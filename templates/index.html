@@ -1,165 +1,165 @@
-        {% extends 'layout.html' %}
-        {% block title %}Home{% endblock %}
-        {% block body %}
-        <body class="homepage">
-        <section id="main-slider" class="no-margin">
-            <div class="carousel slide">
-                <ol class="carousel-indicators">
-                    <li data-target="#main-slider" data-slide-to="0" class="active"></li>
-                    <li data-target="#main-slider" data-slide-to="1"></li>
-                    <li data-target="#main-slider" data-slide-to="2"></li>
-                </ol>
-                <div class="carousel-inner">
+{% extends 'layout.html' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+<body class="homepage">
+<section id="main-slider" class="no-margin">
+    <div class="carousel slide">
+        <ol class="carousel-indicators">
+            <li data-target="#main-slider" data-slide-to="0" class="active"></li>
+            <li data-target="#main-slider" data-slide-to="1"></li>
+            <li data-target="#main-slider" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
 
-                    <div class="item active" style="background-image: url({{ url_for('static', filename='images/slider/health1.jpg')}}">
-                        <div class="container">
-                            <div class="row slide-margin">
-                                <div class="col-sm-6">
-                                    <div class="carousel-content">
-                                        <h1 class="animation animated-item-1" style="color:black">We are a group of weaboos looking to promote healthy living</h1>
-                                        <h2 class="animation animated-item-2" style="color:black">Join our cause!</h2>
-                                        <a class="btn-slide animation animated-item-3" href="/about_us">Read More</a>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 hidden-xs animation animated-item-4">
-                                    <div class="slider-img">
-                                        <img src="{{ url_for('static', filename='images/slider/img1.png')}}" class="img-responsive">
-                                    </div>
-                                </div>
-
+            <div class="item active" style="background-image: url({{ url_for('static', filename='images/slider/health1.jpg')}}">
+                <div class="container">
+                    <div class="row slide-margin">
+                        <div class="col-sm-6">
+                            <div class="carousel-content">
+                                <h1 class="animation animated-item-1" style="color:black">We are a group of weaboos looking to promote healthy living</h1>
+                                <h2 class="animation animated-item-2" style="color:black">Join our cause!</h2>
+                                <a class="btn-slide animation animated-item-3" href="/about_us">Read More</a>
                             </div>
                         </div>
-                    </div><!--/.item-->
 
-                    <div class="item" style="background-image: url({{ url_for('static', filename='images/slider/bg2.jpg')}}">
-                        <div class="container">
-                            <div class="row slide-margin">
-                                <div class="col-sm-6">
-                                    <div class="carousel-content">
-                                        <h1 class="animation animated-item-1">Lorem ipsum dolor sit amet consectetur adipisicing elit</h1>
-                                        <h2 class="animation animated-item-2">Accusantium doloremque laudantium totam rem aperiam, eaque ipsa...</h2>
-                                        <a class="btn-slide animation animated-item-3" href="#">Read More</a>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 hidden-xs animation animated-item-4">
-                                    <div class="slider-img">
-                                        <img src="{{ url_for('static', filename='images/slider/img2.png')}}" class="img-responsive">
-                                    </div>
-                                </div>
-
+                        <div class="col-sm-6 hidden-xs animation animated-item-4">
+                            <div class="slider-img">
+                                <img src="{{ url_for('static', filename='images/slider/img1.png')}}" class="img-responsive">
                             </div>
                         </div>
-                    </div><!--/.item-->
 
-                    <div class="item" style="background-image: url({{ url_for('static', filename='images/slider/bg3.jpg')}}">
-                        <div class="container">
-                            <div class="row slide-margin">
-                                <div class="col-sm-6">
-                                    <div class="carousel-content">
-                                        <h1 class="animation animated-item-1">Lorem ipsum dolor sit amet consectetur adipisicing elit</h1>
-                                        <h2 class="animation animated-item-2">Accusantium doloremque laudantium totam rem aperiam, eaque ipsa...</h2>
-                                        <a class="btn-slide animation animated-item-3" href="#">Read More</a>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 hidden-xs animation animated-item-4">
-                                    <div class="slider-img">
-                                        <img src="{{ url_for('static', filename='images/slider/img3.png')}}" class="img-responsive">
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+            </div><!--/.item-->
+
+            <div class="item" style="background-image: url({{ url_for('static', filename='images/slider/bg2.jpg')}}">
+                <div class="container">
+                    <div class="row slide-margin">
+                        <div class="col-sm-6">
+                            <div class="carousel-content">
+                                <h1 class="animation animated-item-1">Lorem ipsum dolor sit amet consectetur adipisicing elit</h1>
+                                <h2 class="animation animated-item-2">Accusantium doloremque laudantium totam rem aperiam, eaque ipsa...</h2>
+                                <a class="btn-slide animation animated-item-3" href="#">Read More</a>
                             </div>
                         </div>
-                    </div><!--/.item-->
-                </div><!--/.carousel-inner-->
-            </div><!--/.carousel-->
-            <a class="prev hidden-xs" href="#main-slider" data-slide="prev">
-                <i class="fa fa-chevron-left"></i>
-            </a>
-            <a class="next hidden-xs" href="#main-slider" data-slide="next">
-                <i class="fa fa-chevron-right"></i>
-            </a>
-        </section><!--/#main-slider-->
 
-        <section id="feature" >
-            <div class="container">
-            <div class="center wow fadeInDown">
-                    <h2>Features</h2>
-                    <p class="lead">Our website brings the latest technology to provide an efficient way to help you gain a healthy lifestyle</p>
+                        <div class="col-sm-6 hidden-xs animation animated-item-4">
+                            <div class="slider-img">
+                                <img src="{{ url_for('static', filename='images/slider/img2.png')}}" class="img-responsive">
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+            </div><!--/.item-->
 
-                <div class="row">
-                    <div class="features">
-                        <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                            <div class="feature-wrap">
-                                <i class="fa fa-bullhorn"></i>
-                                <h2>Reminders</h2>
-                                <h3>Register and be provided a way to set reminders for medication and workouts</h3>
+            <div class="item" style="background-image: url({{ url_for('static', filename='images/slider/bg3.jpg')}}">
+                <div class="container">
+                    <div class="row slide-margin">
+                        <div class="col-sm-6">
+                            <div class="carousel-content">
+                                <h1 class="animation animated-item-1">Lorem ipsum dolor sit amet consectetur adipisicing elit</h1>
+                                <h2 class="animation animated-item-2">Accusantium doloremque laudantium totam rem aperiam, eaque ipsa...</h2>
+                                <a class="btn-slide animation animated-item-3" href="#">Read More</a>
                             </div>
-                        </div><!--/.col-md-4-->
-
-                        <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                            <div class="feature-wrap">
-                                <i class="fa fa-calendar"></i>
-                                <h2>Calendar</h2>
-                                <h3>A calendar feature will be provided to help organize workouts and medication</h3>
+                        </div>
+                        <div class="col-sm-6 hidden-xs animation animated-item-4">
+                            <div class="slider-img">
+                                <img src="{{ url_for('static', filename='images/slider/img3.png')}}" class="img-responsive">
                             </div>
-                        </div><!--/.col-md-4-->
-
-                        <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                            <div class="feature-wrap">
-                                <i class="fa fa-plus"></i>
-                                <h2>Calculators</h2>
-                                <h3>Be able to calculate your BMI and calorie intake online</h3>
-                            </div>
-                        </div><!--/.col-md-4-->
-
-                        <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                            <div class="feature-wrap">
-                                <i class="fa fa-search"></i>
-                                <h2>Regularly Updated</h2>
-                                <h3>Be kept up-to-date with the latest workouts, meal plans and campaigns</h3>
-                            </div>
-                        </div><!--/.col-md-4-->
-
-                        <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                            <div class="feature-wrap">
-                                <i class="fa fa-bar-chart-o"></i>
-                                <h2>Medical Stocks</h2>
-                                <h3>We provide up-to-date information on medical stocks</h3>
-                            </div>
-                        </div><!--/.col-md-4-->
-
-                        <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                            <div class="feature-wrap">
-                                <i class="fa fa-heart"></i>
-                                <h2>Medical</h2>
-                                <h3>The latest medical ammenities, queuelist and book an appointment</h3>
-                            </div>
-                        </div><!--/.col-md-4-->
-                    </div><!--/.services-->
-                </div><!--/.row-->
-            </div><!--/.container-->
-        </section><!--/#feature-->
-
-        <section id="partner">
-            <div class="container">
-                <div class="center wow fadeInDown">
-                    <h2>Our Partners</h2>
+                        </div>
+                    </div>
                 </div>
+            </div><!--/.item-->
+        </div><!--/.carousel-inner-->
+    </div><!--/.carousel-->
+    <a class="prev hidden-xs" href="#main-slider" data-slide="prev">
+        <i class="fa fa-chevron-left"></i>
+    </a>
+    <a class="next hidden-xs" href="#main-slider" data-slide="next">
+        <i class="fa fa-chevron-right"></i>
+    </a>
+</section><!--/#main-slider-->
 
-                <div class="partners">
-                    <ul>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="300ms" src="{{ url_for('static', filename='images/partners/partner1.png')}}"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms" src="{{ url_for('static', filename='images/partners/partner2.png')}}"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="900ms" src="{{ url_for('static', filename='images/partners/partner3.png')}}"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1200ms" src="{{ url_for('static', filename='images/partners/partner4.png')}}"></a></li>
-                        <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1500ms" src="{{ url_for('static', filename='images/partners/partner5.png')}}"></a></li>
-                    </ul>
-                </div>
-            </div><!--/.container-->
-        </section><!--/#partner-->
-        </body>
-        {% endblock %}
+<section id="feature" >
+    <div class="container">
+    <div class="center wow fadeInDown">
+            <h2>Features</h2>
+            <p class="lead">Our website brings the latest technology to provide an efficient way to help you gain a healthy lifestyle</p>
+        </div>
+
+        <div class="row">
+            <div class="features">
+                <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                    <div class="feature-wrap">
+                        <i class="fa fa-bullhorn"></i>
+                        <h2>Reminders</h2>
+                        <h3>Register and be provided a way to set reminders for medication and workouts</h3>
+                    </div>
+                </div><!--/.col-md-4-->
+
+                <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                    <div class="feature-wrap">
+                        <i class="fa fa-calendar"></i>
+                        <h2>Calendar</h2>
+                        <h3>A calendar feature will be provided to help organize workouts and medication</h3>
+                    </div>
+                </div><!--/.col-md-4-->
+
+                <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                    <div class="feature-wrap">
+                        <i class="fa fa-plus"></i>
+                        <h2>Calculators</h2>
+                        <h3>Be able to calculate your BMI and calorie intake online</h3>
+                    </div>
+                </div><!--/.col-md-4-->
+
+                <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                    <div class="feature-wrap">
+                        <i class="fa fa-search"></i>
+                        <h2>Regularly Updated</h2>
+                        <h3>Be kept up-to-date with the latest workouts, meal plans and campaigns</h3>
+                    </div>
+                </div><!--/.col-md-4-->
+
+                <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                    <div class="feature-wrap">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <h2>Medical Stocks</h2>
+                        <h3>We provide up-to-date information on medical stocks</h3>
+                    </div>
+                </div><!--/.col-md-4-->
+
+                <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                    <div class="feature-wrap">
+                        <i class="fa fa-heart"></i>
+                        <h2>Medical</h2>
+                        <h3>The latest medical ammenities, queuelist and book an appointment</h3>
+                    </div>
+                </div><!--/.col-md-4-->
+            </div><!--/.services-->
+        </div><!--/.row-->
+    </div><!--/.container-->
+</section><!--/#feature-->
+
+<section id="partner">
+    <div class="container">
+        <div class="center wow fadeInDown">
+            <h2>Our Partners</h2>
+        </div>
+
+        <div class="partners">
+            <ul>
+                <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="300ms" src="{{ url_for('static', filename='images/partners/partner1.png')}}"></a></li>
+                <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms" src="{{ url_for('static', filename='images/partners/partner2.png')}}"></a></li>
+                <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="900ms" src="{{ url_for('static', filename='images/partners/partner3.png')}}"></a></li>
+                <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1200ms" src="{{ url_for('static', filename='images/partners/partner4.png')}}"></a></li>
+                <li> <a href="#"><img class="img-responsive wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="1500ms" src="{{ url_for('static', filename='images/partners/partner5.png')}}"></a></li>
+            </ul>
+        </div>
+    </div><!--/.container-->
+</section><!--/#partner-->
+</body>
+{% endblock %}
 
 
