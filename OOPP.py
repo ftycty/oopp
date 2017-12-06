@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField
+from flask import Flask, render_template, request, flash, redirect, url_for, session
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField, ValidationError
 import firebase_admin
 from firebase_admin import credentials, db
 import registration as regist
@@ -10,6 +10,8 @@ default_app = firebase_admin.initialize_app(cred, {
 })
 
 root = db.reference()
+
+userref = db.reference('userbase')
 
 app = Flask(__name__)
 
@@ -38,12 +40,6 @@ def calculator():
 def contact_us():
     return render_template('contact_us.html')
 
-
-@app.route('/food_recipes')
-def food_recipes():
-    return render_template('food_recipes.html')
-
-
 @app.route('/gym_fitness')
 def gym_fitness():
     return render_template('gym_fitness.html')
@@ -53,12 +49,18 @@ def gym_fitness():
 def medshop():
     return render_template('medshop.html')
 
+@app.route('/profile/<username>')
+def user_profile(username):
+    userbase = userref.get()
+    for user in userbase.items():
+        if username == user[1]['username']:
+                fname = user[1]['fname']
+                lname = user[1]['lname']
+                return render_template('profile.html', username=username,fname=fname,lname=lname)
 
-@app.route('/my_profile')
-def my_profile():
-    return render_template('my_profile.html')
-
-
+@app.route('/edit_profile')
+def edit_profile():
+    pass
 @app.route('/forumInput')
 def foruminput():
     return render_template('forumInput.html')
@@ -70,28 +72,42 @@ def forum():
 
 
 class RegistrationForm(Form):
-    name = StringField('Your Full Name:', [validators.Length(min=1),validators.DataRequired()])
-    nric = StringField('Your NRIC:',[validators.DataRequired()])
-    email = StringField('Your Email Address:', [validators.Length(min=6, max=50),
+    fname = StringField('First Name:*', [validators.Length(min=1), validators.DataRequired()])
+    lname  = StringField('Last Name:*', [validators.Length(min=1), validators.DataRequired()])
+    username = StringField('Username:*', [validators.Length(min=6,max=20), validators.DataRequired(), validate_registration])
+    nric = StringField('NRIC*:',[validators.DataRequired(), validate_registration])
+    email = StringField('Email Address:*', [validators.Length(min=6, max=50),
                                           validators.DataRequired(),
-                                          validators.EqualTo('confirmemail',message='Email must match')])
-    confirmemail = StringField('Confirm Email Address:',[validators.DataRequired()])
-    password = PasswordField('Enter a Password:', [
+                                          validators.EqualTo('confirmemail',message='Email must match'), validate_registration])
+    confirmemail = StringField('Confirm Email Address:*',[validators.DataRequired()])
+    password = PasswordField('Password:*', [
         validators.DataRequired(),
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
-    confirmpass = PasswordField('Confirm Password:',[validators.DataRequired()])
-    homephone = StringField('Your Home Phone Number:', [validators.DataRequired()])
-    mobilephone = StringField('Your Mobile Phone Number', [validators.DataRequired()])
-    address = StringField('Address:', [validators.DataRequired()])
-    postalcode = StringField('Postal Code:', [validators.Length(min=6,max=6)])
+    confirmpass = PasswordField('Confirm Password:*',[validators.DataRequired()])
+    homephone = StringField('Home Phone Number:')
+    mobilephone = StringField('Mobile Phone Number:')
+    address = StringField('Address:*', [validators.DataRequired()])
+    postalcode = StringField('Postal Code:*', [validators.Length(min=6,max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
+
+def validate_registration(form, field):
+    userbase = userref.get()
+    for user in userbase.items():
+        if user[1]['username'] == field.data:
+            raise ValidationError('Username is already taken')
+        elif user[1]['email'] == field.data:
+            raise ValidationError('Email has already been used')
+        elif user[1]['nric'] == field.data:
+            raise ValidationError('You have already registered with this NRIC')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = RegistrationForm(request.form)
-    if request == 'POST' and form.validate():
-        name = form.name.data
+    if request.method == 'POST' and form.validate():
+        fname = form.fname.data
+        lname = form.lname.data
+        username = form.username.data
         nric = form.nric.data
         email = form.email.data
         password = form.password.data
@@ -100,10 +116,12 @@ def register():
         address = form.address.data
         postalcode = form.postalcode.data
         newsletter = form.newsletter.data
-        user = regist.User(name,nric,email,password,homephone,mobilephone,address,postalcode,newsletter)
-        mag_db = root.child('userbase')
-        mag_db.push({
-            'name': user.get_name(),
+        user = regist.User(fname,lname,username,nric,email,password,homephone,mobilephone,address,postalcode,newsletter)
+        user_db = root.child('userbase')
+        user_db.push({
+            'fname': user.get_fname(),
+            'lname': user.get_lname(),
+            'username': user.get_username(),
             'nric': user.get_nric(),
             'email': user.get_email(),
             'password': user.get_password(),
@@ -113,15 +131,44 @@ def register():
             'postalcode': user.get_postalcode(),
             'newsletter': user.get_newsletter()
         })
-        flash('You have successfully created an account','regsuccess')
-        return redirect(url_for('login.html'))
+
+
+        flash('You have successfully created an account','success')
+        return redirect(url_for('login'))
     return render_template('register.html',form=form)
 
+class LoginForm(Form):
+    id = StringField('NRIC:',[validators.DataRequired()])
+    password = PasswordField('Password:',[validators.DataRequired()])
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    form = LoginForm(request.form)
+    if request.method =='POST' and form.validate():
+        id = form.id.data.upper()
+        password = form.password.data
+        userbase = userref.get()
+        for user in userbase.items():
+            if user[1]['nric'] == id and user[1]['password'] == password:
+                session['user_data'] = user[1]
+                session['logged_in'] = True
+                session['id'] = id
+                return redirect(url_for('home'))
+            elif id == 'ADMIN' and password == 'password':
+                session['logged_in'] = True
+                session['id'] = id
+                return redirect(url_for('home'))
+            else:
+                error = 'Invalid login'
+                flash(error, 'danger')
+                return render_template('login.html', form=form)
+    return render_template('login.html', form=form)
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You are now logged out','success')
+    return redirect(url_for('login'))
 
 class RequiredIf(object):
 
@@ -174,6 +221,18 @@ def illnessinput():
     return render_template('IllnessInput.html', form=form)
 
 
+# userbase = userref.get()
+# for user in userbase.items():
+#     print(user[1]['password'])
+#     print(user[1]['nric'])
+#     print(user[1])
+# username = 'fattycuty'
+# userbase = userref.get()
+# for user in userbase.items():
+#     if username == user[1]['username']:
+#             fname = user['fname']
+#             lname = user['lname']
+#             print(fname)
 if __name__ == '__main__':
     app.secret_key = 'secret123'
     app.run()

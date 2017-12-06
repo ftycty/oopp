@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block title %}Login{% endblock %}
 {% block body %}
+{% from "includes/_formhelper.html" import render_field %}
 
 <div class="container mtb" style="padding-bottom: 225px">
     <div class="center wow fadeInDown">
@@ -11,21 +12,15 @@
             <h4>Login Here!</h4>
             <div class="hline"></div>
             </br>
-            <form class="form-horizontal" role="form" method="get">
+            <form class="form-horizontal" action="" method="POST" >
                 <div class="form-group">
-                    <label class="col-md-4 control-label" for="InputNRIC">Your NRIC:</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="nric" style="text-transform: uppercase;" required>
-                    </div>
+                    {{ render_field(form.id, class_="form-control", style="text-transform: uppercase;") }}
                 </div>
                 <div class="form-group">
-                    <label class="col-md-4 control-label" for="InputPass">Your Password:</label>
-                    <div class="col-md-4">
-                        <input type="password" class="form-control" id="pass" required>
-                    </div>
+                    {{ render_field(form.password, class_="form-control") }}
                 </div>
                 <div class="form-group">
-                    <button type="button" class="btn btn-theme">Login</button>
+                    <input type="submit" class="btn btn-theme" value="Login">
                     <div class="hline-w"></div>
                     <p>Dont have an account?<a style="padding-left:10px;" href="/register">Sign Up Here</a></p>
                 </div>
