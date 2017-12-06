@@ -1,6 +1,8 @@
 class User:
-    def __init__(self,name,nric,email,password,homephone,mobilephone,address,postalcode,newsletter):
-        self.__name = name
+    def __init__(self,fname,lname,username,nric,email,password,homephone,mobilephone,address,postalcode,newsletter):
+        self.__fname = fname
+        self.__lname = lname
+        self.__username = username
         self.__nric = nric
         self.__email = email
         self.__password = password
@@ -11,8 +13,12 @@ class User:
         self.__newsletter = newsletter
 
     #getters
-    def get_name(self):
-        return self.__name
+    def get_fname(self):
+        return self.__fname
+    def get_lname(self):
+        return self.__lname
+    def get_username(self):
+        return self.__username
     def get_nric(self):
         return self.__nric
     def get_email(self):
@@ -31,8 +37,12 @@ class User:
         return self.__newsletter
 
     #setters
-    def set_name(self,name):
-        self.__name = name
+    def set_fname(self,fname):
+        self.__fname = fname
+    def set_lname(self,lname):
+        self.__lname = lname
+    def set_username(self,username):
+        self.__username = username
     def set_nric(self,nric):
         self.__nric = nric
     def set_email(self,email):
