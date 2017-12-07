@@ -3,9 +3,9 @@
    <div class="col-md-4">
        {{ field(**kwargs)|safe }}
    </div>
-  {% if field.errors %}
-    {% for error in field.errors %}
-      <span class="help-inline">{{ error }}</span>
-    {% endfor %}
-  {% endif %}
+{#  {% if field.errors %}#}
+{#    {% for error in field.errors %}#}
+{#      <span class="help-inline">{{ error }}</span>#}
+{#    {% endfor %}#}
+{#  {% endif %}#}
 {% endmacro %}
