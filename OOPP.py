@@ -60,11 +60,11 @@ def user_profile(username):
 
 @app.route('/edit_profile')
 def edit_profile():
-    pass
+    return render_template('edit_profile.html')
+
 @app.route('/forumInput')
 def foruminput():
     return render_template('forumInput.html')
-
 
 @app.route('/forum')
 def forum():
@@ -130,8 +130,6 @@ def register():
             'postalcode': user.get_postalcode(),
             'newsletter': user.get_newsletter()
         })
-
-
         flash('You have successfully created an account','success')
         return redirect(url_for('login'))
     return render_template('register.html',form=form)
@@ -152,6 +150,7 @@ def login():
                 session['user_data'] = user[1]
                 session['logged_in'] = True
                 session['id'] = id
+                session['key'] = user
                 return redirect(url_for('home'))
             else:
                 flash('Invalid Login', 'danger')
