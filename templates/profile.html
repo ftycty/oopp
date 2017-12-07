@@ -13,8 +13,8 @@
                     <div class="panel-body">
                         Date of birth: 15 june 1999<br>
                         Gender: Male<br><br>
-                        {% if session['logged_in'] %}
-                        <button type="button" class="btn btn-primary">Edit Profile</button>
+                        {% if session['id']==username %}
+                            <button type="button" class="btn btn-primary">Edit Profile</button>
                         {% endif %}
                     </div>
                 </div>
