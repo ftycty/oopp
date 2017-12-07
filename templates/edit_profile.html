@@ -1,18 +1,53 @@
 {% extends 'layout.html' %}
 {% block title %}Edit Profile{% endblock %}
 {% block body %}
+{% from "includes/_formhelper.html" import render_field %}
  <section id="portfolio">
     <div class="container">
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                        {% for error in field_errors %}
+                            <li>{{ form[field_name].label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <div class="center wow fadeInDown">
             <h2>Settings</h2>
         </div>
-        <div id="content">
-            <div id="horiznav_nav">
-                <ul>
-                    <li>
-                        <a href=''>Profile</a>
-                    </li>
-                </ul>
+        <ul class="nav nav-pills nav-justified">
+            <li class="active"><a data-toggle="pill" href="#profile-edit">Profile</a></li>
+            <li><a data-toggle="pill" href="#account-edit">Account</a></li>
+            <li><a data-toggle="pill" href="#picture-edit">Picture</a></li>
+            <li><a data-toggle="pill" href="#favourites-edit">Favourites</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id='profile-edit' class="tab-pane fade in active">
+                <h3>My Details</h3><hr>
+                <form class="form-horizontal" action="" method="POST">
+
+                    <div class="form-group">
+                        {{ render_field(form.gender,class_="form-control") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form.birthday,class_="form-control") }}
+                    </div>
+
+                    <input type="submit" class="btn" value="Update">
+                </form>
+            </div>
+            <div id='account-edit' class="tab-pane fade">
+                <p>Lorem ipsum2</p>
+            </div>
+            <div id='picture-edit' class="tab-pane fade">
+                <p>Lorem ipsum3</p>
+            </div>
+            <div id='favourites-edit' class="tab-pane fade">
+                <p>Lorem ipsum4</p>
             </div>
         </div>
     </div>
