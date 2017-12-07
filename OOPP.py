@@ -70,27 +70,6 @@ def foruminput():
 def forum():
     return render_template('forum.html')
 
-
-class RegistrationForm(Form):
-    fname = StringField('First Name:*', [validators.Length(min=1), validators.DataRequired()])
-    lname  = StringField('Last Name:*', [validators.Length(min=1), validators.DataRequired()])
-    username = StringField('Username:*', [validators.Length(min=6,max=20), validators.DataRequired(), validate_registration])
-    nric = StringField('NRIC*:',[validators.DataRequired(), validate_registration])
-    email = StringField('Email Address:*', [validators.Length(min=6, max=50),
-                                          validators.DataRequired(),
-                                          validators.EqualTo('confirmemail',message='Email must match'), validate_registration])
-    confirmemail = StringField('Confirm Email Address:*',[validators.DataRequired()])
-    password = PasswordField('Password:*', [
-        validators.DataRequired(),
-        validators.EqualTo('confirmpass', message='Passwords must match')
-    ])
-    confirmpass = PasswordField('Confirm Password:*',[validators.DataRequired()])
-    homephone = StringField('Home Phone Number:')
-    mobilephone = StringField('Mobile Phone Number:')
-    address = StringField('Address:*', [validators.DataRequired()])
-    postalcode = StringField('Postal Code:*', [validators.Length(min=6,max=6)])
-    newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
-
 def validate_registration(form, field):
     userbase = userref.get()
     for user in userbase.items():
@@ -101,14 +80,34 @@ def validate_registration(form, field):
         elif user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
 
+class RegistrationForm(Form):
+    fname = StringField('*First Name', [validators.Length(min=1), validators.DataRequired()])
+    lname  = StringField('*Last Name', [validators.Length(min=1), validators.DataRequired()])
+    username = StringField('*Username', [validators.Length(min=6,max=20), validators.DataRequired(), validate_registration])
+    nric = StringField('*NRIC',[validators.DataRequired(), validate_registration])
+    email = StringField('*Email Address', [validators.Length(min=6, max=50),
+                                          validators.DataRequired(),
+                                          validators.EqualTo('confirmemail',message='Email must match'), validate_registration])
+    confirmemail = StringField('*Confirm Email Address:',[validators.DataRequired()])
+    password = PasswordField('*Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirmpass', message='Passwords must match')
+    ])
+    confirmpass = PasswordField('*Confirm Password',[validators.DataRequired()])
+    homephone = StringField('Home Phone Number')
+    mobilephone = StringField('Mobile Phone Number')
+    address = StringField('*Address', [validators.DataRequired()])
+    postalcode = StringField('*Postal Code', [validators.Length(min=6,max=6)])
+    newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
-        fname = form.fname.data
-        lname = form.lname.data
+        fname = form.fname.data.title()
+        lname = form.lname.data.title()
         username = form.username.data
-        nric = form.nric.data
+        nric = form.nric.data.upper()
         email = form.email.data
         password = form.password.data
         homephone = form.homephone.data
@@ -138,30 +137,28 @@ def register():
     return render_template('register.html',form=form)
 
 class LoginForm(Form):
-    id = StringField('NRIC:',[validators.DataRequired()])
+    id = StringField('Username:',[validators.DataRequired()])
     password = PasswordField('Password:',[validators.DataRequired()])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
     if request.method =='POST' and form.validate():
-        id = form.id.data.upper()
+        id = form.id.data
         password = form.password.data
         userbase = userref.get()
         for user in userbase.items():
-            if user[1]['nric'] == id and user[1]['password'] == password:
+            if user[1]['username'] == id and user[1]['password'] == password:
                 session['user_data'] = user[1]
                 session['logged_in'] = True
                 session['id'] = id
                 return redirect(url_for('home'))
-            elif id == 'ADMIN' and password == 'password':
-                session['logged_in'] = True
-                session['id'] = id
-                return redirect(url_for('home'))
             else:
-                error = 'Invalid login'
-                flash(error, 'danger')
+                flash('Invalid Login', 'danger')
                 return render_template('login.html', form=form)
+    elif request.method=='POST' and form.validate()==False:
+        flash('Please enter your details', 'danger')
+        return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
 @app.route('/logout')
