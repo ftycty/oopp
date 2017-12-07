@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField, ValidationError, DateField
+from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, DateField, FileField, SubmitField
 import firebase_admin
 from firebase_admin import credentials, db
 import registration as regist
@@ -56,27 +56,67 @@ def user_profile(username):
         if username == user[1]['username']:
                 fname = user[1]['fname']
                 lname = user[1]['lname']
-                return render_template('profile.html', username=username,fname=fname,lname=lname)
+                try:
+                    birthday = user[1]['birthday']
+                except KeyError:
+                    birthday = ''
+                try:
+                    gender = user[1]['gender']
+                except KeyError:
+                    gender=''
+                return render_template('profile.html', username=username,fname=fname,lname=lname,birthday=birthday,gender=gender)
 
 class ProfileForm(Form):
-    gender = SelectField('My Gender',choices=[('M','Male'),('F','Female'),('O','Others')])
-    birthday = DateField('My Birthday')
+    gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('O','Others')])
+    birthday = DateField('My Birthday',format='%d/%m/%Y')
+
+class AccountForm(Form):
+    email = StringField('New Email', [validators.Length(min=6, max=50)])
+    password = PasswordField('New Password (Optional)', [
+        validators.Length(min=6, max=50),
+        validators.EqualTo('confirmpass', message='Passwords must match')
+    ])
+    confirmpass = PasswordField('Confirm New Password (Optional)')
 
 @app.route('/edit_profile', methods=['GET','POST'])
 def edit_profile():
+    user_data = session['user_data']
+    key = session['key']
+    user = user_ref.child(key)
+    try:
+        disp_gender = user_data['gender']
+    except:
+        disp_gender = ''
+    try:
+        disp_birthday = user_data['birthday']
+    except:
+        disp_birthday =''
+    email = user_data['email']
     form = ProfileForm(request.form)
+    form2 = AccountForm(request.form)
     if request.method == 'POST':
-        key = session['key']
-        gender = form.gender.data
-        birthday = form.data
-        user = user_ref.child(key)
-        user.update({
-            'gender': gender,
-            'birthday': birthday
-        })
-        flash('You have updated your profile settings','success')
-        return redirect(url_for('home'))
-    return render_template('edit_profile.html',form=form)
+        form_name = request.form['form-name']
+        if form_name == 'form':
+            gender = form.gender.data
+            birthday = str(form.birthday.data)
+            user.update({
+                'gender': gender,
+                'birthday': birthday
+            })
+            flash('You have updated your profile settings','success')
+        elif form_name == 'form2' and (form.validate() or form2.password.data == ''):
+            email = form2.email.data
+            user.update({
+                'email':email
+            })
+            if form2.password.data != '':
+                password = form2.password.data
+                user.update({
+                    'password':password
+                })
+            flash('You have updated your account settings','success')
+        return redirect(url_for('edit_profile'))
+    return render_template('edit_profile.html',form=form, form2=form2,disp_gender=disp_gender,disp_birthday=disp_birthday,email=email)
 
 @app.route('/forumInput')
 def foruminput():
@@ -106,6 +146,7 @@ class RegistrationForm(Form):
                                           validators.EqualTo('confirmemail',message='Email must match'), validate_registration])
     confirmemail = StringField('*Confirm Email Address:',[validators.DataRequired()])
     password = PasswordField('*Password', [
+        validators.Length(min=6, max=50),
         validators.DataRequired(),
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
@@ -166,7 +207,7 @@ def login():
                 session['user_data'] = user[1]
                 session['logged_in'] = True
                 session['id'] = id
-                session['key'] = user
+                session['key'] = user[0]
                 return redirect(url_for('home'))
             else:
                 flash('Invalid Login', 'danger')
@@ -228,7 +269,6 @@ def illnessinput():
             flash('Past Medical History Inserted Sucessfully.', 'success')
         return render_template('IllnessInput.html', form=form)
     return render_template('IllnessInput.html', form=form)
-
 
 # userbase = user_ref.get()
 # for user in userbase.items():
