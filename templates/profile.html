@@ -3,7 +3,10 @@
 {% block body %}
 <section id="portfolio">
     <div class="container">
-        <div class="col-lg-3 col-md-4 col-sm-8">
+        <div class="center wow fadeInDown">
+            <h2>{{ username }}'s Profile</h2>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-8">
             <div>
                 <img src="../static/images/portfolio/steve.jpg" class="img-circle" style="height:210px; width: 210px;">
             </div>
@@ -14,7 +17,7 @@
                         Date of birth: 15 june 1999<br>
                         Gender: Male<br><br>
                         {% if session['id']==username %}
-                            <button type="button" class="btn btn-primary">Edit Profile</button>
+                            <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
                         {% endif %}
                     </div>
                 </div>
