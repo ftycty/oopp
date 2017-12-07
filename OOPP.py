@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField, ValidationError
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField, ValidationError, DateField
 import firebase_admin
 from firebase_admin import credentials, db
 import registration as regist
@@ -11,7 +11,7 @@ default_app = firebase_admin.initialize_app(cred, {
 
 root = db.reference()
 
-userref = db.reference('userbase')
+user_ref = db.reference('userbase')
 
 app = Flask(__name__)
 
@@ -51,16 +51,32 @@ def medshop():
 
 @app.route('/profile/<username>')
 def user_profile(username):
-    userbase = userref.get()
+    userbase = user_ref.get()
     for user in userbase.items():
         if username == user[1]['username']:
                 fname = user[1]['fname']
                 lname = user[1]['lname']
                 return render_template('profile.html', username=username,fname=fname,lname=lname)
 
-@app.route('/edit_profile')
+class ProfileForm(Form):
+    gender = SelectField('My Gender',choices=[('M','Male'),('F','Female'),('O','Others')])
+    birthday = DateField('My Birthday')
+
+@app.route('/edit_profile', methods=['GET','POST'])
 def edit_profile():
-    return render_template('edit_profile.html')
+    form = ProfileForm(request.form)
+    if request.method == 'POST':
+        key = session['key']
+        gender = form.gender.data
+        birthday = form.data
+        user = user_ref.child(key)
+        user.update({
+            'gender': gender,
+            'birthday': birthday
+        })
+        flash('You have updated your profile settings','success')
+        return redirect(url_for('home'))
+    return render_template('edit_profile.html',form=form)
 
 @app.route('/forumInput')
 def foruminput():
@@ -71,7 +87,7 @@ def forum():
     return render_template('forum.html')
 
 def validate_registration(form, field):
-    userbase = userref.get()
+    userbase = user_ref.get()
     for user in userbase.items():
         if user[1]['username'] == field.data:
             raise ValidationError('Username is already taken')
@@ -142,9 +158,9 @@ class LoginForm(Form):
 def login():
     form = LoginForm(request.form)
     if request.method =='POST' and form.validate():
-        id = form.id.data
+        id = form.id.data.strip()
         password = form.password.data
-        userbase = userref.get()
+        userbase = user_ref.get()
         for user in userbase.items():
             if user[1]['username'] == id and user[1]['password'] == password:
                 session['user_data'] = user[1]
@@ -182,13 +198,10 @@ class RequiredIf(object):
                 else:
                     validators.Optional().__call__(form, field)
 
-
 class IllnessForm(Form):
     medtype = RadioField('Which to edit ', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='spast')
     cmedical = SelectField('Current Illness', [validators.DataRequired(), RequiredIf(medtype='scurrent')], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
     pmedical = SelectField('Past Illness', [validators.DataRequired(), RequiredIf(medtype='pcurrent')], choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),('DIABETES', 'Diabetes')], default='')
-
-
 
 @app.route('/illnessinput', methods=['GET','POST'])
 def illnessinput():
@@ -217,13 +230,13 @@ def illnessinput():
     return render_template('IllnessInput.html', form=form)
 
 
-# userbase = userref.get()
+# userbase = user_ref.get()
 # for user in userbase.items():
 #     print(user[1]['password'])
 #     print(user[1]['nric'])
 #     print(user[1])
 # username = 'fattycuty'
-# userbase = userref.get()
+# userbase = user_ref.get()
 # for user in userbase.items():
 #     if username == user[1]['username']:
 #             fname = user['fname']
