@@ -1,17 +1,20 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, DateField, FileField, SubmitField
 import firebase_admin
-from firebase_admin import credentials, db
+from firebase_admin import credentials, db, storage
 import registration as regist
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://oopp-53405.firebaseio.com'
+    'databaseURL': 'https://oopp-53405.firebaseio.com',
+    'storageBucket':'gs://oopp-53405.appspot.com/'
 })
 
 root = db.reference()
 
 user_ref = db.reference('userbase')
+
+bucket = storage.bucket()
 
 app = Flask(__name__)
 
@@ -70,6 +73,7 @@ class ProfileForm(Form):
     gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('O','Others')])
     birthday = DateField('My Birthday',format='%d/%m/%Y')
 
+
 class AccountForm(Form):
     email = StringField('New Email', [validators.Length(min=6, max=50)])
     password = PasswordField('New Password (Optional)', [
@@ -77,6 +81,9 @@ class AccountForm(Form):
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
     confirmpass = PasswordField('Confirm New Password (Optional)')
+
+class PictureForm(Form):
+    picture = FileField('Upload Profile Picture')
 
 @app.route('/edit_profile', methods=['GET','POST'])
 def edit_profile():
@@ -94,6 +101,7 @@ def edit_profile():
     email = user_data['email']
     form = ProfileForm(request.form)
     form2 = AccountForm(request.form)
+    form3 = PictureForm(request.form)
     if request.method == 'POST':
         form_name = request.form['form-name']
         if form_name == 'form':
@@ -115,8 +123,10 @@ def edit_profile():
                     'password':password
                 })
             flash('You have updated your account settings','success')
+        elif form_name == 'form3':
+            pass
         return redirect(url_for('edit_profile'))
-    return render_template('edit_profile.html',form=form, form2=form2,disp_gender=disp_gender,disp_birthday=disp_birthday,email=email)
+    return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,email=email)
 
 @app.route('/forumInput')
 def foruminput():

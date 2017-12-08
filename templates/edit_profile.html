@@ -61,7 +61,14 @@
                 </form>
             </div>
             <div id='picture-edit' class="tab-pane fade">
-                <p>Lorem ipsum3</p>
+                <h3>Upload Profile Picture</h3><hr>
+                <form class="form-horizontal" method="POST">
+                    <div class="form-group">
+                        {{ render_field(form3.picture,class_='form=control') }}
+                    </div>
+                    <input type="submit" class="btn" value="Update">
+                    <input type="hidden" name="form-name" value="form3">
+                </form>
             </div>
             <div id='favourites-edit' class="tab-pane fade">
                 <p>Lorem ipsum4</p>
