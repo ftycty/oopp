@@ -6,7 +6,6 @@ import registration as regist
 from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
-from flask.json import JSONEncoder
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
