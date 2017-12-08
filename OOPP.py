@@ -1,17 +1,21 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField, ValidationError, DateField
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, RadioField,SelectField, ValidationError
 import firebase_admin
 from firebase_admin import credentials, db
 import registration as regist
+from wtforms.fields.html5 import DateField
+from PastIllness import PastIllness
+from CurrentIllness import CurrentIllness
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
+
 default_app = firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://oopp-53405.firebaseio.com'
 })
 
 root = db.reference()
 
-user_ref = db.reference('userbase')
+userref = db.reference('userbase')
 
 app = Flask(__name__)
 
@@ -40,6 +44,7 @@ def calculator():
 def contact_us():
     return render_template('contact_us.html')
 
+
 @app.route('/gym_fitness')
 def gym_fitness():
     return render_template('gym_fitness.html')
@@ -49,45 +54,34 @@ def gym_fitness():
 def medshop():
     return render_template('medshop.html')
 
+
 @app.route('/profile/<username>')
 def user_profile(username):
-    userbase = user_ref.get()
+    userbase = userref.get()
     for user in userbase.items():
         if username == user[1]['username']:
                 fname = user[1]['fname']
                 lname = user[1]['lname']
                 return render_template('profile.html', username=username,fname=fname,lname=lname)
 
-class ProfileForm(Form):
-    gender = SelectField('My Gender',choices=[('M','Male'),('F','Female'),('O','Others')])
-    birthday = DateField('My Birthday')
 
-@app.route('/edit_profile', methods=['GET','POST'])
+@app.route('/edit_profile')
 def edit_profile():
-    form = ProfileForm(request.form)
-    if request.method == 'POST':
-        key = session['key']
-        gender = form.gender.data
-        birthday = form.data
-        user = user_ref.child(key)
-        user.update({
-            'gender': gender,
-            'birthday': birthday
-        })
-        flash('You have updated your profile settings','success')
-        return redirect(url_for('home'))
-    return render_template('edit_profile.html',form=form)
+    return render_template('edit_profile.html')
+
 
 @app.route('/forumInput')
 def foruminput():
     return render_template('forumInput.html')
 
+
 @app.route('/forum')
 def forum():
     return render_template('forum.html')
 
+
 def validate_registration(form, field):
-    userbase = user_ref.get()
+    userbase = userref.get()
     for user in userbase.items():
         if user[1]['username'] == field.data:
             raise ValidationError('Username is already taken')
@@ -95,6 +89,7 @@ def validate_registration(form, field):
             raise ValidationError('Email has already been used')
         elif user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
+
 
 class RegistrationForm(Form):
     fname = StringField('*First Name', [validators.Length(min=1), validators.DataRequired()])
@@ -115,6 +110,7 @@ class RegistrationForm(Form):
     address = StringField('*Address', [validators.DataRequired()])
     postalcode = StringField('*Postal Code', [validators.Length(min=6,max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
+
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -150,17 +146,19 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html',form=form)
 
+
 class LoginForm(Form):
     id = StringField('Username:',[validators.DataRequired()])
     password = PasswordField('Password:',[validators.DataRequired()])
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
     if request.method =='POST' and form.validate():
-        id = form.id.data.strip()
+        id = form.id.data
         password = form.password.data
-        userbase = user_ref.get()
+        userbase = userref.get()
         for user in userbase.items():
             if user[1]['username'] == id and user[1]['password'] == password:
                 session['user_data'] = user[1]
@@ -176,14 +174,15 @@ def login():
         return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You are now logged out','success')
     return redirect(url_for('login'))
 
-class RequiredIf(object):
 
+class RequiredIf(object):
     def __init__(self, *args, **kwargs):
         self.conditions = kwargs
 
@@ -198,45 +197,58 @@ class RequiredIf(object):
                 else:
                     validators.Optional().__call__(form, field)
 
+
 class IllnessForm(Form):
-    medtype = RadioField('Which to edit ', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='spast')
-    cmedical = SelectField('Current Illness', [validators.DataRequired(), RequiredIf(medtype='scurrent')], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
-    pmedical = SelectField('Past Illness', [validators.DataRequired(), RequiredIf(medtype='pcurrent')], choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),('DIABETES', 'Diabetes')], default='')
+    medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
+    illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
+    startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
+    enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
+
 
 @app.route('/illnessinput', methods=['GET','POST'])
 def illnessinput():
     form = IllnessForm(request.form)
     if request == 'POST' and form.validate():
         if form.medtype.data == 'scurrent':
-            current = form.cmedical.data
+            illness = form.illness.data
+            start = form.startdate.data
 
-            current_db = root.child('publications')
+            current = CurrentIllness(illness, start)
+
+            current_db = root.child('currentillness')
             current_db.push({
-                    'current': current,
+                'illness': current.get_illness(),
+                'startdate': current.get_startdate(),
             })
 
             flash('Currant Medical History Inserted Sucessfully.', 'success')
 
         elif form.medtype.data == 'spast':
-            past = form.pmedical.data
+            illness = form.illness.data
+            start = form.startdate.data
+            end = form.enddate.data
 
-            past_db = root.child('publications')
+            past = PastIllness(illness, start, end)
+
+            past_db = root.child('pastillness')
             past_db.push({
-                'title': form.pmedical.data,
+                'illness': past.get_illness(),
+                'startdate': past.get_startdate(),
+                'enddate': past.get_enddate(),
             })
 
             flash('Past Medical History Inserted Sucessfully.', 'success')
-        return render_template('IllnessInput.html', form=form)
+        return redirect(url_for('/'))
     return render_template('IllnessInput.html', form=form)
 
 
-# userbase = user_ref.get()
+# userbase = userref.get()
 # for user in userbase.items():
 #     print(user[1]['password'])
 #     print(user[1]['nric'])
 #     print(user[1])
 # username = 'fattycuty'
-# userbase = user_ref.get()
+# userbase = userref.get()
 # for user in userbase.items():
 #     if username == user[1]['username']:
 #             fname = user['fname']

@@ -23,24 +23,47 @@
                 <h4>CHANGE MEDICAL HISTORY</h4>
                 <div class="hline"></div>
                 <br>
-                <form method="POST" action="">
+                <form class="form-horizontal" method="POST" action="">
 
                     <div class="form-group">
                         <div class="form-row">
-                            {{ render_field(form.medtype, class_="radio-inline") }}
+                            {{ render_field(form.medtype, class_='radio-inline') }}
                         </div>
                     </div>
 
-                    <div class="form-group" id="current">
-                        {{ render_field(form.cmedical, class_='form-control') }}
+                    <div id="current">
+                        <div class="form-group">
+                            {{ render_field(form.illness, class_='form-control') }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.startdate, class_='form-control') }}
+                        </div>
                     </div>
 
-                    <div class="form-group" id="past">
-                        {{ render_field(form.pmedical, class_='form-control') }}
+                    <div id="past">
+                        <div class="form-group">
+                            {{ render_field(form.illness, class_='form-control') }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.startdate, class_='form-control') }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.enddate, class_='form-control') }}
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="form-group col-md-11">
 
+
+                            </div>
+                            <div class="form-group col-md-1">
+                                <input type="submit" value="Submit" class="btn btn-info"/>
+                            </div>
+                        </div>
+                    </div>
                 </form>
-			</div><!--/row -->
-		</div><!--/container -->
+			</div>
+		</div>
     </div>
 {% endblock %}
