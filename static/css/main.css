@@ -2770,6 +2770,7 @@ ul.social_icons li  a i{
 
 .form-group .form-control {
   padding: 7px 12px;
+  border-color:#f2f2f2;
   box-shadow: none;
 }
 
@@ -3045,7 +3046,13 @@ ul.pagination > li:hover > a {
   box-shadow: none;
 }
 
-ul.tag-cloud, 
+.form-control:focus {
+  box-shadow:none;
+  outline: 0 none;
+}
+
+
+ul.tag-cloud,
 ul.sidebar-gallery {
   list-style: none;
   padding: 0;
