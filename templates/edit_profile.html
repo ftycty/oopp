@@ -7,17 +7,6 @@
         <div class="center wow fadeInDown">
             <h2>Settings</h2>
         </div>
-        {% if form2.errors %}
-            <div class="alert alert-danger">
-                <ul>
-                    {% for field_name, field_errors in form2.errors|dictsort if field_errors %}
-                        {% for error in field_errors %}
-                            <li>{{ form2[field_name].label }}: {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
         <ul class="nav nav-pills nav-justified">
             <li class="active"><a data-toggle="pill" href="#profile-edit">Profile</a></li>
             <li><a data-toggle="pill" href="#account-edit">Account</a></li>
