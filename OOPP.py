@@ -320,7 +320,7 @@ def illnessinput():
             })
 
             flash('Past Medical History Inserted Sucessfully.', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('login')) #supposed to link back to profile
     return render_template('IllnessInput.html', form=form)
 
 # userbase = user_ref.get()
