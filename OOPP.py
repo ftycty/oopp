@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, DateField, FileField, SubmitField
+from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, DateField, FileField, SubmitField, TextAreaField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
@@ -128,13 +128,29 @@ def edit_profile():
         return redirect(url_for('edit_profile'))
     return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,email=email)
 
-@app.route('/forumInput')
-def foruminput():
-    return render_template('forumInput.html')
+class formpost(Form):
+    title = StringField('Title:', [validators.length(min=3, max=30), validators.DataRequired()])
+    content = TextAreaField('Content:', [validators.DataRequired()])
+    type = RadioField('Type:', [validators.DataRequired()], choices=[('F', 'Fitness'),('N', 'Nutrition'),('O', 'Other')])
 
-@app.route('/forum')
+
+@app.route('/forumpost', methods=['POST', 'GET'])
+def foruminput():
+    form = formpost(request.form)
+    if request.method == 'POST' and form.validate():
+        return render_template('forumpost.html', form=form)
+    return render_template('forumpost.html', form=form)
+
+
+
+class forumSearch(Form):
+    search = StringField('Search:')
+
+@app.route('/forumDisplay')
 def forum():
-    return render_template('forum.html')
+    form = forumSearch(request.form)
+    return render_template('forumDisplay.html', form=form)
+
 
 def validate_registration(form, field):
     userbase = user_ref.get()

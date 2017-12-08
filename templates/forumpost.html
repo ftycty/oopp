@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+{% block title %}forumpost{% endblock %}
+{% block body %}
+{% from "includes/_formhelper.html" import render_field %}
+<div class="container">
+    <form method="POST">
+        <div class="form-group">
+            {{ render_field(form.title)}}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.type)}}
+        </div>
+        <div class="form-group">
+            {{ render_field(form.content)}}
+        </div>
+        <input type="button" class="btn btn-primary" value="Post">
+    </form>
+</div>
+{% endblock %}
