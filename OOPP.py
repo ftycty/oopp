@@ -11,7 +11,7 @@ from flask.json import JSONEncoder
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://oopp-53405.firebaseio.com',
-    'storageBucket':'gs://oopp-53405.appspot.com/'
+    'storageBucket':'gs://oopp-53405.appspot.com'
 })
 
 root = db.reference()
@@ -120,17 +120,22 @@ def edit_profile():
                 'birthday': birthday
             })
             flash('You have updated your profile settings','success')
-        elif form_name == 'form2' and (form.validate() or form2.password.data == ''):
+        elif form_name == 'form2':
+            wrong_info = False
             email = form2.email.data
             user.update({
                 'email':email
             })
-            if form2.password.data != '':
+            if form2.password.data != '' and form2.validate():
                 password = form2.password.data
                 user.update({
                     'password':password
                 })
-            flash('You have updated your account settings','success')
+            elif form2.password.data !='' and form2.validate() == False:
+                wrong_info = True
+                flash('Inncorrect password details','danger')
+            if wrong_info == False:
+                flash('You have updated your account settings','success')
         elif form_name == 'form3':
             pass
         return redirect(url_for('edit_profile'))
@@ -248,9 +253,8 @@ def login():
                 session['id'] = id
                 session['key'] = user[0]
                 return redirect(url_for('home'))
-            else:
-                flash('Invalid Login', 'danger')
-                return render_template('login.html', form=form)
+        flash('Invalid Login', 'danger')
+        return render_template('login.html', form=form)
     elif request.method=='POST' and form.validate()==False:
         flash('Please enter your details', 'danger')
         return render_template('login.html', form=form)
