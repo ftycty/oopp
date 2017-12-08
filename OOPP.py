@@ -6,6 +6,7 @@ import registration as regist
 from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
+from flask.json import JSONEncoder
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -87,8 +88,10 @@ class AccountForm(Form):
     ])
     confirmpass = PasswordField('Confirm New Password (Optional)')
 
+
 class PictureForm(Form):
     picture = FileField('Upload Profile Picture')
+
 
 @app.route('/edit_profile', methods=['GET','POST'])
 def edit_profile():
@@ -280,14 +283,14 @@ class RequiredIf(object):
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
     illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
-    startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
-    enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
+    startdate = StringField('Start Date', [validators.DataRequired()])
+    enddate = StringField('End Date', [RequiredIf(medtype='spast')])
 
 
-@app.route('/illnessinput', methods=['GET','POST'])
+@app.route('/illnessinput', methods=['GET', 'POST'])
 def illnessinput():
     form = IllnessForm(request.form)
-    if request == 'POST' and form.validate():
+    if request.method == 'POST' and form.validate():
         if form.medtype.data == 'scurrent':
             illness = form.illness.data
             start = form.startdate.data
@@ -300,7 +303,7 @@ def illnessinput():
                 'startdate': current.get_startdate(),
             })
 
-            flash('Currant Medical History Inserted Sucessfully.', 'success')
+            flash('Current Medical History Inserted Sucessfully.', 'success')
 
         elif form.medtype.data == 'spast':
             illness = form.illness.data
@@ -309,7 +312,7 @@ def illnessinput():
 
             past = PastIllness(illness, start, end)
 
-            past_db = root.child('pastillness')
+            past_db = user_ref.child('pastillness')
             past_db.push({
                 'illness': past.get_illness(),
                 'startdate': past.get_startdate(),
@@ -317,9 +320,8 @@ def illnessinput():
             })
 
             flash('Past Medical History Inserted Sucessfully.', 'success')
-        return redirect(url_for('/'))
+        return redirect(url_for('login'))
     return render_template('IllnessInput.html', form=form)
-
 
 # userbase = user_ref.get()
 # for user in userbase.items():
@@ -333,6 +335,8 @@ def illnessinput():
 #             fname = user['fname']
 #             lname = user['lname']
 #             print(fname)
+
+
 if __name__ == '__main__':
     app.secret_key = 'secret123'
     app.run()
