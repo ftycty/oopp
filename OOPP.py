@@ -3,6 +3,9 @@ from wtforms import Form, StringField, PasswordField, validators, RadioField,Sel
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
+from wtforms.fields.html5 import DateField
+from PastIllness import PastIllness
+from CurrentIllness import CurrentIllness
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -14,7 +17,7 @@ root = db.reference()
 
 user_ref = db.reference('userbase')
 
-bucket = storage.bucket()
+# bucket = storage.bucket()
 
 app = Flask(__name__)
 
@@ -43,6 +46,7 @@ def calculator():
 def contact_us():
     return render_template('contact_us.html')
 
+
 @app.route('/gym_fitness')
 def gym_fitness():
     return render_template('gym_fitness.html')
@@ -51,6 +55,7 @@ def gym_fitness():
 @app.route('/medshop')
 def medshop():
     return render_template('medshop.html')
+
 
 @app.route('/profile/<username>')
 def user_profile(username):
@@ -133,6 +138,7 @@ def edit_profile():
         return redirect(url_for('edit_profile'))
     return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,email=email)
 
+
 class formpost(Form):
     title = StringField('Title:', [validators.length(min=3, max=30), validators.DataRequired()])
     content = TextAreaField('Content:', [validators.DataRequired()])
@@ -147,9 +153,9 @@ def foruminput():
     return render_template('forumpost.html', form=form)
 
 
-
 class forumSearch(Form):
     search = StringField('Search:')
+
 
 @app.route('/forumDisplay')
 def forum():
@@ -166,6 +172,7 @@ def validate_registration(form, field):
             raise ValidationError('Email has already been used')
         elif user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
+
 
 class RegistrationForm(Form):
     fname = StringField('*First Name', [validators.Length(min=1), validators.DataRequired()])
@@ -187,6 +194,7 @@ class RegistrationForm(Form):
     address = StringField('*Address', [validators.DataRequired()])
     postalcode = StringField('*Postal Code', [validators.Length(min=6,max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
+
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -222,15 +230,17 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html',form=form)
 
+
 class LoginForm(Form):
     id = StringField('Username:',[validators.DataRequired()])
     password = PasswordField('Password:',[validators.DataRequired()])
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
     if request.method =='POST' and form.validate():
-        id = form.id.data.strip()
+        id = form.id.data
         password = form.password.data
         userbase = user_ref.get()
         for user in userbase.items():
@@ -247,14 +257,15 @@ def login():
         return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You are now logged out','success')
     return redirect(url_for('login'))
 
-class RequiredIf(object):
 
+class RequiredIf(object):
     def __init__(self, *args, **kwargs):
         self.conditions = kwargs
 
@@ -269,36 +280,50 @@ class RequiredIf(object):
                 else:
                     validators.Optional().__call__(form, field)
 
+
 class IllnessForm(Form):
-    medtype = RadioField('Which to edit ', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='spast')
-    cmedical = SelectField('Current Illness', [validators.DataRequired(), RequiredIf(medtype='scurrent')], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
-    pmedical = SelectField('Past Illness', [validators.DataRequired(), RequiredIf(medtype='pcurrent')], choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),('DIABETES', 'Diabetes')], default='')
+    medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
+    illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
+    startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
+    enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
+
 
 @app.route('/illnessinput', methods=['GET','POST'])
 def illnessinput():
     form = IllnessForm(request.form)
     if request == 'POST' and form.validate():
         if form.medtype.data == 'scurrent':
-            current = form.cmedical.data
+            illness = form.illness.data
+            start = form.startdate.data
 
-            current_db = root.child('publications')
+            current = CurrentIllness(illness, start)
+
+            current_db = user_ref.child('currentillness')
             current_db.push({
-                    'current': current,
+                'illness': current.get_illness(),
+                'startdate': current.get_startdate(),
             })
 
             flash('Currant Medical History Inserted Sucessfully.', 'success')
 
         elif form.medtype.data == 'spast':
-            past = form.pmedical.data
+            illness = form.illness.data
+            start = form.startdate.data
+            end = form.enddate.data
 
-            past_db = root.child('publications')
+            past = PastIllness(illness, start, end)
+
+            past_db = root.child('pastillness')
             past_db.push({
-                'title': form.pmedical.data,
+                'illness': past.get_illness(),
+                'startdate': past.get_startdate(),
+                'enddate': past.get_enddate(),
             })
 
             flash('Past Medical History Inserted Sucessfully.', 'success')
-        return render_template('IllnessInput.html', form=form)
+        return redirect(url_for('/'))
     return render_template('IllnessInput.html', form=form)
+
 
 # userbase = user_ref.get()
 # for user in userbase.items():
