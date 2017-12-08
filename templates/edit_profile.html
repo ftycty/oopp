@@ -4,20 +4,20 @@
 {% from "includes/_formhelper.html" import render_field %}
  <section id="portfolio">
     <div class="container">
-        {% if form.errors %}
+        <div class="center wow fadeInDown">
+            <h2>Settings</h2>
+        </div>
+        {% if form2.errors %}
             <div class="alert alert-danger">
                 <ul>
-                    {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                    {% for field_name, field_errors in form2.errors|dictsort if field_errors %}
                         {% for error in field_errors %}
-                            <li>{{ form[field_name].label }}: {{ error }}</li>
+                            <li>{{ form2[field_name].label }}: {{ error }}</li>
                         {% endfor %}
                     {% endfor %}
                 </ul>
             </div>
         {% endif %}
-        <div class="center wow fadeInDown">
-            <h2>Settings</h2>
-        </div>
         <ul class="nav nav-pills nav-justified">
             <li class="active"><a data-toggle="pill" href="#profile-edit">Profile</a></li>
             <li><a data-toggle="pill" href="#account-edit">Account</a></li>
@@ -25,26 +25,50 @@
             <li><a data-toggle="pill" href="#favourites-edit">Favourites</a></li>
         </ul>
         <div class="tab-content">
-            <div id='profile-edit' class="tab-pane fade in active">
+            <div id='profile-edit' class="tab-pane fade in active" href="#profile">
                 <h3>My Details</h3><hr>
-                <form class="form-horizontal" action="" method="POST">
+                <form class="form-horizontal" method="POST">
 
                     <div class="form-group">
                         {{ render_field(form.gender,class_="form-control") }}
                     </div>
 
                     <div class="form-group">
-                        {{ render_field(form.birthday,class_="form-control") }}
+                        {{ render_field(form.birthday,class_="form-control") }} <span class="help-inline"><em>dd/mm/yyyy</em></span>
                     </div>
 
                     <input type="submit" class="btn" value="Update">
+                    <input type="hidden" name="form-name" value="form">
                 </form>
             </div>
             <div id='account-edit' class="tab-pane fade">
-                <p>Lorem ipsum2</p>
+                <h3>Change Account Settings</h3><hr>
+                <form class="form-horizontal" method="POST">
+                    <div class="form-group">
+                        {{ render_field(form2.email,class_="form-control") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form2.password,class_="form-control") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form2.confirmpass,class_="form-control") }}
+                    </div>
+
+                    <input type="submit" class="btn" value="Update">
+                    <input type="hidden" name="form-name" value="form2">
+                </form>
             </div>
             <div id='picture-edit' class="tab-pane fade">
-                <p>Lorem ipsum3</p>
+                <h3>Upload Profile Picture</h3><hr>
+                <form class="form-horizontal" method="POST">
+                    <div class="form-group">
+                        {{ render_field(form3.picture,class_='form=control') }}
+                    </div>
+                    <input type="submit" class="btn" value="Update">
+                    <input type="hidden" name="form-name" value="form3">
+                </form>
             </div>
             <div id='favourites-edit' class="tab-pane fade">
                 <p>Lorem ipsum4</p>
@@ -52,4 +76,11 @@
         </div>
     </div>
  </section>
+{% endblock %}
+{% block botscript %}
+<script>
+    $(document).ready(function (){
+    $('#email').val('{{ email }}');
+    })
+</script>
 {% endblock %}

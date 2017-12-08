@@ -14,8 +14,15 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading">{{ fname }} {{ lname }}</div>
                     <div class="panel-body">
-                        Date of birth: 15 june 1999<br>
-                        Gender: Male<br><br>
+                        {% if (birthday != '') %}
+                            <p>Birthday: {{ birthday }}</p>
+                        {% endif %}
+                         {% if (gender != '') %}
+                            <p>Gender: {{ gender }}</p>
+                        {% endif %}
+                        {% if ((birthday and gender)=='') %}
+                            <p><em>This person should be more descriptive!</em></p>
+                        {% endif %}
                         {% if session['id']==username %}
                             <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
                         {% endif %}
