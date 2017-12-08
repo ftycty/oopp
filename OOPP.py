@@ -14,7 +14,7 @@ root = db.reference()
 
 user_ref = db.reference('userbase')
 
-bucket = storage.bucket()
+# bucket = storage.bucket()
 
 app = Flask(__name__)
 
