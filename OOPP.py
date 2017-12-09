@@ -6,6 +6,7 @@ import registration as regist
 from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
+import Forum as f
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -151,7 +152,18 @@ class formpost(Form):
 def foruminput():
     form = formpost(request.form)
     if request.method == 'POST' and form.validate():
-        return render_template('forumpost.html', form=form)
+        title = form.title.data
+        content = form.content.data
+        type = form.type.data
+        forum = f.Forum(title, content, type)
+        forum_db = root.child('postbase')
+        forum_db.push({
+            'title': forum.get_title(),
+            'content': forum.get_content(),
+            'type': forum.get_type()
+        })
+        flash('You have successfully post', 'success')
+        return redirect(url_for('forum'))
     return render_template('forumpost.html', form=form)
 
 

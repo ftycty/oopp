@@ -6,15 +6,17 @@
    <div class="row">
        <div class="col-sm-8">
            <div class="panel panel-info">
-               <div class="panel-heading"></div>
+               <div class="panel-heading">Health Forum</div>
                <div class="panel-body">
 
                </div>
            </div>
        </div>
        <div class="col-sm-4">
-           <form method="POST">
-               {{ render_field(form.search)}}
+           <form class="blog" method="POST">
+               <div class="form-group">
+               {{ render_field(form.search, class_="form-text")}}
+               </div>
            </form>
            <div class="panel panel-info" style="margin-top: 50px">
                <div class="panel-heading">What is this?</div>
