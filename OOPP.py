@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, FileField, SubmitField, TextAreaField
+from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
-from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
