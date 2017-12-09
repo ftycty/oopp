@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, DateField, FileField, SubmitField, TextAreaField
+from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, FileField, SubmitField, TextAreaField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
@@ -286,8 +286,8 @@ class RequiredIf(object):
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
     illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
-    startdate = StringField('Start Date', [validators.DataRequired()])
-    enddate = StringField('End Date', [RequiredIf(medtype='spast')])
+    startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
+    enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
 
 
 @app.route('/illnessinput', methods=['GET', 'POST'])
@@ -296,7 +296,7 @@ def illnessinput():
     if request.method == 'POST' and form.validate():
         if form.medtype.data == 'scurrent':
             illness = form.illness.data
-            start = form.startdate.data
+            start = str(form.startdate.data)
 
             current = CurrentIllness(illness, start)
 
@@ -310,8 +310,8 @@ def illnessinput():
 
         elif form.medtype.data == 'spast':
             illness = form.illness.data
-            start = form.startdate.data
-            end = form.enddate.data
+            start = str(form.startdate.data)
+            end = str(form.enddate.data)
 
             past = PastIllness(illness, start, end)
 
