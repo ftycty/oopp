@@ -23,16 +23,30 @@
                     </div>
 
                     <div class="form-group">
-                        {{ render_field(form.birthday,class_="form-control") }} <span class="help-inline"><em>dd/mm/yyyy</em></span>
+                        {{ render_field(form.birthday,class_="form-control",placeholder='yyyy-mm-dd') }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form.homephone,class_='form-control') }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form.mobilephone,class_='form-control') }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form.about,class_='form-control',placeholder='Say something about yourself!') }}
                     </div>
 
                     <input type="submit" class="btn" value="Update">
                     <input type="hidden" name="form-name" value="form">
                 </form>
             </div>
+
             <div id='account-edit' class="tab-pane fade">
                 <h3>Change Account Settings</h3><hr>
                 <form class="form-horizontal" method="POST">
+
                     <div class="form-group">
                         {{ render_field(form2.email,class_="form-control") }}
                     </div>
@@ -49,16 +63,20 @@
                     <input type="hidden" name="form-name" value="form2">
                 </form>
             </div>
+
             <div id='picture-edit' class="tab-pane fade">
                 <h3>Upload Profile Picture</h3><hr>
                 <form class="form-horizontal" method="POST">
+
                     <div class="form-group">
                         {{ render_field(form3.picture,class_='form=control') }}
                     </div>
+
                     <input type="submit" class="btn" value="Update">
                     <input type="hidden" name="form-name" value="form3">
                 </form>
             </div>
+
             <div id='favourites-edit' class="tab-pane fade">
                 <p>Lorem ipsum4</p>
             </div>
@@ -70,6 +88,11 @@
 <script>
     $(document).ready(function (){
     $('#email').val('{{ email }}');
+    $('#gender').val('{{ disp_gender }}');
+    $('#homephone').val('{{ homephone }}');
+    $('#mobilephone').val('{{ mobilephone }}');
+    $('#birthday').val('{{ disp_birthday }}');
+    $('#about').val('{{ disp_about }}');
     })
 </script>
 {% endblock %}

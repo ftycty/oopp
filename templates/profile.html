@@ -20,7 +20,10 @@
                          {% if (gender != '') %}
                             <p>Gender: {{ gender }}</p>
                         {% endif %}
-                        {% if ((birthday and gender)=='') %}
+                         {% if (about != '') %}
+                            <p>About Me: {{ about }}</p>
+                        {% endif %}
+                        {% if ((birthday and gender and about)=='') %}
                             <p><em>This person should be more descriptive!</em></p>
                         {% endif %}
                         {% if session['id']==username %}
