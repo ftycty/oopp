@@ -62,22 +62,28 @@ def user_profile(username):
     userbase = user_ref.get()
     for user in userbase.items():
         if username == user[1]['username']:
-                fname = user[1]['fname']
-                lname = user[1]['lname']
-                try:
-                    birthday = user[1]['birthday']
-                except KeyError:
-                    birthday = ''
-                try:
-                    gender = user[1]['gender']
-                except KeyError:
-                    gender=''
-                return render_template('profile.html', username=username,fname=fname,lname=lname,birthday=birthday,gender=gender)
+            fname = user[1]['fname']
+            lname = user[1]['lname']
+            try:
+                birthday = user[1]['birthday']
+            except KeyError:
+                birthday = ''
+            try:
+                gender = user[1]['gender']
+            except KeyError:
+                gender=''
+            try:
+                about = user[1]['about']
+            except:
+                about =''
+            return render_template('profile.html', username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about)
 
 class ProfileForm(Form):
-    gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('O','Others')])
-    birthday = DateField('My Birthday',format='%d/%m/%Y')
-
+    gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('Others','Others')])
+    birthday = DateField('My Birthday')
+    homephone = StringField('Home Phone Number')
+    mobilephone = StringField('Mobile Phone Number')
+    about = TextAreaField('About Me')
 
 class AccountForm(Form):
     email = StringField('New Email', [validators.Length(min=6, max=50)])
@@ -87,24 +93,39 @@ class AccountForm(Form):
     ])
     confirmpass = PasswordField('Confirm New Password (Optional)')
 
-
 class PictureForm(Form):
     picture = FileField('Upload Profile Picture')
 
-
 @app.route('/edit_profile', methods=['GET','POST'])
 def edit_profile():
-    user_data = session['user_data']
     key = session['key']
-    user = user_ref.child(key)
+    user_update = user_ref.child(key)
+    user_data = user_ref.child(key).get()
     try:
         disp_gender = user_data['gender']
     except:
         disp_gender = ''
+
     try:
         disp_birthday = user_data['birthday']
     except:
-        disp_birthday =''
+        disp_birthday = ''
+
+    try:
+        disp_about = user_data['about']
+    except:
+        disp_about = ''
+
+    try:
+        homephone = user_data['homephone']
+    except:
+        homephone = ''
+
+    try:
+        mobilephone = user_data['mobilephone']
+    except:
+        mobilephone = ''
+
     email = user_data['email']
     form = ProfileForm(request.form)
     form2 = AccountForm(request.form)
@@ -114,20 +135,24 @@ def edit_profile():
         if form_name == 'form':
             gender = form.gender.data
             birthday = str(form.birthday.data)
-            user.update({
+            about = str(form.about.data)
+            user_update.update({
                 'gender': gender,
-                'birthday': birthday
+                'birthday': birthday,
+                'about':about,
+                'homephone':homephone,
+                'mobilephone':mobilephone
             })
             flash('You have updated your profile settings','success')
         elif form_name == 'form2':
             wrong_info = False
             email = form2.email.data
-            user.update({
+            user_update.update({
                 'email':email
             })
             if form2.password.data != '' and form2.validate():
                 password = form2.password.data
-                user.update({
+                user_update.update({
                     'password':password
                 })
             elif form2.password.data !='' and form2.validate() == False:
@@ -138,7 +163,7 @@ def edit_profile():
         elif form_name == 'form3':
             pass
         return redirect(url_for('edit_profile'))
-    return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,email=email)
+    return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,disp_about=disp_about,email=email,homephone=homephone,mobilephone=mobilephone)
 
 
 class formpost(Form):
@@ -258,7 +283,6 @@ def login():
         userbase = user_ref.get()
         for user in userbase.items():
             if user[1]['username'] == id and user[1]['password'] == password:
-                session['user_data'] = user[1]
                 session['logged_in'] = True
                 session['id'] = id
                 session['key'] = user[0]
