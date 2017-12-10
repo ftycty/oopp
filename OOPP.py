@@ -283,6 +283,7 @@ def login():
         userbase = user_ref.get()
         for user in userbase.items():
             if user[1]['username'] == id and user[1]['password'] == password:
+                session['user_data'] = user[1]
                 session['logged_in'] = True
                 session['id'] = id
                 session['key'] = user[0]
