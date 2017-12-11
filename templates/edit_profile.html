@@ -35,6 +35,14 @@
                     </div>
 
                     <div class="form-group">
+                        {{ render_field(form.address,class_='form-control') }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ render_field(form.postalcode,class_='form-control',readonly=False) }}
+                    </div>
+
+                    <div class="form-group">
                         {{ render_field(form.about,class_='form-control',placeholder='Say something about yourself!') }}
                     </div>
 
@@ -87,12 +95,14 @@
 {% block botscript %}
 <script>
     $(document).ready(function (){
-    $('#email').val('{{ email }}');
-    $('#gender').val('{{ disp_gender }}');
-    $('#homephone').val('{{ homephone }}');
-    $('#mobilephone').val('{{ mobilephone }}');
-    $('#birthday').val('{{ disp_birthday }}');
-    $('#about').val('{{ disp_about }}');
-    })
+        $('#email').val('{{ disp_email }}');
+        $('#gender').val('{{ disp_gender }}');
+        $('#homephone').val('{{ disp_homephone }}');
+        $('#mobilephone').val('{{ disp_mobilephone }}');
+        $('#birthday').val('{{ disp_birthday }}');
+        $('#about').val('{{ disp_about }}');
+        $('#address').val('{{ disp_address }}');
+        $('#postalcode').val('{{ disp_postalcode }}');
+    });
 </script>
 {% endblock %}

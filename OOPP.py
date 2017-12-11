@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField,SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
+from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
+
+
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -57,8 +59,12 @@ def medshop():
     return render_template('medshop.html')
 
 
+class AddFriend(Form):
+    friend_name = SubmitField('Add Friend')
+
 @app.route('/profile/<username>')
 def user_profile(username):
+    form = AddFriend(request.form)
     userbase = user_ref.get()
     for user in userbase.items():
         if username == user[1]['username']:
@@ -76,13 +82,20 @@ def user_profile(username):
                 about = user[1]['about']
             except:
                 about =''
-            return render_template('profile.html', username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about)
+            return render_template('profile.html', form=form, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about)
+    if request.method == 'POST':
+        key = session['key']
+        user_update = user_ref.child(key)
+        user_data = user_ref.child(key).get()
+
 
 class ProfileForm(Form):
     gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('Others','Others')])
     birthday = DateField('My Birthday')
     homephone = StringField('Home Phone Number')
     mobilephone = StringField('Mobile Phone Number')
+    address = StringField('Address')
+    postalcode = StringField('Postal Code')
     about = TextAreaField('About Me')
 
 class AccountForm(Form):
@@ -101,32 +114,16 @@ def edit_profile():
     key = session['key']
     user_update = user_ref.child(key)
     user_data = user_ref.child(key).get()
-    try:
-        disp_gender = user_data['gender']
-    except:
-        disp_gender = ''
 
-    try:
-        disp_birthday = user_data['birthday']
-    except:
-        disp_birthday = ''
+    disp_gender = user_data['gender']
+    disp_birthday = user_data['birthday']
+    disp_about = user_data['about']
+    disp_homephone = user_data['homephone']
+    disp_mobilephone = user_data['mobilephone']
+    disp_email = user_data['email']
+    disp_address = user_data['address']
+    disp_postalcode = user_data['postalcode']
 
-    try:
-        disp_about = user_data['about']
-    except:
-        disp_about = ''
-
-    try:
-        homephone = user_data['homephone']
-    except:
-        homephone = ''
-
-    try:
-        mobilephone = user_data['mobilephone']
-    except:
-        mobilephone = ''
-
-    email = user_data['email']
     form = ProfileForm(request.form)
     form2 = AccountForm(request.form)
     form3 = PictureForm(request.form)
@@ -135,13 +132,20 @@ def edit_profile():
         if form_name == 'form':
             gender = form.gender.data
             birthday = str(form.birthday.data)
-            about = str(form.about.data)
+            about = form.about.data
+            homephone = form.homephone.data
+            mobilephone = form.mobilephone.data
+            address = form.address.data
+            postalcode = form.postalcode.data
+
             user_update.update({
                 'gender': gender,
                 'birthday': birthday,
                 'about':about,
                 'homephone':homephone,
-                'mobilephone':mobilephone
+                'mobilephone':mobilephone,
+                'address':address,
+                'postalcode':postalcode
             })
             flash('You have updated your profile settings','success')
         elif form_name == 'form2':
@@ -163,7 +167,7 @@ def edit_profile():
         elif form_name == 'form3':
             pass
         return redirect(url_for('edit_profile'))
-    return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,disp_about=disp_about,email=email,homephone=homephone,mobilephone=mobilephone)
+    return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,disp_about=disp_about,disp_email=disp_email,disp_homephone=disp_homephone,disp_mobilephone=disp_mobilephone,disp_address=disp_address,disp_postalcode=disp_postalcode)
 
 
 class formpost(Form):
@@ -262,7 +266,11 @@ def register():
             'mobilephone': user.get_mobilephone(),
             'address': user.get_address(),
             'postalcode': user.get_postalcode(),
-            'newsletter': user.get_newsletter()
+            'newsletter': user.get_newsletter(),
+            'about': '',
+            'friend':'',
+            'birthday':'',
+            'favourites':''
         })
         flash('You have successfully created an account','success')
         return redirect(url_for('login'))

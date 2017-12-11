@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block title %}My Profile{% endblock %}
 {% block body %}
+{% from "includes/_formhelper.html" import render_field %}
 <section id="portfolio">
     <div class="container">
         <div class="center wow fadeInDown">
@@ -28,6 +29,11 @@
                         {% endif %}
                         {% if session['id']==username %}
                             <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
+                        {% endif %}
+                        {% if (session['id'] != username and session['logged_in'] == True) %}
+                            <form method="POST">
+                                {{ form.friend_name(class='form-control') }}
+                            </form>
                         {% endif %}
                     </div>
                 </div>
