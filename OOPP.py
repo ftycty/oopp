@@ -18,7 +18,7 @@ default_app = firebase_admin.initialize_app(cred, {
 root = db.reference()
 
 user_ref = db.reference('userbase')
-
+forum_ref = db.reference('postbase')
 # bucket = storage.bucket()
 
 app = Flask(__name__)
@@ -75,6 +75,11 @@ def medshop_watsons():
             products = pdt.Products(data[0],data[1],data[2],data[3],data[4])
             list.append(products)
     return render_template('medshop.html',pdt=list)
+
+
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
 
 class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
@@ -237,14 +242,15 @@ def foruminput():
     return render_template('forumpost.html', form=form)
 
 
-class forumSearch(Form):
-    search = StringField('Search:')
-
-
 @app.route('/forumDisplay')
 def forum():
-    form = forumSearch(request.form)
-    return render_template('forumDisplay.html', form=form)
+    forumbase = forum_ref.get()
+    list = []
+    for post in forumbase:
+        eachpost = forumbase[post]
+        forum = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
+        list.append(forum)
+    return render_template('forumDisplay.html', forum=list)
 
 
 def validate_registration(form, field):

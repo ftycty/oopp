@@ -4,18 +4,21 @@
 {% from "includes/_formhelper.html" import render_field %}
 <div class="container">
    <div class="row">
-       <div class="col-sm-8">
+       <div class="col-sm-8 col-xs-12">
            <div class="panel panel-info">
                <div class="panel-heading">Health Forum</div>
                <div class="panel-body">
-
+                {% for albert in forum %}
+                    <h2>{{ albert.get_title() }}</h2>
+                    <p>{{ albert.get_content() }}</p>
+                {% endfor %}
                </div>
            </div>
        </div>
-       <div class="col-sm-4">
+       <div class="col-sm-4 col-xs-12">
            <form class="blog" method="POST">
                <div class="form-group">
-               {{ render_field(form.search, class_="form-text")}}
+                    <input type="text" id="search"  class="form-control search_box" autocomplete="off" placeholder="Search Here">
                </div>
            </form>
            <div class="panel panel-info" style="margin-top: 50px">

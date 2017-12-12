@@ -3,6 +3,7 @@ class Forum:
         self.__title = title
         self.__content = content
         self.__type = type
+        self.__post = ''
 
 #setter
     def set_title(self, title):
@@ -14,6 +15,9 @@ class Forum:
     def set_type(self, type):
         self.__type = type
 
+    def set_post(self, post):
+        self.__post = post
+
 #getter
     def get_title(self):
         return self.__title
@@ -23,3 +27,6 @@ class Forum:
 
     def get_type(self):
         return self.__type
+
+    def get_post(self):
+        return self.__post
