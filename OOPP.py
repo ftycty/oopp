@@ -16,7 +16,7 @@ default_app = firebase_admin.initialize_app(cred, {
 root = db.reference()
 
 user_ref = db.reference('userbase')
-
+forum_ref = db.reference('postbase')
 # bucket = storage.bucket()
 
 app = Flask(__name__)
@@ -56,6 +56,9 @@ def gym_fitness():
 def medshop():
     return render_template('medshop.html')
 
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
 
 @app.route('/profile/<username>')
 def user_profile(username):
@@ -191,14 +194,15 @@ def foruminput():
     return render_template('forumpost.html', form=form)
 
 
-class forumSearch(Form):
-    search = StringField('Search:')
-
-
 @app.route('/forumDisplay')
 def forum():
-    form = forumSearch(request.form)
-    return render_template('forumDisplay.html', form=form)
+    forumbase = forum_ref.get()
+    list = []
+    for post in forumbase:
+        eachpost = forumbase[post]
+        forum = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
+        list.append(forum)
+    return render_template('forumDisplay.html', forum=list)
 
 
 def validate_registration(form, field):

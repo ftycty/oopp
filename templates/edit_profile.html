@@ -2,7 +2,7 @@
 {% block title %}Edit Profile{% endblock %}
 {% block body %}
 {% from "includes/_formhelper.html" import render_field %}
- <section id="portfolio">
+<section id="portfolio">
     <div class="container">
         <div class="center wow fadeInDown">
             <h2>Settings</h2>
@@ -82,17 +82,17 @@
             </div>
         </div>
     </div>
- </section>
+</section>
 {% endblock %}
 {% block botscript %}
 <script>
     $(document).ready(function (){
-    $('#email').val('{{ email }}');
-    $('#gender').val('{{ disp_gender }}');
-    $('#homephone').val('{{ homephone }}');
-    $('#mobilephone').val('{{ mobilephone }}');
-    $('#birthday').val('{{ disp_birthday }}');
-    $('#about').val('{{ disp_about }}');
+        $('#email').val('{{ email }}');
+        $('#gender').val('{{ disp_gender }}');
+        $('#homephone').val('{{ homephone }}');
+        $('#mobilephone').val('{{ mobilephone }}');
+        $('#birthday').val('{{ disp_birthday }}');
+        $('#about').val('{{ disp_about }}');
     })
 </script>
 {% endblock %}
