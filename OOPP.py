@@ -6,8 +6,8 @@ import registration as regist
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
-
-
+import csv
+import products as pdt
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -54,40 +54,82 @@ def gym_fitness():
     return render_template('gym_fitness.html')
 
 
-@app.route('/medshop')
-def medshop():
-    return render_template('medshop.html')
+@app.route('/medshop/guardian')
+def medshop_guardian():
+    list = []
+    with open('cough_pg1.csv',newline ='') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader, None)
+        for data in reader:
+            products = pdt.Products(data[0],data[1],data[2],data[3],data[4])
+            list.append(products)
+    return render_template('medshop.html',pdt=list)
 
+@app.route('/medshop/watsons')
+def medshop_watsons():
+    list = []
+    with open('cough_pg1.csv',newline ='') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader, None)
+        for data in reader:
+            products = pdt.Products(data[0],data[1],data[2],data[3],data[4])
+            list.append(products)
+    return render_template('medshop.html',pdt=list)
 
 class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
 
-@app.route('/profile/<username>')
+@app.route('/profile/<username>', methods=['GET','POST'])
 def user_profile(username):
     form = AddFriend(request.form)
     userbase = user_ref.get()
-    for user in userbase.items():
-        if username == user[1]['username']:
-            fname = user[1]['fname']
-            lname = user[1]['lname']
-            try:
-                birthday = user[1]['birthday']
-            except KeyError:
-                birthday = ''
-            try:
-                gender = user[1]['gender']
-            except KeyError:
-                gender=''
-            try:
-                about = user[1]['about']
-            except:
-                about =''
-            return render_template('profile.html', form=form, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about)
     if request.method == 'POST':
+        add_user = request.form['form-add']
         key = session['key']
-        user_update = user_ref.child(key)
-        user_data = user_ref.child(key).get()
+        user_update = user_ref.child(key).child('friends')
+        user_update.update({
+            add_user : 'from'
+        })
+        for user in userbase.items():
+            if user[1]['username'] == add_user:
+                friend_key = user[0]
+                friend_update = user_ref.child(friend_key).child('friends')
+                friend_update.update({
+                    session['user_data']['username'] : 'to'
+                })
+        return redirect(url_for('user_profile',username=add_user))
+    else:
+        for user in userbase.items():
+            if username == user[1]['username']:
+                fname = user[1]['fname']
+                lname = user[1]['lname']
+                birthday = user[1]['birthday']
+                gender = user[1]['gender']
+                about = user[1]['about']
+                friends = user[1]['friends']
+                return render_template('profile.html', form=form, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about,friends=friends)
 
+class RespondFriend(Form):
+    accept = SubmitField()
+    reject = SubmitField()
+
+@app.route('/my_friends', methods=['GET','POST'])
+def my_friends():
+    form = RespondFriend()
+    key = session['key']
+    friends = user_ref.child(key).child('friends').get()
+
+    # if request.method == 'POST' and form.validate():
+    #     form_name = request.form['form-name']
+    #     if form_name == 'form':
+    #         if form.accept.data:
+    #             pass
+    # else:
+    pending_list = []
+    for pending in friends.items():
+        if pending[1] == 'from':
+            pending_list.append(pending[0])
+    return render_template('friends.html', pending_list=pending_list,form=form)
 
 class ProfileForm(Form):
     gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('Others','Others')])
@@ -268,9 +310,10 @@ def register():
             'postalcode': user.get_postalcode(),
             'newsletter': user.get_newsletter(),
             'about': '',
-            'friend':'',
-            'birthday':'',
-            'favourites':''
+            'friends': '',
+            'birthday': '',
+            'favourites': '',
+            'gender': ''
         })
         flash('You have successfully created an account','success')
         return redirect(url_for('login'))

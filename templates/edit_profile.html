@@ -14,7 +14,7 @@
             <li><a data-toggle="pill" href="#favourites-edit">Favourites</a></li>
         </ul>
         <div class="tab-content">
-            <div id='profile-edit' class="tab-pane fade in active" href="#profile">
+            <div id='profile-edit' class="tab-pane fade in active" >
                 <h3>My Details</h3><hr>
                 <form class="form-horizontal" method="POST">
 
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="form-group">
-                        {{ render_field(form.postalcode,class_='form-control',readonly=False) }}
+                        {{ render_field(form.postalcode,class_='form-control') }}
                     </div>
 
                     <div class="form-group">

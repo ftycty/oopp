@@ -33,8 +33,11 @@
                         {% if (session['id'] != username and session['logged_in'] == True) %}
                             <form method="POST">
                                 {{ form.friend_name(class='form-control') }}
+                                <input type="hidden" name="form-add" value="{{ username }}">
                             </form>
                         {% endif %}
+{#                        {% elseif (session['id'] != username and username == ) %}#}
+{#                        {% endif %}#}
                     </div>
                 </div>
                 <div class="panel panel-primary">
@@ -87,4 +90,11 @@
         </div>
     </div>
 </section><!--/#portfolio-item-->
+{% endblock %}
+{% block botscript %}
+{#<script>#}
+{#    $(document).ready(function () {#}
+{#        $('#friend_name').onclick#}
+{#    })#}
+{#</script>#}
 {% endblock %}
