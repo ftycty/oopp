@@ -18,26 +18,32 @@
                         {% if (birthday != '') %}
                             <p>Birthday: {{ birthday }}</p>
                         {% endif %}
+
                          {% if (gender != '') %}
                             <p>Gender: {{ gender }}</p>
                         {% endif %}
+
                          {% if (about != '') %}
                             <p>About Me: {{ about }}</p>
                         {% endif %}
+
                         {% if ((birthday and gender and about)=='') %}
                             <p><em>This person should be more descriptive!</em></p>
                         {% endif %}
+
                         {% if session['id']==username %}
                             <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
                         {% endif %}
-                        {% if (session['id'] != username and session['logged_in'] == True) %}
+
+                        {% if (session['id'] != username and session['logged_in'] == True and username not in friends_list) %}
                             <form method="POST">
                                 {{ form.friend_name(class='form-control') }}
                                 <input type="hidden" name="form-add" value="{{ username }}">
                             </form>
+                        {% elif (session['id'] != username and username in friends_list) %}
+                            <p class="btn btn-info">You are friends with {{ username }}</p>
                         {% endif %}
-{#                        {% elseif (session['id'] != username and username == ) %}#}
-{#                        {% endif %}#}
+
                     </div>
                 </div>
                 <div class="panel panel-primary">

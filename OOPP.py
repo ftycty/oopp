@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
+from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, \
+    SubmitField, TextAreaField, DateField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
@@ -12,7 +13,7 @@ import products as pdt
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://oopp-53405.firebaseio.com',
-    'storageBucket':'gs://oopp-53405.appspot.com'
+    'storageBucket': 'gs://oopp-53405.appspot.com'
 })
 
 root = db.reference()
@@ -57,34 +58,39 @@ def gym_fitness():
 @app.route('/medshop/guardian')
 def medshop_guardian():
     list = []
-    with open('cough_pg1.csv',newline ='') as csv_file:
+    with open('scrape_files/g_cough_pg1.csv', newline='') as csv_file:
         reader = csv.reader(csv_file)
         next(reader, None)
         for data in reader:
-            products = pdt.Products(data[0],data[1],data[2],data[3],data[4])
+            products = pdt.Products(data[0], data[1], data[2], data[3], data[4])
             list.append(products)
-    return render_template('medshop.html',pdt=list)
+    website = 'Guardian'
+    return render_template('medshop.html', pdt=list, website=website)
+
 
 @app.route('/medshop/watsons')
 def medshop_watsons():
     list = []
-    with open('cough_pg1.csv',newline ='') as csv_file:
+    with open('scrape_files/w_cold_scrape_pg1.csv', newline='') as csv_file:
         reader = csv.reader(csv_file)
         next(reader, None)
         for data in reader:
-            products = pdt.Products(data[0],data[1],data[2],data[3],data[4])
+            products = pdt.Products(data[0], data[1], data[2], data[3], data[4])
             list.append(products)
-    return render_template('medshop.html',pdt=list)
+    website = 'Watsons'
+    return render_template('medshop.html', pdt=list, website=website)
 
 
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
 
+
 class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
 
-@app.route('/profile/<username>', methods=['GET','POST'])
+
+@app.route('/profile/<username>', methods=['GET', 'POST'])
 def user_profile(username):
     form = AddFriend(request.form)
     userbase = user_ref.get()
@@ -93,17 +99,23 @@ def user_profile(username):
         key = session['key']
         user_update = user_ref.child(key).child('friends')
         user_update.update({
-            add_user : 'from'
+            add_user: 'from'
         })
         for user in userbase.items():
             if user[1]['username'] == add_user:
                 friend_key = user[0]
                 friend_update = user_ref.child(friend_key).child('friends')
                 friend_update.update({
-                    session['user_data']['username'] : 'to'
+                    session['user_data']['username']: 'to'
                 })
-        return redirect(url_for('user_profile',username=add_user))
+        return redirect(url_for('user_profile', username=add_user))
     else:
+        key = session['key']
+        friends = user_ref.child(key).child('friends').get()
+        friends_list = []
+        for current in friends.items():
+            if current[1] == 'friends':
+                friends_list.append(current[0])
         for user in userbase.items():
             if username == user[1]['username']:
                 fname = user[1]['fname']
@@ -112,38 +124,99 @@ def user_profile(username):
                 gender = user[1]['gender']
                 about = user[1]['about']
                 friends = user[1]['friends']
-                return render_template('profile.html', form=form, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about,friends=friends)
+                return render_template('profile.html', form=form, friends_list=friends_list,username=username, fname=fname, lname=lname,
+                                       birthday=birthday, gender=gender, about=about, friends=friends)
+
 
 class RespondFriend(Form):
     accept = SubmitField()
     reject = SubmitField()
 
-@app.route('/my_friends', methods=['GET','POST'])
+
+class SearchFriend(Form):
+    search = StringField('Find Friend', [validators.DataRequired])
+
+
+class DeleteFriend(Form):
+    del_friend = StringField('Remove Friend')
+
+
+@app.route('/my_friends', methods=['GET', 'POST'])
 def my_friends():
-    form = RespondFriend()
+    form = RespondFriend(request.form)
+    form2 = SearchFriend(request.form)
+    form3 = DeleteFriend(request.form)
     key = session['key']
     friends = user_ref.child(key).child('friends').get()
 
-    # if request.method == 'POST' and form.validate():
-    #     form_name = request.form['form-name']
-    #     if form_name == 'form':
-    #         if form.accept.data:
-    #             pass
-    # else:
-    pending_list = []
-    for pending in friends.items():
-        if pending[1] == 'from':
-            pending_list.append(pending[0])
-    return render_template('friends.html', pending_list=pending_list,form=form)
+    if request.method == 'POST' and form.validate():
+        userbase = user_ref.get()
+        form_name = request.form['form-name']
+        if form_name == 'form':
+            if form.accept.data:
+                add_user = request.form['form-username']
+                key = session['key']
+                user_update = user_ref.child(key).child('friends')
+                user_update.update({
+                    add_user: 'friends'
+                })
+                for user in userbase.items():
+                    if user[1]['username'] == add_user:
+                        friend_key = user[0]
+                        friend_update = user_ref.child(friend_key).child('friends')
+                        friend_update.update({
+                            session['user_data']['username']: 'friends'
+                        })
+            elif form.reject.data:
+                add_user = request.form['form-username']
+                key = session['key']
+                user_ref.child(key).child('friends').child(add_user).delete()
+                for user in userbase.items():
+                    if user[1]['username'] == add_user:
+                        friend_key = user[0]
+                        user_ref.child(friend_key).child('friends').child(session['user_data']['username']).delete()
+            return redirect(url_for('my_friends'))
+        elif form_name == 'form2':
+            search_user = form2.search.data.strip()
+            for user in userbase.items():
+                if user[1]['username'] == search_user:
+                    return redirect(url_for('user_profile', username=search_user))
+                else:
+                    flash('User not found', 'danger')
+                    return redirect(url_for('my_friends'))
+        elif form_name == 'form3':
+            delete_user = form3.del_friend.data.strip()
+            key = session['key']
+            check = user_ref.child(key).child('friends').get()
+            for check in check:
+                if check == delete_user:
+                    user_ref.child(key).child('friends').child(delete_user).delete()
+                    flash('You have successfully deleted ' + delete_user + '.', 'success')
+                    return redirect(url_for('my_friends'))
+            flash('You do not have ' + delete_user + ' as a friend!', 'danger')
+            return redirect(url_for('my_friends'))
+    else:
+        pending_list = []
+        friends_list = []
+        for pending in friends.items():
+            if pending[1] == 'from':
+                pending_list.append(pending[0])
+        for current in friends.items():
+            if current[1] == 'friends':
+                friends_list.append(current[0])
+        return render_template('friends.html', pending_list=pending_list, friends_list=friends_list, form=form,
+                               form2=form2, form3=form3)
+
 
 class ProfileForm(Form):
-    gender = SelectField('My Gender',choices=[('Male','Male'),('Female','Female'),('Others','Others')])
+    gender = SelectField('My Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     birthday = DateField('My Birthday')
     homephone = StringField('Home Phone Number')
     mobilephone = StringField('Mobile Phone Number')
     address = StringField('Address')
     postalcode = StringField('Postal Code')
     about = TextAreaField('About Me')
+
 
 class AccountForm(Form):
     email = StringField('New Email', [validators.Length(min=6, max=50)])
@@ -153,10 +226,12 @@ class AccountForm(Form):
     ])
     confirmpass = PasswordField('Confirm New Password (Optional)')
 
+
 class PictureForm(Form):
     picture = FileField('Upload Profile Picture')
 
-@app.route('/edit_profile', methods=['GET','POST'])
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     key = session['key']
     user_update = user_ref.child(key)
@@ -188,39 +263,45 @@ def edit_profile():
             user_update.update({
                 'gender': gender,
                 'birthday': birthday,
-                'about':about,
-                'homephone':homephone,
-                'mobilephone':mobilephone,
-                'address':address,
-                'postalcode':postalcode
+                'about': about,
+                'homephone': homephone,
+                'mobilephone': mobilephone,
+                'address': address,
+                'postalcode': postalcode
             })
-            flash('You have updated your profile settings','success')
+            flash('You have updated your profile settings', 'success')
+
         elif form_name == 'form2':
             wrong_info = False
             email = form2.email.data
             user_update.update({
-                'email':email
+                'email': email
             })
             if form2.password.data != '' and form2.validate():
                 password = form2.password.data
                 user_update.update({
-                    'password':password
+                    'password': password
                 })
-            elif form2.password.data !='' and form2.validate() == False:
+            elif form2.password.data != '' and form2.validate() == False:
                 wrong_info = True
-                flash('Inncorrect password details','danger')
+                flash('Inncorrect password details', 'danger')
             if wrong_info == False:
-                flash('You have updated your account settings','success')
+                flash('You have updated your account settings', 'success')
         elif form_name == 'form3':
             pass
         return redirect(url_for('edit_profile'))
-    return render_template('edit_profile.html',form=form, form2=form2, form3=form3, disp_gender=disp_gender,disp_birthday=disp_birthday,disp_about=disp_about,disp_email=disp_email,disp_homephone=disp_homephone,disp_mobilephone=disp_mobilephone,disp_address=disp_address,disp_postalcode=disp_postalcode)
+    return render_template('edit_profile.html', form=form, form2=form2, form3=form3, disp_gender=disp_gender,
+                           disp_birthday=disp_birthday, disp_about=disp_about, disp_email=disp_email,
+                           disp_homephone=disp_homephone,
+                           disp_mobilephone=disp_mobilephone, disp_address=disp_address,
+                           disp_postalcode=disp_postalcode)
 
 
 class formpost(Form):
     title = StringField('Title:', [validators.length(min=3, max=30), validators.DataRequired()])
     content = TextAreaField('Content:', [validators.DataRequired()])
-    type = RadioField('Type:', [validators.DataRequired()], choices=[('F', 'Fitness'),('N', 'Nutrition'),('O', 'Other')])
+    type = RadioField('Type:', [validators.DataRequired()],
+                      choices=[('F', 'Fitness'), ('N', 'Nutrition'), ('O', 'Other')])
 
 
 @app.route('/forumpost', methods=['POST', 'GET'])
@@ -266,27 +347,30 @@ def validate_registration(form, field):
 
 class RegistrationForm(Form):
     fname = StringField('*First Name', [validators.Length(min=1), validators.DataRequired()])
-    lname  = StringField('*Last Name', [validators.Length(min=1), validators.DataRequired()])
-    username = StringField('*Username', [validators.Length(min=6,max=20), validators.DataRequired(), validate_registration])
-    nric = StringField('*NRIC',[validators.DataRequired(), validate_registration])
+    lname = StringField('*Last Name', [validators.Length(min=1), validators.DataRequired()])
+    username = StringField('*Username',
+                           [validators.Length(min=6, max=20), validators.DataRequired(), validate_registration])
+    nric = StringField('*NRIC', [validators.DataRequired(), validate_registration])
     email = StringField('*Email Address', [validators.Length(min=6, max=50),
-                                          validators.DataRequired(),
-                                          validators.EqualTo('confirmemail',message='Email must match'), validate_registration])
-    confirmemail = StringField('*Confirm Email Address:',[validators.DataRequired()])
+                                           validators.DataRequired(),
+                                           validators.EqualTo('confirmemail', message='Email must match'),
+                                           validate_registration])
+    confirmemail = StringField('*Confirm Email Address:', [validators.DataRequired()])
     password = PasswordField('*Password', [
         validators.Length(min=6, max=50),
         validators.DataRequired(),
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
-    confirmpass = PasswordField('*Confirm Password',[validators.DataRequired()])
+    confirmpass = PasswordField('*Confirm Password', [validators.DataRequired()])
     homephone = StringField('Home Phone Number')
     mobilephone = StringField('Mobile Phone Number')
     address = StringField('*Address', [validators.DataRequired()])
-    postalcode = StringField('*Postal Code', [validators.Length(min=6,max=6)])
-    newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',choices=[('Y','Yes'),('N','No')])
+    postalcode = StringField('*Postal Code', [validators.Length(min=6, max=6)])
+    newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',
+                            choices=[('Y', 'Yes'), ('N', 'No')])
 
 
-@app.route('/register', methods=['GET','POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -301,7 +385,8 @@ def register():
         address = form.address.data
         postalcode = form.postalcode.data
         newsletter = form.newsletter.data
-        user = regist.User(fname,lname,username,nric,email,password,homephone,mobilephone,address,postalcode,newsletter)
+        user = regist.User(fname, lname, username, nric, email, password, homephone, mobilephone, address, postalcode,
+                           newsletter)
         user_db = root.child('userbase')
         user_db.push({
             'fname': user.get_fname(),
@@ -316,25 +401,25 @@ def register():
             'postalcode': user.get_postalcode(),
             'newsletter': user.get_newsletter(),
             'about': '',
-            'friends': '',
+            'friends': {'dummy': 'user'},
             'birthday': '',
             'favourites': '',
             'gender': ''
         })
-        flash('You have successfully created an account','success')
+        flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html',form=form)
+    return render_template('register.html', form=form)
 
 
 class LoginForm(Form):
-    id = StringField('Username:',[validators.DataRequired()])
-    password = PasswordField('Password:',[validators.DataRequired()])
+    id = StringField('Username:', [validators.DataRequired()])
+    password = PasswordField('Password:', [validators.DataRequired()])
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
-    if request.method =='POST' and form.validate():
+    if request.method == 'POST' and form.validate():
         id = form.id.data
         password = form.password.data
         userbase = user_ref.get()
@@ -347,7 +432,7 @@ def login():
                 return redirect(url_for('home'))
         flash('Invalid Login', 'danger')
         return render_template('login.html', form=form)
-    elif request.method=='POST' and form.validate()==False:
+    elif request.method == 'POST' and form.validate() == False:
         flash('Please enter your details', 'danger')
         return render_template('login.html', form=form)
     return render_template('login.html', form=form)
@@ -356,7 +441,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('You are now logged out','success')
+    flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
 
@@ -378,7 +463,9 @@ class RequiredIf(object):
 
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
-    illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('HIGH BLOOD PRESSURE','High Blood Pressure'), ('DIABETES','Diabetes')], default='')
+    illness = SelectField('Type of Illness', [validators.DataRequired()],
+                          choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),
+                                   ('DIABETES', 'Diabetes')], default='')
     startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
     enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
 
@@ -416,7 +503,7 @@ def illnessinput():
             })
 
             flash('Past Medical History Inserted Sucessfully.', 'success')
-        return redirect(url_for('login')) #supposed to link back to profile
+        return redirect(url_for('login'))  # supposed to link back to profile
     return render_template('IllnessInput.html', form=form)
 
 

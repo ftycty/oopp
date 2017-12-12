@@ -10,7 +10,7 @@ uClient.close()
 page_soup = soup(page_html,'html.parser')
 containers = page_soup.findAll('div',{'class':'listing-item'})
 
-f = open('cough_pg1.csv','w', encoding="utf-8")
+f = open('g_cough_pg1.csv','w', encoding="utf-8")
 
 headers = 'name, price, offer, link, image\n'
 

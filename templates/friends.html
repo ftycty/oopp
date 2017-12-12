@@ -1,66 +1,101 @@
 {% extends 'layout.html' %}
 {% block title %}Friends{% endblock %}
 {% block body %}
-
-<div class="container mtb" style="padding-bottom: 225px">
-    <div class="center wow fadeInDown">
-        <h2>My Friends</h2>
-    </div>
-     <ul class="nav nav-pills nav-justified">
-        <li class="active"><a data-toggle="pill" href="#my-friends">My Friends</a></li>
-        <li><a data-toggle="pill" href="#pending-requests">Pending Requests</a></li>
-        <li><a data-toggle="pill" href="#add-frends">Add Friend</a></li>
-        <li><a data-toggle="pill" href="#remove-friends">Remove Friend</a></li>
-     </ul>
-    <div class="tab-content">
-        <div id='my-friends' class="tab-pane fade in active">
-            <h3>My Friends</h3><hr>
-            <table class="table table-bordered" id="friends">
-                <thead>
+    {% from "includes/_formhelper.html" import render_field %}
+    <div class="container mtb" style="padding-bottom: 225px">
+        <div class="center wow fadeInDown">
+            <h2>My Friends</h2>
+        </div>
+        <ul class="nav nav-pills nav-justified">
+            <li class="active"><a data-toggle="pill" href="#my-friends">My Friends</a></li>
+            <li><a data-toggle="pill" href="#pending-requests">Pending Requests</a></li>
+            <li><a data-toggle="pill" href="#add-frends">Add Friend</a></li>
+            <li><a data-toggle="pill" href="#remove-friends">Remove Friend</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id='my-friends' class="tab-pane fade in active col-md-4">
+                <h3>My Friends</h3>
+                <hr>
+                <table class="table table-bordered" id="friends">
+                    <thead>
                     <tr>
                         <th>Friends</th>
                     </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                    {% for friends in friends_list %}
+                        <tr>
+                            <td><a href="{{ url_for('user_profile',username=friends) }}">{{ friends }}</a></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>You have no friends!</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-        <div id='pending-requests' class="tab-pane fade">
-            <h3>Pending Requests</h3><hr>
-            <table class="table table-bordered" id="pending">
-                <thead>
+            <div id='pending-requests' class="tab-pane fade col-md-4">
+                <h3>Pending Requests</h3>
+                <hr>
+                <table class="table table-bordered" id="pending">
+                    <thead>
                     <tr>
                         <th>Username</th>
                         <th>Accept/Reject</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
 
-                {% for pending in pending_list %}
-                    <tr>
-                        <td><a href="{{ url_for('user_profile',username=pending) }}">{{ pending }}</a></td>
-                        <td>
-                            <form method = "POST">
-                                {{ form.accept }}
-                                {{ form.reject }}
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    {% for pending in pending_list %}
+                        <tr>
+                            <td><a href="{{ url_for('user_profile',username=pending) }}">{{ pending }}</a></td>
+                            <td>
+                                <form method="POST">
+                                    {{ form.accept }}
+                                    {{ form.reject }}
+                                    <input type="hidden" name="form-name" value="form">
+                                    <input type="hidden" name="form-username" value="{{ pending }}">
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2">You have no pending friend requests</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-        <div id='add-frends' class="tab-pane fade">
-            <h3>Add Friends</h3><hr>
-        </div>
+            <div id='add-frends' class="tab-pane fade col-md-12">
+                <h3>Search for a friend</h3>
+                <hr>
+                <p>Enter the username of the person you would lke to send a friend request to</p>
+                <form method="POST">
+                    <div class="row col-md-6">
+                        {{ render_field(form2.search) }} &nbsp&nbsp
+                        <input type="submit" value="Search">
+                        <input type="hidden" name="form-name" value="form2">
+                    </div>
+                </form>
+            </div>
 
-        <div id='remove-friends' class="tab-pane fade">
-            <h3>Remove Friend</h3><hr>
+            <div id='remove-friends' class="tab-pane fade col-md-12">
+                <h3>Remove Friend</h3>
+                <hr>
+                <p>Type the username of the friend you would like to delete</p>
+                <form method="POST">
+                    <div class="row col-md-6">
+                        {{ render_field(form3.del_friend) }} &nbsp&nbsp
+                        <input type="submit" value="Delete Friend">
+                        <input type="hidden" name="form-name" value="form3">
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-</div><!--/container -->
+    </div><!--/container -->
 {% endblock %}
 {#{% block botscript %}#}
 {#<script>#}
