@@ -50,7 +50,7 @@
                     <div class="panel-heading">Useful Links</div>
                     <div class="panel-body col-sm-9">
                         <a href="#">Diet Planner</a>
-                        <a href="#">Caledar</a>
+                        <a href="#">Calendar</a>
                     </div>
                 </div>
             </div>
@@ -58,13 +58,25 @@
         <div  class="col-lg-8 col-md-8 col-sm-8">
             <div class="panel panel-warning">
                 <div class="panel-heading">Medical Condition</div>
-                <div><button type="button" class="btn btn-primary btn-xs">Add New</button></div>
                 <div class="panel-body">
-                    <ul>
-                        <li>Asthma</li>
-                        <li></li>
+                    {% if (current != []) %}
+                        <p>Current Illnesses</p>
+                        <ul>
+                            {% for cillness in current %}
+                                <li>{{ cillness.get_illness() }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if (past != []) %}
+                        <p>Past Illnesses</p>
+                        <ul>
+                            {% for pillness in past %}
+                                <li>{{ pillness.get_illness() }}</li>
+                            {% endfor %}
+                    {% endif %}
                     </ul>
                 </div>
+                <div><a class="btn btn-default" href="/illnessinput">Add New</a></div>
             </div>
             <div class="panel panel-warning">
                 <div class="panel-heading">Medicine</div>

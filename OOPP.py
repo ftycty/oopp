@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, \
-    SubmitField, TextAreaField, DateField
+from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
+from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
@@ -90,10 +90,12 @@ class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
 
 
-@app.route('/profile/<username>', methods=['GET', 'POST'])
+@app.route('/profile/<username>', methods=['GET','POST'])
 def user_profile(username):
     form = AddFriend(request.form)
     userbase = user_ref.get()
+    current_list = []
+    past_list = []
     if request.method == 'POST':
         add_user = request.form['form-add']
         key = session['key']
@@ -124,8 +126,29 @@ def user_profile(username):
                 gender = user[1]['gender']
                 about = user[1]['about']
                 friends = user[1]['friends']
-                return render_template('profile.html', form=form, friends_list=friends_list,username=username, fname=fname, lname=lname,
-                                       birthday=birthday, gender=gender, about=about, friends=friends)
+                try:
+                    current = user[1]['currentillness']
+                    for illness in current.items():
+                        c = illness[0]
+                        cdate = illness[1]['startdate']
+                        current = CurrentIllness(c, cdate)
+                        current_list.append(current)
+                except KeyError:
+                    flash('Enter a Current Illness', 'danger')
+                    return redirect(url_for('illnessinput'))
+                try:
+                    past = user[1]['pastillness']
+                    for illness in past.items():
+                        p = illness[0]
+                        pdate = illness[1]['startdate']
+                        pedate = illness[1]['enddate']
+                        past = PastIllness(p, pdate, pedate)
+                        past_list.append(past)
+                except KeyError:
+                    flash('Enter a Past Illness', 'danger')
+                    return redirect(url_for('illnessinput'))
+
+                return render_template('profile.html', form=form, friends_list=friends_list, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about,friends=friends,current=current_list,past=past_list)
 
 
 class RespondFriend(Form):
@@ -208,6 +231,7 @@ def my_friends():
                                form2=form2, form3=form3)
 
 
+
 class ProfileForm(Form):
     gender = SelectField('My Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     birthday = DateField('My Birthday')
@@ -231,7 +255,7 @@ class PictureForm(Form):
     picture = FileField('Upload Profile Picture')
 
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@app.route('/edit_profile', methods=['GET','POST'])
 def edit_profile():
     key = session['key']
     user_update = user_ref.child(key)
@@ -404,7 +428,9 @@ def register():
             'friends': {'dummy': 'user'},
             'birthday': '',
             'favourites': '',
-            'gender': ''
+            'gender': '',
+            'currentillness': '',
+            'pastillness': '',
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
@@ -463,15 +489,15 @@ class RequiredIf(object):
 
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
-    illness = SelectField('Type of Illness', [validators.DataRequired()],
-                          choices=[('', 'Select'), ('HIGH BLOOD PRESSURE', 'High Blood Pressure'),
-                                   ('DIABETES', 'Diabetes')], default='')
+    illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('High Blood Pressure','High Blood Pressure'), ('Diabetes','Diabetes')], default='')
     startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
     enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
 
 
 @app.route('/illnessinput', methods=['GET', 'POST'])
 def illnessinput():
+    key = session['key']
+    user = user_ref.child(key)
     form = IllnessForm(request.form)
     if request.method == 'POST' and form.validate():
         if form.medtype.data == 'scurrent':
@@ -480,9 +506,9 @@ def illnessinput():
 
             current = CurrentIllness(illness, start)
 
-            current_db = user_ref.child('currentillness')
-            current_db.push({
-                'illness': current.get_illness(),
+            current_db = user.child('currentillness')
+            current_date_db = current_db.child(form.illness.data)
+            current_date_db.update({
                 'startdate': current.get_startdate(),
             })
 
@@ -495,15 +521,15 @@ def illnessinput():
 
             past = PastIllness(illness, start, end)
 
-            past_db = user_ref.child('pastillness')
-            past_db.push({
-                'illness': past.get_illness(),
+            past_db = user.child('pastillness')
+            past_date_db = past_db.child(form.illness.data)
+            past_date_db.update({
                 'startdate': past.get_startdate(),
                 'enddate': past.get_enddate(),
             })
 
             flash('Past Medical History Inserted Sucessfully.', 'success')
-        return redirect(url_for('login'))  # supposed to link back to profile
+        return redirect(url_for('user_profile', username=session['id']))
     return render_template('IllnessInput.html', form=form)
 
 

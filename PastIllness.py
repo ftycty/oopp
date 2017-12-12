@@ -2,7 +2,7 @@ from Illness import Illness
 
 
 class PastIllness(Illness):
-    def __init__(self, illness, startdate, enddate):
+    def __init__(self,illness, startdate, enddate):
         super().__init__(illness, startdate)
         self.enddate = enddate
 
