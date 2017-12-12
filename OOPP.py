@@ -419,19 +419,6 @@ def illnessinput():
         return redirect(url_for('login')) #supposed to link back to profile
     return render_template('IllnessInput.html', form=form)
 
-# userbase = user_ref.get()
-# for user in userbase.items():
-#     print(user[1]['password'])
-#     print(user[1]['nric'])
-#     print(user[1])
-# username = 'fattycuty'
-# userbase = user_ref.get()
-# for user in userbase.items():
-#     if username == user[1]['username']:
-#             fname = user['fname']
-#             lname = user['lname']
-#             print(fname)
-
 
 if __name__ == '__main__':
     app.secret_key = 'secret123'
