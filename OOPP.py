@@ -133,9 +133,9 @@ def user_profile(username):
                         cdate = illness[1]['startdate']
                         current = CurrentIllness(c, cdate)
                         current_list.append(current)
-                except KeyError:
-                    flash('Enter a Current Illness', 'danger')
-                    return redirect(url_for('illnessinput'))
+                except AttributeError:
+                    pass
+
                 try:
                     past = user[1]['pastillness']
                     for illness in past.items():
@@ -144,9 +144,8 @@ def user_profile(username):
                         pedate = illness[1]['enddate']
                         past = PastIllness(p, pdate, pedate)
                         past_list.append(past)
-                except KeyError:
-                    flash('Enter a Past Illness', 'danger')
-                    return redirect(url_for('illnessinput'))
+                except AttributeError:
+                    pass
 
                 return render_template('profile.html', form=form, friends_list=friends_list, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about,friends=friends,current=current_list,past=past_list)
 
