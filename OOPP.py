@@ -1,14 +1,15 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
 import firebase_admin
-from firebase_admin import credentials, db, storage
+from firebase_admin import credentials, db
 import registration as regist
 from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
 import csv
-import products as pdt
+import g_products as g_pdt
+import w_products as w_pdt
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -20,7 +21,6 @@ root = db.reference()
 
 user_ref = db.reference('userbase')
 forum_ref = db.reference('postbase')
-# bucket = storage.bucket()
 
 app = Flask(__name__)
 
@@ -55,30 +55,64 @@ def gym_fitness():
     return render_template('gym_fitness.html')
 
 
-@app.route('/medshop/guardian')
-def medshop_guardian():
-    list = []
-    with open('scrape_files/g_cough_pg1.csv', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader, None)
-        for data in reader:
-            products = pdt.Products(data[0], data[1], data[2], data[3], data[4])
-            list.append(products)
+@app.route('/medshop')
+def medshop_main():
+    website = 'main'
+    return render_template('medshop.html', website=website)
+
+
+@app.route('/medshop/guardian/<type>')
+@app.route('/medshop/guardian/<type>/<page>')
+def medshop_guardian(type, page='1'):
+    if type == 'cough_cold_allergy' and page == '1':
+        list = []
+        with open('scrape_files/g_cough_pg1.csv', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+                list.append(products)
+    elif type == 'cough_cold_allergy' and page == '2':
+        list = []
+        with open('scrape_files/g_cough_pg2.csv', newline='', encoding='cp932', errors='ignore') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+                list.append(products)
+    elif type == 'pain_fever' and page == '1':
+        list = []
+        with open('scrape_files/g_pain_pg1.csv', newline='', encoding='cp932', errors='ignore') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+                list.append(products)
     website = 'Guardian'
-    return render_template('medshop.html', pdt=list, website=website)
+    return render_template('medshop.html', pdt=list, website=website, type=type, page=page)
 
 
-@app.route('/medshop/watsons')
-def medshop_watsons():
-    list = []
-    with open('scrape_files/w_cold_scrape_pg1.csv', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader, None)
-        for data in reader:
-            products = pdt.Products(data[0], data[1], data[2], data[3], data[4])
-            list.append(products)
+@app.route('/medshop/watsons/<type>')
+@app.route('/medshop/watsons/<type>/<page>')
+def medshop_watsons(type, page='1'):
+    if type == 'colds_flu_nasal' and page == '1':
+        list = []
+        with open('scrape_files/w_cold_pg1.csv', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = w_pdt.Products(data[0], data[1], data[2], data[3], data[4])
+                list.append(products)
+    elif type == 'fever_analgesics' and page == '1':
+        list = []
+        with open('scrape_files/w_fever_pg1.csv', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = w_pdt.Products(data[0], data[1], data[2], data[3], data[4])
+                list.append(products)
     website = 'Watsons'
-    return render_template('medshop.html', pdt=list, website=website)
+    return render_template('medshop.html', pdt=list, website=website, type=type, page=page)
 
 
 @app.route('/faq')
@@ -90,7 +124,7 @@ class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
 
 
-@app.route('/profile/<username>', methods=['GET','POST'])
+@app.route('/profile/<username>', methods=['GET', 'POST'])
 def user_profile(username):
     form = AddFriend(request.form)
     userbase = user_ref.get()
@@ -115,9 +149,12 @@ def user_profile(username):
         key = session['key']
         friends = user_ref.child(key).child('friends').get()
         friends_list = []
+        pending_list = []
         for current in friends.items():
             if current[1] == 'friends':
                 friends_list.append(current[0])
+            elif current[1] == 'from':
+                pending_list.append(current[0])
         for user in userbase.items():
             if username == user[1]['username']:
                 fname = user[1]['fname']
@@ -133,9 +170,8 @@ def user_profile(username):
                         cdate = illness[1]['startdate']
                         current = CurrentIllness(c, cdate)
                         current_list.append(current)
-                except AttributeError:
+                except:
                     pass
-
                 try:
                     past = user[1]['pastillness']
                     for illness in past.items():
@@ -144,10 +180,12 @@ def user_profile(username):
                         pedate = illness[1]['enddate']
                         past = PastIllness(p, pdate, pedate)
                         past_list.append(past)
-                except AttributeError:
+                except:
                     pass
-
-                return render_template('profile.html', form=form, friends_list=friends_list, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about,friends=friends,current=current_list,past=past_list)
+                return render_template('profile.html', form=form, friends_list=friends_list, pending_list=pending_list,
+                                       username=username, fname=fname, lname=lname,
+                                       birthday=birthday, gender=gender, about=about, friends=friends,
+                                       current=current_list, past=past_list)
 
 
 class RespondFriend(Form):
@@ -189,6 +227,7 @@ def my_friends():
                         friend_update.update({
                             session['user_data']['username']: 'friends'
                         })
+                flash('You have accepted' + add_user + "'s friend request!", 'success')
             elif form.reject.data:
                 add_user = request.form['form-username']
                 key = session['key']
@@ -197,15 +236,15 @@ def my_friends():
                     if user[1]['username'] == add_user:
                         friend_key = user[0]
                         user_ref.child(friend_key).child('friends').child(session['user_data']['username']).delete()
+                flash('You have rejected' + add_user + "'s friend request.", 'danger')
             return redirect(url_for('my_friends'))
         elif form_name == 'form2':
             search_user = form2.search.data.strip()
             for user in userbase.items():
                 if user[1]['username'] == search_user:
                     return redirect(url_for('user_profile', username=search_user))
-                else:
-                    flash('User not found', 'danger')
-                    return redirect(url_for('my_friends'))
+            flash('User not found', 'danger')
+            return redirect(url_for('my_friends'))
         elif form_name == 'form3':
             delete_user = form3.del_friend.data.strip()
             key = session['key']
@@ -213,7 +252,7 @@ def my_friends():
             for check in check:
                 if check == delete_user:
                     user_ref.child(key).child('friends').child(delete_user).delete()
-                    flash('You have successfully deleted ' + delete_user + '.', 'success')
+                    flash('You have successfully removed ' + delete_user + ' as a friend.', 'success')
                     return redirect(url_for('my_friends'))
             flash('You do not have ' + delete_user + ' as a friend!', 'danger')
             return redirect(url_for('my_friends'))
@@ -230,14 +269,13 @@ def my_friends():
                                form2=form2, form3=form3)
 
 
-
 class ProfileForm(Form):
     gender = SelectField('My Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     birthday = DateField('My Birthday')
-    homephone = StringField('Home Phone Number')
-    mobilephone = StringField('Mobile Phone Number')
+    homephone = StringField('Home Phone Number', validators.Length(min=8, max=8))
+    mobilephone = StringField('Mobile Phone Number', validators.Length(min=8, max=8))
     address = StringField('Address')
-    postalcode = StringField('Postal Code')
+    postalcode = StringField('Postal Code', [validators.Length(min=6, max=6)])
     about = TextAreaField('About Me')
 
 
@@ -254,7 +292,7 @@ class PictureForm(Form):
     picture = FileField('Upload Profile Picture')
 
 
-@app.route('/edit_profile', methods=['GET','POST'])
+@app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     key = session['key']
     user_update = user_ref.child(key)
@@ -362,9 +400,9 @@ def validate_registration(form, field):
     for user in userbase.items():
         if user[1]['username'] == field.data:
             raise ValidationError('Username is already taken')
-        elif user[1]['email'] == field.data:
+        if user[1]['email'] == field.data:
             raise ValidationError('Email has already been used')
-        elif user[1]['nric'] == field.data:
+        if user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
 
 
@@ -385,10 +423,10 @@ class RegistrationForm(Form):
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
     confirmpass = PasswordField('*Confirm Password', [validators.DataRequired()])
-    homephone = StringField('Home Phone Number')
-    mobilephone = StringField('Mobile Phone Number')
+    homephone = StringField('Home Phone Number', validators.Length(min=8, max=8))
+    mobilephone = StringField('Mobile Phone Number', validators.Length(min=8, max=8))
     address = StringField('*Address', [validators.DataRequired()])
-    postalcode = StringField('*Postal Code', [validators.Length(min=6, max=6)])
+    postalcode = StringField('*Postal Code', [validators.DataRequired, validators.Length(min=6, max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',
                             choices=[('Y', 'Yes'), ('N', 'No')])
 
@@ -488,7 +526,9 @@ class RequiredIf(object):
 
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
-    illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('High Blood Pressure','High Blood Pressure'), ('Diabetes','Diabetes')], default='')
+    illness = SelectField('Type of Illness', [validators.DataRequired()],
+                          choices=[('', 'Select'), ('High Blood Pressure', 'High Blood Pressure'),
+                                   ('Diabetes', 'Diabetes')], default='')
     startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
     enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
 

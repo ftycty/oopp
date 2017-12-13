@@ -8,43 +8,72 @@
 {% block body %}
 <section class="pricing-page">
         <div class="container">
-            <div class="center wow fadeInDown">
+            <div class="center wow">
                 <h2>Medical Solutions</h2>
                 <p class="lead">Shop your medical needs</p>
             </div>
          <div class="row">
-            <div class="col-md-3 wow fadeInUp">
+            <div class="col-md-3 wow">
                 <div>
                     <a class="list-group-item active">Guardian
                     </a>
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="{{ url_for('medshop_guardian') }}">Cough, Cold & Allergy</a>
+                        <li class="list-group-item"><a href="/medshop/guardian/cough_cold_allergy">Cough, Cold & Allergy</a>
 {#                        <span class="label label-primary pull-right">20</span>#}
                         </li>
-{#                        <li class="list-group-item">Bandaids#}
+                        <li class="list-group-item"><a href="/medshop/guardian/pain_fever">Pain & Fever</a>
 {#                    <span class="label label-success pull-right">20</span>#}
-{#                        </li>#}
+                        </li>
                     </ul>
                 </div>
                 <div>
                     <a class="list-group-item active list-group-item-success">Watsons
                     </a>
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="{{ url_for('medshop_watsons') }}">Colds/Flu/Nasal</a>
+                        <li class="list-group-item"><a href="/medshop/watsons/colds_flu_nasal">Colds, Flu & Nasal</a>
 {#                        <span class="label label-primary pull-right">20</span>#}
                         </li>
-{#                        <li class="list-group-item">Bandaids#}
-{#                    <span class="label label-success pull-right">20</span>#}
-{#                        </li>#}
+                        <li class="list-group-item"><a href="/medshop/watsons/fever_analgesics">Fever & Analgesics</a>
+{#                          <span class="label label-success pull-right">20</span>#}
+                        </li>
                     </ul>
                 </div>
+                {% if website == 'Guardian' or  website == 'Watsons' %}
+                <div>
+                    <form id="live-search" action="" class="styled" method="post">
+                        <fieldset>
+                            <label>Filter Product Name:</label>
+                            <input type="text" class="text-input" id="filter" value="" />
+                        </fieldset>
+                    </form>
+                </div>
+                {% endif %}
             </div>
 
-            <div class="col-md-9 wow fadeInUp">
+            <div class="col-md-9 wow">
                 <div>
                     <ol class="breadcrumb">
-                        <li><a href="#">Home</a></li>
+                        <li><a href="/medshop">Home</a></li>
+                        {%  if website == 'Guardian' or website == 'Watsons' %}
                         <li class="active">{{ website }}</li>
+                        {% endif %}
+
+                        {% if type == 'cough_cold_allergy' %}
+                        <li class="active">Cough, Cold & Allergy</li>
+                        {% endif %}
+
+                        {% if type == 'pain_fever' %}
+                        <li class="active">Pain & Fever</li>
+                        {% endif %}
+
+                        {% if type == 'colds_flu_nasal' %}
+                        <li class="active">Colds, Flu & Nasal</li>
+                        {% endif %}
+
+                        {% if type == 'fever_analgesics' %}
+                        <li class="active">Colds, Flu & Nasal</li>
+                        {% endif %}
+
                     </ol>
                 </div>
                 <!-- /.div -->
@@ -68,10 +97,19 @@
 {#                </div>#}
                 <br />
                 <!-- /.row -->
+                {% if website == 'Guardian' and type == 'cough_cold_allergy' %}
                 <div class="row">
-                {% if website == 'Guardian' %}
+                    <ul class="pagination alg-right-pad">
+                        <li><a href="/medshop/guardian/cough_cold_allergy">1</a></li>
+                        <li><a href="/medshop/guardian/cough_cold_allergy/2">2</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="row wow fadeInUp">
+                {% if website == 'Guardian' and type == 'cough_cold_allergy' and page == '1'  %}
                 {% for products in pdt %}
-                    <div class="col-md-4 text-center col-sm-6 col-xs-6">
+                    <div class="col-md-4 text-center col-sm-6 col-xs-6 pdtName">
                         <div class="thumbnail product-box">
                             <img src="https://www.guardian.com.sg{{ products.get_image() }}" alt="" />
                             <div class="caption">
@@ -85,15 +123,59 @@
                     </div>
                 {% endfor %}
                 {% endif %}
-                {% if website == 'Watsons' %}
+
+                {% if website == 'Guardian' and type == 'cough_cold_allergy' and page == '2' %}
                 {% for products in pdt %}
-                    <div class="col-md-4 text-center col-sm-6 col-xs-6">
+                    <div class="col-md-4 text-center col-sm-6 col-xs-6 pdtName">
+                        <div class="thumbnail product-box">
+                            <img src="https://www.guardian.com.sg{{ products.get_image() }}" alt="" />
+                            <div class="caption">
+                                <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
+                                <p>Price : <strong>{{ products.get_price() }}</strong> </p>
+                                <p><strong>{{ products.get_offer() }}</strong></p>
+                                <p><a href="https://www.guardian.com.sg{{ products.get_link() }}" title="Product" target='_blank' onClick="window.open(this.href,'{{ products.get_name() }}',
+                                        'resizable,location=no,toolbar=no,status=no,scrollbars=yes,menubar=no,titlebar=yes,width=1000,height=500,left=0,top=0'); return false;">More Information</a></p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if website == 'Guardian' and type == 'cough_cold_allergy' %}
+                <div class="row">
+                    <ul class="pagination alg-right-pad">
+                        <li><a href="/medshop/guardian/cough_cold_allergy">1</a></li>
+                        <li><a href="/medshop/guardian/cough_cold_allergy/2">2</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if website == 'Guardian' and type == 'pain_fever' and page == '1' %}
+                {% for products in pdt %}
+                    <div class="col-md-4 text-center col-sm-6 col-xs-6 pdtName">
+                        <div class="thumbnail product-box">
+                            <img src="https://www.guardian.com.sg{{ products.get_image() }}" alt="" />
+                            <div class="caption">
+                                <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
+                                <p>Price : <strong>{{ products.get_price() }}</strong> </p>
+                                <p><strong>{{ products.get_offer() }}</strong></p>
+                                <p><a href="https://www.guardian.com.sg{{ products.get_link() }}" title="Product" target='_blank' onClick="window.open(this.href,'{{ products.get_name() }}',
+                                        'resizable,location=no,toolbar=no,status=no,scrollbars=yes,menubar=no,titlebar=yes,width=1000,height=500,left=0,top=0'); return false;">More Information</a></p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if website == 'Watsons' and type == 'colds_flu_nasal' and page == '1' %}
+                {% for products in pdt %}
+                    <div class="col-md-4 text-center col-sm-6 col-xs-6 pdtName">
                         <div class="thumbnail product-box">
                             <img src="http://www.watsons.com.sg{{ products.get_image() }}" alt="" />
                             <div class="caption">
                                 <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
                                 <p>Price : <strong>{{ products.get_price() }}</strong> </p>
-                                <p><strong>{{ products.get_offer() }}</strong></p>
+                                <p style="min-height: 4em;"><strong>{% if products.get_offer() == 'None' %}{% else %} {{ products.get_offer() }}{% endif %}</strong></p>
                                 <p><a href="http://www.watsons.com.sg{{ products.get_link() }}" title="Product" target='_blank' onClick="window.open(this.href,'{{ products.get_name() }}',
                                         'resizable,location=no,toolbar=no,status=no,scrollbars=yes,menubar=no,titlebar=yes,width=1000,height=500,left=0,top=0'); return false;">More Information</a></p>
                             </div>
@@ -101,19 +183,36 @@
                     </div>
                 {% endfor %}
                 {% endif %}
+                {% if website == 'Watsons' and type == 'fever_analgesics' and page == '1'  %}
+                {% for products in pdt %}
+                    <div class="col-md-4 text-center col-sm-6 col-xs-6 pdtName">
+                        <div class="thumbnail product-box">
+                            <img src="http://www.watsons.com.sg{{ products.get_image() }}" alt="" />
+                            <div class="caption">
+                                <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
+                                <p>Price : <strong>{{ products.get_price() }}</strong> </p>
+                                <p style="min-height: 4em;"><strong>{% if products.get_offer() == 'None' %}{% else %} {{ products.get_offer() }}{% endif %}</strong></p>
+                                <p><a href="http://www.watsons.com.sg{{ products.get_link() }}" title="Product" target='_blank' onClick="window.open(this.href,'{{ products.get_name() }}',
+                                        'resizable,location=no,toolbar=no,status=no,scrollbars=yes,menubar=no,titlebar=yes,width=1000,height=500,left=0,top=0'); return false;">More Information</a></p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% endif %}
+
                 </div>
                 <!-- /.row -->
-                <div class="row">
-                    <ul class="pagination alg-right-pad">
-                        <li><a href="#">&laquo;</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#">&raquo;</a></li>
-                    </ul>
-                </div>
+{#                <div class="row">#}
+{#                    <ul class="pagination alg-right-pad">#}
+{#                        <li><a href="#">&laquo;</a></li>#}
+{#                        <li><a href="#">1</a></li>#}
+{#                        <li><a href="#">2</a></li>#}
+{#                        <li><a href="#">3</a></li>#}
+{#                        <li><a href="#">4</a></li>#}
+{#                        <li><a href="#">5</a></li>#}
+{#                        <li><a href="#">&raquo;</a></li>#}
+{#                    </ul>#}
+{#                </div>#}
                 <!-- /.row -->
                 <!-- /.row -->
                 <!-- /.row -->
@@ -124,7 +223,27 @@
 </section><!--/pricing-page-->
 {% endblock %}
 {% block botscript %}
-<script type="text/javascript">
-    $('.carousel').carousel()
+<script>
+$(document).ready(function(){
+    $("#filter").keyup(function(){
+
+        // Retrieve the input field text and reset the count to zero
+        var filter = $(this).val(), count = 0;
+
+        // Loop through the comment list
+        $(".pdtName").each(function(){
+
+            // If the list item does not contain the text phrase fade it out
+            if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+                $(this).fadeOut();
+
+            // Show the list item if the phrase matches and increase the count by 1
+            } else {
+                $(this).show();
+                count++;
+            }
+        });
+    });
+});
 </script>
 {% endblock %}

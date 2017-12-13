@@ -3,7 +3,7 @@ from urllib.request import Request
 from bs4 import BeautifulSoup as soup
 # -*- coding:utf-8 -*-
 
-my_url = Request('http://www.watsons.com.sg/health/colds/flu/nasal/c/010102',headers={'User-Agent': 'Mozilla/5.0'})
+my_url = Request('http://www.watsons.com.sg/health/fever/analgesics/c/010101',headers={'User-Agent': 'Mozilla/5.0'})
 
 uClient = uReq(my_url)
 page_html = uClient.read()
@@ -12,7 +12,7 @@ uClient.close()
 page_soup = soup(page_html,'html.parser')
 containers = page_soup.findAll('div',{'class':'productItemContainer'})
 
-f = open('w_cold_scrape_pg1.csv','w', encoding="utf-8")
+f = open('w_fever_pg1.csv','w', encoding="utf-8")
 
 headers = 'name, price, offer, link, image\n'
 
@@ -34,13 +34,13 @@ for container in containers:
 
     pdt_image = container.findAll('div',{'class':'productItemPhotoContainer'})[0].a.img['src']
 
-    print('name:',pdt_name)
-    print('price:', pdt_price)
-    print('offer:', pdt_offer)
-    print('link:',pdt_link)
-    print('img:', pdt_image)
-    print('________________')
+    # print('name:',pdt_name)
+    # print('price:', pdt_price)
+    # print('offer:', pdt_offer)
+    # print('link:',pdt_link)
+    # print('img:', pdt_image)
+    # print('________________')
 
-    f.write(pdt_name.replace(',','|') + ',' + pdt_price + ',' + pdt_offer + ',' + pdt_link + ',' + pdt_image +'\n')
+    f.write(pdt_name.replace(',','|').replace('<BR><BR>',' ') + ',' + pdt_price + ',' + pdt_offer + ',' + pdt_link + ',' + pdt_image +'\n')
 
 f.close()

@@ -35,13 +35,15 @@
                             <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
                         {% endif %}
 
-                        {% if (session['id'] != username and session['logged_in'] == True and username not in friends_list) %}
+                        {% if (session['id'] != username and session['logged_in'] == True and username not in friends_list and username not in pending_list) %}
                             <form method="POST">
                                 {{ form.friend_name(class='form-control') }}
                                 <input type="hidden" name="form-add" value="{{ username }}">
                             </form>
                         {% elif (session['id'] != username and username in friends_list) %}
-                            <p class="btn btn-info">You are friends with {{ username }}</p>
+                            <p class="btn btn-info disabled" style="cursor: default;">You are friends with {{ username }}</p>
+                        {% elif (session['id'] != username and username in pending_list) %}
+                            <p class="btn btn-danger disabled" style="cursor: default;">You have already added {{ username }}</p>
                         {% endif %}
 
                     </div>
