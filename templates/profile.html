@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block title %}My Profile{% endblock %}
 {% block body %}
+{% from "includes/_formhelper.html" import render_field %}
 <section id="portfolio">
     <div class="container">
         <div class="center wow fadeInDown">
@@ -17,25 +18,39 @@
                         {% if (birthday != '') %}
                             <p>Birthday: {{ birthday }}</p>
                         {% endif %}
+
                          {% if (gender != '') %}
                             <p>Gender: {{ gender }}</p>
                         {% endif %}
+
                          {% if (about != '') %}
                             <p>About Me: {{ about }}</p>
                         {% endif %}
+
                         {% if ((birthday and gender and about)=='') %}
                             <p><em>This person should be more descriptive!</em></p>
                         {% endif %}
+
                         {% if session['id']==username %}
                             <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
                         {% endif %}
+
+                        {% if (session['id'] != username and session['logged_in'] == True and username not in friends_list) %}
+                            <form method="POST">
+                                {{ form.friend_name(class='form-control') }}
+                                <input type="hidden" name="form-add" value="{{ username }}">
+                            </form>
+                        {% elif (session['id'] != username and username in friends_list) %}
+                            <p class="btn btn-info">You are friends with {{ username }}</p>
+                        {% endif %}
+
                     </div>
                 </div>
                 <div class="panel panel-primary">
                     <div class="panel-heading">Useful Links</div>
                     <div class="panel-body col-sm-9">
                         <a href="#">Diet Planner</a>
-                        <a href="#">Caledar</a>
+                        <a href="#">Calendar</a>
                     </div>
                 </div>
             </div>
@@ -43,13 +58,28 @@
         <div  class="col-lg-8 col-md-8 col-sm-8">
             <div class="panel panel-warning">
                 <div class="panel-heading">Medical Condition</div>
-                <div><button type="button" class="btn btn-primary btn-xs">Add New</button></div>
                 <div class="panel-body">
+                    <p>Current Illnesses</p>
                     <ul>
-                        <li>Asthma</li>
-                        <li></li>
+                        {% for cillness in current %}
+                            <li>{{ cillness.get_illness() }}</li>
+                            {% else %}
+                            <p>This person does not have any current illnesses</p>
+                        {% endfor %}
+                    </ul>
+
+                    <p>Past Illnesses</p>
+                    <ul>
+                        {% for pillness in past %}
+                            <li>{{ pillness.get_illness() }}</li>
+                            {% else %}
+                            <p>This person does not have any past illnesses</p>
+                        {% endfor %}
                     </ul>
                 </div>
+            {% if (session['id'] == username) %}
+                <div><a class="btn btn-default" href="/illnessinput">Add New</a></div>
+            {% endif %}
             </div>
             <div class="panel panel-warning">
                 <div class="panel-heading">Medicine</div>
@@ -81,4 +111,11 @@
         </div>
     </div>
 </section><!--/#portfolio-item-->
+{% endblock %}
+{% block botscript %}
+{#<script>#}
+{#    $(document).ready(function () {#}
+{#        $('#friend_name').onclick#}
+{#    })#}
+{#</script>#}
 {% endblock %}
