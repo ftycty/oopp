@@ -532,6 +532,15 @@ def illnessinput():
     return render_template('IllnessInput.html', form=form)
 
 
+# @app.route('/connect')
+# def connect():
+#     key = session['key']
+#     user = user_ref.child(key)
+#     for other_user in user_ref.items():
+#         if other_user[1]['']
+#     return render_template('connect.html')
+
+
 if __name__ == '__main__':
     app.secret_key = 'secret123'
     app.run()

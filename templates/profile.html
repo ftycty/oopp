@@ -59,24 +59,27 @@
             <div class="panel panel-warning">
                 <div class="panel-heading">Medical Condition</div>
                 <div class="panel-body">
-                    {% if (current != []) %}
-                        <p>Current Illnesses</p>
-                        <ul>
-                            {% for cillness in current %}
-                                <li>{{ cillness.get_illness() }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    {% if (past != []) %}
-                        <p>Past Illnesses</p>
-                        <ul>
-                            {% for pillness in past %}
-                                <li>{{ pillness.get_illness() }}</li>
-                            {% endfor %}
-                    {% endif %}
+                    <p>Current Illnesses</p>
+                    <ul>
+                        {% for cillness in current %}
+                            <li>{{ cillness.get_illness() }}</li>
+                            {% else %}
+                            <p>This person does not have any current illnesses</p>
+                        {% endfor %}
+                    </ul>
+
+                    <p>Past Illnesses</p>
+                    <ul>
+                        {% for pillness in past %}
+                            <li>{{ pillness.get_illness() }}</li>
+                            {% else %}
+                            <p>This person does not have any past illnesses</p>
+                        {% endfor %}
                     </ul>
                 </div>
+            {% if (session['id'] == username) %}
                 <div><a class="btn btn-default" href="/illnessinput">Add New</a></div>
+            {% endif %}
             </div>
             <div class="panel panel-warning">
                 <div class="panel-heading">Medicine</div>
