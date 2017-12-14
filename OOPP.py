@@ -442,17 +442,6 @@ class formpost(Form):
 def foruminput():
     form = formpost(request.form)
     if request.method == 'POST' and form.validate():
-        title = form.title.data
-        content = form.content.data
-        type = form.type.data
-        forum = f.Forum(title, content, type)
-        forum_db = root.child('postbase')
-        forum_db.push({
-            'title': forum.get_title(),
-            'content': forum.get_content(),
-            'type': forum.get_type()
-        })
-        flash('You have successfully posted', 'success')
         if form.type.data == 'O':
             title = form.title.data
             content = form.content.data
