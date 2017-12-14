@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, \
     SubmitField, TextAreaField, DateField
 import firebase_admin
-from firebase_admin import credentials, db, storage
+from firebase_admin import credentials, db
 import registration as regist
 from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
@@ -11,7 +11,8 @@ import Forum as f
 import Nutrition as n
 import Fitness as fit
 import csv
-import products as pdt
+import g_products as g_pdt
+import w_products as w_pdt
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -23,7 +24,6 @@ root = db.reference()
 
 user_ref = db.reference('userbase')
 forum_ref = db.reference('postbase')
-# bucket = storage.bucket()
 
 app = Flask(__name__)
 
@@ -58,30 +58,64 @@ def gym_fitness():
     return render_template('gym_fitness.html')
 
 
-@app.route('/medshop/guardian')
-def medshop_guardian():
-    list = []
-    with open('scrape_files/g_cough_pg1.csv', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader, None)
-        for data in reader:
-            products = pdt.Products(data[0], data[1], data[2], data[3], data[4])
-            list.append(products)
+@app.route('/medshop')
+def medshop_main():
+    website = 'main'
+    return render_template('medshop.html', website=website)
+
+
+@app.route('/medshop/guardian/<type>')
+@app.route('/medshop/guardian/<type>/<page>')
+def medshop_guardian(type, page='1'):
+    if type == 'cough_cold_allergy' and page == '1':
+        list = []
+        with open('scrape_files/g_cough_pg1.csv', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+                list.append(products)
+    elif type == 'cough_cold_allergy' and page == '2':
+        list = []
+        with open('scrape_files/g_cough_pg2.csv', newline='', encoding='cp932', errors='ignore') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+                list.append(products)
+    elif type == 'pain_fever' and page == '1':
+        list = []
+        with open('scrape_files/g_pain_pg1.csv', newline='', encoding='cp932', errors='ignore') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+                list.append(products)
     website = 'Guardian'
-    return render_template('medshop.html', pdt=list, website=website)
+    return render_template('medshop.html', pdt=list, website=website, type=type, page=page)
 
 
-@app.route('/medshop/watsons')
-def medshop_watsons():
-    list = []
-    with open('scrape_files/w_cold_scrape_pg1.csv', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader, None)
-        for data in reader:
-            products = pdt.Products(data[0], data[1], data[2], data[3], data[4])
-            list.append(products)
+@app.route('/medshop/watsons/<type>')
+@app.route('/medshop/watsons/<type>/<page>')
+def medshop_watsons(type, page='1'):
+    if type == 'colds_flu_nasal' and page == '1':
+        list = []
+        with open('scrape_files/w_cold_pg1.csv', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = w_pdt.Products(data[0], data[1], data[2], data[3], data[4])
+                list.append(products)
+    elif type == 'fever_analgesics' and page == '1':
+        list = []
+        with open('scrape_files/w_fever_pg1.csv', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader, None)
+            for data in reader:
+                products = w_pdt.Products(data[0], data[1], data[2], data[3], data[4])
+                list.append(products)
     website = 'Watsons'
-    return render_template('medshop.html', pdt=list, website=website)
+    return render_template('medshop.html', pdt=list, website=website, type=type, page=page)
 
 
 @app.route('/faq')
@@ -99,6 +133,7 @@ def user_profile(username):
     userbase = user_ref.get()
     current_list = []
     past_list = []
+    sports_list = []
     if request.method == 'POST':
         add_user = request.form['form-add']
         key = session['key']
@@ -118,9 +153,12 @@ def user_profile(username):
         key = session['key']
         friends = user_ref.child(key).child('friends').get()
         friends_list = []
+        pending_list = []
         for current in friends.items():
             if current[1] == 'friends':
                 friends_list.append(current[0])
+            elif current[1] == 'from':
+                pending_list.append(current[0])
         for user in userbase.items():
             if username == user[1]['username']:
                 fname = user[1]['fname']
@@ -130,29 +168,46 @@ def user_profile(username):
                 about = user[1]['about']
                 friends = user[1]['friends']
                 try:
+                    sports = user[1]['sports']
+                    try:
+                        for sport in sports.items():
+                            s = sport[0]
+                            sports_list.append(s)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
+                    pass
+                try:
                     current = user[1]['currentillness']
-                    for illness in current.items():
-                        c = illness[0]
-                        cdate = illness[1]['startdate']
-                        current = CurrentIllness(c, cdate)
-                        current_list.append(current)
-                except AttributeError:
+                    try:
+                        for illness in current.items():
+                            c = illness[0]
+                            cdate = illness[1]['startdate']
+                            current = CurrentIllness(c, cdate)
+                            current_list.append(current)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
                     pass
 
                 try:
                     past = user[1]['pastillness']
-                    for illness in past.items():
-                        p = illness[0]
-                        pdate = illness[1]['startdate']
-                        pedate = illness[1]['enddate']
-                        past = PastIllness(p, pdate, pedate)
-                        past_list.append(past)
-                except AttributeError:
+                    try:
+                        for illness in past.items():
+                            p = illness[0]
+                            pdate = illness[1]['startdate']
+                            pedate = illness[1]['enddate']
+                            past = PastIllness(p, pdate, pedate)
+                            past_list.append(past)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
                     pass
 
                 return render_template('profile.html', form=form, friends_list=friends_list, username=username,
-                                       fname=fname, lname=lname, birthday=birthday, gender=gender, about=about,
-                                       friends=friends, current=current_list, past=past_list)
+                                       pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
+                                       gender=gender, about=about, friends=friends, sports=sports_list,
+                                       current=current_list, past=past_list)
 
 
 class RespondFriend(Form):
@@ -194,6 +249,7 @@ def my_friends():
                         friend_update.update({
                             session['user_data']['username']: 'friends'
                         })
+                flash('You have accepted' + add_user + "'s friend request!", 'success')
             elif form.reject.data:
                 add_user = request.form['form-username']
                 key = session['key']
@@ -202,15 +258,15 @@ def my_friends():
                     if user[1]['username'] == add_user:
                         friend_key = user[0]
                         user_ref.child(friend_key).child('friends').child(session['user_data']['username']).delete()
+                flash('You have rejected' + add_user + "'s friend request.", 'danger')
             return redirect(url_for('my_friends'))
         elif form_name == 'form2':
             search_user = form2.search.data.strip()
             for user in userbase.items():
                 if user[1]['username'] == search_user:
                     return redirect(url_for('user_profile', username=search_user))
-                else:
-                    flash('User not found', 'danger')
-                    return redirect(url_for('my_friends'))
+            flash('User not found', 'danger')
+            return redirect(url_for('my_friends'))
         elif form_name == 'form3':
             delete_user = form3.del_friend.data.strip()
             key = session['key']
@@ -218,7 +274,7 @@ def my_friends():
             for check in check:
                 if check == delete_user:
                     user_ref.child(key).child('friends').child(delete_user).delete()
-                    flash('You have successfully deleted ' + delete_user + '.', 'success')
+                    flash('You have successfully removed ' + delete_user + ' as a friend.', 'success')
                     return redirect(url_for('my_friends'))
             flash('You do not have ' + delete_user + ' as a friend!', 'danger')
             return redirect(url_for('my_friends'))
@@ -238,11 +294,12 @@ def my_friends():
 class ProfileForm(Form):
     gender = SelectField('My Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     birthday = DateField('My Birthday')
-    homephone = StringField('Home Phone Number')
-    mobilephone = StringField('Mobile Phone Number')
+    homephone = StringField('Home Phone Number', [validators.Length(min=8, max=8)])
+    mobilephone = StringField('Mobile Phone Number', [validators.Length(min=8, max=8)])
     address = StringField('Address')
-    postalcode = StringField('Postal Code')
+    postalcode = StringField('Postal Code', [validators.Length(min=6, max=6)])
     about = TextAreaField('About Me')
+    sports = SelectField('Your Interests', choices=[('running', 'Running'), ('swimming','Swimming'), ('badminton', 'Badminton'), ('volleyball', 'Volleyball'), ('soccer', 'Soccer')])
 
 
 class AccountForm(Form):
@@ -272,6 +329,7 @@ def edit_profile():
     disp_email = user_data['email']
     disp_address = user_data['address']
     disp_postalcode = user_data['postalcode']
+    disp_sports = user_data['sports']
 
     form = ProfileForm(request.form)
     form2 = AccountForm(request.form)
@@ -286,7 +344,12 @@ def edit_profile():
             mobilephone = form.mobilephone.data
             address = form.address.data
             postalcode = form.postalcode.data
+            sports = form.sports.data
 
+            sports_db = user_update.child('sports')
+            sports_db.update({
+                sports: sports,
+            })
             user_update.update({
                 'gender': gender,
                 'birthday': birthday,
@@ -296,6 +359,7 @@ def edit_profile():
                 'address': address,
                 'postalcode': postalcode
             })
+
             flash('You have updated your profile settings', 'success')
 
         elif form_name == 'form2':
@@ -321,7 +385,7 @@ def edit_profile():
                            disp_birthday=disp_birthday, disp_about=disp_about, disp_email=disp_email,
                            disp_homephone=disp_homephone,
                            disp_mobilephone=disp_mobilephone, disp_address=disp_address,
-                           disp_postalcode=disp_postalcode)
+                           disp_postalcode=disp_postalcode, disp_sports=disp_sports)
 
 
 class formpost(Form):
@@ -408,10 +472,17 @@ def validate_registration(form, field):
     for user in userbase.items():
         if user[1]['username'] == field.data:
             raise ValidationError('Username is already taken')
-        elif user[1]['email'] == field.data:
+        if user[1]['email'] == field.data:
             raise ValidationError('Email has already been used')
-        elif user[1]['nric'] == field.data:
+        if user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
+def phone_length(form,field):
+    if field.data == '':
+        pass
+    elif field.data.isalpha():
+        raise ValidationError('Your phone number should only contain numbers')
+    elif len(field.data) != 8:
+        raise ValidationError('Your phone number should contain 8 numbers')
 
 
 class RegistrationForm(Form):
@@ -431,10 +502,10 @@ class RegistrationForm(Form):
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
     confirmpass = PasswordField('*Confirm Password', [validators.DataRequired()])
-    homephone = StringField('Home Phone Number')
-    mobilephone = StringField('Mobile Phone Number')
+    homephone = StringField('Home Phone Number', [phone_length])
+    mobilephone = StringField('Mobile Phone Number', [phone_length])
     address = StringField('*Address', [validators.DataRequired()])
-    postalcode = StringField('*Postal Code', [validators.Length(min=6, max=6)])
+    postalcode = StringField('*Postal Code', [validators.DataRequired(), validators.Length(min=6, max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',
                             choices=[('Y', 'Yes'), ('N', 'No')])
 
@@ -476,6 +547,8 @@ def register():
             'gender': '',
             'currentillness': '',
             'pastillness': '',
+            'healthtips':'yes',
+            'sports': ''
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
@@ -532,6 +605,24 @@ class RequiredIf(object):
                     validators.Optional().__call__(form, field)
 
 
+# def validate_current_illness(form, field):
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     current_db = userbase.get('currentillness')
+#     for illness in current_db.items():
+#         if illness == field.data
+#             raise ValidationError('This current illness has already been added')
+#
+#
+# def validate_past_illness(form, field):
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     past_db = userbase.get('pastillness')
+#     for illness in past_db.items():
+#         if illness == field.data:
+#             raise ValidationError('This past illness has already been added')
+
+
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
     illness = SelectField('Type of Illness', [validators.DataRequired()],
@@ -580,13 +671,67 @@ def illnessinput():
     return render_template('IllnessInput.html', form=form)
 
 
-# @app.route('/connect')
-# def connect():
-#     key = session['key']
-#     user = user_ref.child(key)
-#     for other_user in user_ref.items():
-#         if other_user[1]['']
-#     return render_template('connect.html')
+@app.route('/deletecurrent/<string:illness>', methods=['POST'])
+def delete_current(illness):
+    username = session['id']
+    key = session['key']
+    userbase = user_ref.child(key)
+    current_db = userbase.child('currentillness/' + illness)
+    current_db.delete()
+    flash('Current Illness deleted successfully', 'success')
+    return redirect(url_for('user_profile', username=username))
+
+
+@app.route('/deletepast/<string:illness>', methods=['POST'])
+def delete_past(illness):
+    username = session['id']
+    key = session['key']
+    userbase = user_ref.child(key)
+    past_db = userbase.child('pastillness/' + illness)
+    past_db.delete()
+    flash('Past Illness deleted successfully', 'success')
+    return redirect(url_for('user_profile', username=username))
+
+
+@app.route('/connect')
+def connect():
+    userbase = user_ref.get()
+    keys = []
+    my_list = []
+    common = []
+    user_dict = {}
+
+    for user in userbase.items():
+        if user[1]['username'] == session['id']:
+            my_sport = user[1]['sports']
+            for sport in my_sport:
+                my_list.append(sport)
+
+        if user[1]['username'] != session['id']:
+            keys.append(user[0])
+            sport_list = []
+            user_sport = user[1]['sports']
+            for sport in user_sport:
+                sport_list.append(sport)
+                user_dict[user[0]] = sport_list
+
+    for u in keys:
+        this = user_dict[u]
+        for each in this:
+            if each in my_list:
+                name = userbase[u]['username']
+                common.append(name)
+                break
+
+            else:
+                flash('Nobody', 'success')
+                return redirect(url_for('my_friends'))
+
+    if common != []:
+        flash(common, 'success')
+        return redirect(url_for('my_friends'))
+
+    return redirect(url_for('my_friends'))
 
 
 if __name__ == '__main__':
