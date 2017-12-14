@@ -431,6 +431,8 @@ def validate_registration(form, field):
             raise ValidationError('Email has already been used')
         if user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
+
+
 def phone_length(form,field):
     if field.data == '':
         pass
@@ -680,13 +682,24 @@ def connect():
 
             else:
                 flash('Nobody', 'success')
-                return redirect(url_for('my_friends'))
+
+    new_common = str(common).replace('[', '')
+    new1_common = new_common.replace(']', '')
 
     if common != []:
-        flash(common, 'success')
-        return redirect(url_for('my_friends'))
-
+        flash(new1_common.replace("'", '') + ' have similar interests', 'success')
     return redirect(url_for('my_friends'))
+
+
+# @app.route('/deleteinterest/<string:sport>')
+# def delete_interest(sport):
+#     username = session['id']
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     sports_db = userbase.child('sports/' + sport)
+#     sports_db.delete()
+#     flash('Interest deleted successfully', 'success')
+#     return redirect(url_for('edit_profile'))
 
 
 if __name__ == '__main__':
