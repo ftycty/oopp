@@ -11,6 +11,7 @@ import Forum as f
 import Nutrition as n
 import Fitness as fit
 import csv
+import json
 import g_products as g_pdt
 import w_products as w_pdt
 
@@ -540,7 +541,7 @@ class RegistrationForm(Form):
     fname = StringField('*First Name', [validators.Length(min=1), validators.DataRequired()])
     lname = StringField('*Last Name', [validators.Length(min=1), validators.DataRequired()])
     username = StringField('*Username',
-                           [validators.Length(min=6, max=20), validators.DataRequired(), validate_registration])
+                           [validators.Length(min=6, max=12), validators.DataRequired(), validate_registration])
     nric = StringField('*NRIC', [validators.DataRequired(), validate_registration])
     email = StringField('*Email Address', [validators.Length(min=6, max=50),
                                            validators.DataRequired(),
@@ -603,7 +604,13 @@ def register():
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+    used_username = []
+    used_email = []
+    userbase = user_ref.get()
+    for user in userbase.items():
+        used_username.append(user[1]['username'])
+        used_email.append(user[1]['email'])
+    return render_template('register.html', form=form, used_username=used_username,used_email=used_email)
 
 
 class LoginForm(Form):
