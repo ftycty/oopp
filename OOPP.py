@@ -8,6 +8,8 @@ from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
+import Nutrition as n
+import Fitness as fit
 import csv
 import g_products as g_pdt
 import w_products as w_pdt
@@ -425,13 +427,18 @@ def edit_profile():
 
 
 class formpost(Form):
-    title = StringField('Title:', [validators.length(min=3, max=30), validators.DataRequired()])
+    title = StringField('Title:', [validators.length(min=3), validators.DataRequired()])
     content = TextAreaField('Content:', [validators.DataRequired()])
     type = RadioField('Type:', [validators.DataRequired()],
                       choices=[('F', 'Fitness'), ('N', 'Nutrition'), ('O', 'Other')])
+    # nutrition
+    ingredient = TextAreaField('Ingredient')
+    # exercise
+    exercise = TextAreaField('Exercise:')
+    time = StringField('Duration:')
 
 
-@app.route('/forumpost', methods=['POST', 'GET'])
+@app.route('/forumpost', methods=['GET', 'POST'])
 def foruminput():
     form = formpost(request.form)
     if request.method == 'POST' and form.validate():
@@ -446,6 +453,48 @@ def foruminput():
             'type': forum.get_type()
         })
         flash('You have successfully posted', 'success')
+        if form.type.data == 'O':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            other = f.Forum(title, content, type)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': other.get_title(),
+                'content': other.get_content(),
+                'type': other.get_type()
+            })
+            flash('You have successfully post', 'success')
+        elif form.type.data == 'N':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            ingredient = form.ingredient.data
+            nutrition = n.Nutrition(title, content, type, ingredient)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': nutrition.get_title(),
+                'content': nutrition.get_content(),
+                'type': nutrition.get_type(),
+                'ingredient': nutrition.get_ingredient()
+            })
+            flash('You have successfully post', 'success')
+        elif form.type.data == 'F':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            exercise = form.exercise.data
+            time = form.time.data
+            fitness = fit.Fitness(title, content, type, exercise, time)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': fitness.get_title(),
+                'content': fitness.get_content(),
+                'type': fitness.get_type(),
+                'exercise': fitness.get_exercise(),
+                'time': fitness.get_time()
+            })
+            flash('You have successfully post', 'success')
         return redirect(url_for('forum'))
     return render_template('forumpost.html', form=form)
 
@@ -456,10 +505,16 @@ def forum():
     list = []
     for post in forumbase:
         eachpost = forumbase[post]
-        forum = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
-        list.append(forum)
+        if eachpost['type'] == 'O':
+            other = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
+            list.append(other)
+        elif eachpost['type'] == 'F':
+            fitness = fit.Fitness(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['exercise'], eachpost['time'])
+            list.append(fitness)
+        elif eachpost['type'] == 'N':
+            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'])
+            list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
-
 
 def validate_registration(form, field):
     userbase = user_ref.get()
