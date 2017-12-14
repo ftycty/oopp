@@ -130,6 +130,7 @@ def user_profile(username):
     userbase = user_ref.get()
     current_list = []
     past_list = []
+    sports_list = []
     if request.method == 'POST':
         add_user = request.form['form-add']
         key = session['key']
@@ -164,27 +165,45 @@ def user_profile(username):
                 about = user[1]['about']
                 friends = user[1]['friends']
                 try:
-                    current = user[1]['currentillness']
-                    for illness in current.items():
-                        c = illness[0]
-                        cdate = illness[1]['startdate']
-                        current = CurrentIllness(c, cdate)
-                        current_list.append(current)
-                except:
+                    sports = user[1]['sports']
+                    try:
+                        for sport in sports.items():
+                            s = sport[0]
+                            sports_list.append(s)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
                     pass
                 try:
-                    past = user[1]['pastillness']
-                    for illness in past.items():
-                        p = illness[0]
-                        pdate = illness[1]['startdate']
-                        pedate = illness[1]['enddate']
-                        past = PastIllness(p, pdate, pedate)
-                        past_list.append(past)
-                except:
+                    current = user[1]['currentillness']
+                    try:
+                        for illness in current.items():
+                            c = illness[0]
+                            cdate = illness[1]['startdate']
+                            current = CurrentIllness(c, cdate)
+                            current_list.append(current)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
                     pass
-                return render_template('profile.html', form=form, friends_list=friends_list, pending_list=pending_list,
-                                       username=username, fname=fname, lname=lname,
-                                       birthday=birthday, gender=gender, about=about, friends=friends,
+
+                try:
+                    past = user[1]['pastillness']
+                    try:
+                        for illness in past.items():
+                            p = illness[0]
+                            pdate = illness[1]['startdate']
+                            pedate = illness[1]['enddate']
+                            past = PastIllness(p, pdate, pedate)
+                            past_list.append(past)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
+                    pass
+
+                return render_template('profile.html', form=form, friends_list=friends_list, username=username,
+                                       pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
+                                       gender=gender, about=about, friends=friends, sports=sports_list,
                                        current=current_list, past=past_list)
 
 
@@ -272,11 +291,12 @@ def my_friends():
 class ProfileForm(Form):
     gender = SelectField('My Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     birthday = DateField('My Birthday')
-    homephone = StringField('Home Phone Number', validators.Length(min=8, max=8))
-    mobilephone = StringField('Mobile Phone Number', validators.Length(min=8, max=8))
+    homephone = StringField('Home Phone Number', [validators.Length(min=8, max=8)])
+    mobilephone = StringField('Mobile Phone Number', [validators.Length(min=8, max=8)])
     address = StringField('Address')
     postalcode = StringField('Postal Code', [validators.Length(min=6, max=6)])
     about = TextAreaField('About Me')
+    sports = SelectField('Your Interests', choices=[('running', 'Running'), ('swimming','Swimming'), ('badminton', 'Badminton'), ('volleyball', 'Volleyball'), ('soccer', 'Soccer')])
 
 
 class AccountForm(Form):
@@ -306,6 +326,7 @@ def edit_profile():
     disp_email = user_data['email']
     disp_address = user_data['address']
     disp_postalcode = user_data['postalcode']
+    disp_sports = user_data['sports']
 
     form = ProfileForm(request.form)
     form2 = AccountForm(request.form)
@@ -320,7 +341,12 @@ def edit_profile():
             mobilephone = form.mobilephone.data
             address = form.address.data
             postalcode = form.postalcode.data
+            sports = form.sports.data
 
+            sports_db = user_update.child('sports')
+            sports_db.update({
+                sports: sports,
+            })
             user_update.update({
                 'gender': gender,
                 'birthday': birthday,
@@ -330,6 +356,7 @@ def edit_profile():
                 'address': address,
                 'postalcode': postalcode
             })
+
             flash('You have updated your profile settings', 'success')
 
         elif form_name == 'form2':
@@ -355,7 +382,7 @@ def edit_profile():
                            disp_birthday=disp_birthday, disp_about=disp_about, disp_email=disp_email,
                            disp_homephone=disp_homephone,
                            disp_mobilephone=disp_mobilephone, disp_address=disp_address,
-                           disp_postalcode=disp_postalcode)
+                           disp_postalcode=disp_postalcode, disp_sports=disp_sports)
 
 
 class formpost(Form):
@@ -475,7 +502,8 @@ def register():
             'gender': '',
             'currentillness': '',
             'pastillness': '',
-            'healthtips':'yes'
+            'healthtips':'yes',
+            'sports': ''
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
@@ -532,6 +560,24 @@ class RequiredIf(object):
                     validators.Optional().__call__(form, field)
 
 
+# def validate_current_illness(form, field):
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     current_db = userbase.get('currentillness')
+#     for illness in current_db.items():
+#         if illness == field.data
+#             raise ValidationError('This current illness has already been added')
+#
+#
+# def validate_past_illness(form, field):
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     past_db = userbase.get('pastillness')
+#     for illness in past_db.items():
+#         if illness == field.data:
+#             raise ValidationError('This past illness has already been added')
+
+
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
     illness = SelectField('Type of Illness', [validators.DataRequired()],
@@ -580,13 +626,67 @@ def illnessinput():
     return render_template('IllnessInput.html', form=form)
 
 
-# @app.route('/connect')
-# def connect():
-#     key = session['key']
-#     user = user_ref.child(key)
-#     for other_user in user_ref.items():
-#         if other_user[1]['']
-#     return render_template('connect.html')
+@app.route('/deletecurrent/<string:illness>', methods=['POST'])
+def delete_current(illness):
+    username = session['id']
+    key = session['key']
+    userbase = user_ref.child(key)
+    current_db = userbase.child('currentillness/' + illness)
+    current_db.delete()
+    flash('Current Illness deleted successfully', 'success')
+    return redirect(url_for('user_profile', username=username))
+
+
+@app.route('/deletepast/<string:illness>', methods=['POST'])
+def delete_past(illness):
+    username = session['id']
+    key = session['key']
+    userbase = user_ref.child(key)
+    past_db = userbase.child('pastillness/' + illness)
+    past_db.delete()
+    flash('Past Illness deleted successfully', 'success')
+    return redirect(url_for('user_profile', username=username))
+
+
+@app.route('/connect')
+def connect():
+    userbase = user_ref.get()
+    keys = []
+    my_list = []
+    common = []
+    user_dict = {}
+
+    for user in userbase.items():
+        if user[1]['username'] == session['id']:
+            my_sport = user[1]['sports']
+            for sport in my_sport:
+                my_list.append(sport)
+
+        if user[1]['username'] != session['id']:
+            keys.append(user[0])
+            sport_list = []
+            user_sport = user[1]['sports']
+            for sport in user_sport:
+                sport_list.append(sport)
+                user_dict[user[0]] = sport_list
+
+    for u in keys:
+        this = user_dict[u]
+        for each in this:
+            if each in my_list:
+                name = userbase[u]['username']
+                common.append(name)
+                break
+
+            else:
+                flash('Nobody', 'success')
+                return redirect(url_for('my_friends'))
+
+    if common != []:
+        flash(common, 'success')
+        return redirect(url_for('my_friends'))
+
+    return redirect(url_for('my_friends'))
 
 
 if __name__ == '__main__':
