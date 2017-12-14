@@ -97,7 +97,7 @@ def medshop_main():
             list4.append(products)
             if len(list4) == 6:
                 break
-    return render_template('medshop.html', website=website)
+    return render_template('medshop.html', website=website,list1=list1,list2=list2,list3=list3,list4=list4)
 
 
 @app.route('/medshop/guardian/<type>')
