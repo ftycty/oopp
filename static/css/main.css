@@ -528,7 +528,6 @@ nav {
 .navbar {
     position: relative;
     min-height: 50px;
-    margin-bottom: 20px;
     border: 1px solid transparent;
 }
 
@@ -888,7 +887,6 @@ nav {
     }
     .navbar-right {
         float: right!important;
-        margin-right: -15px
     }
     .navbar-right~.navbar-right {
         margin-right: 0

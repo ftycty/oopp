@@ -517,6 +517,7 @@ def forum():
             list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
 
+
 def validate_registration(form, field):
     userbase = user_ref.get()
     for user in userbase.items():
@@ -783,13 +784,24 @@ def connect():
 
             else:
                 flash('Nobody', 'success')
-                return redirect(url_for('my_friends'))
+
+    new_common = str(common).replace('[', '')
+    new1_common = new_common.replace(']', '')
 
     if common != []:
-        flash(common, 'success')
-        return redirect(url_for('my_friends'))
-
+        flash(new1_common.replace("'", '') + ' have similar interests', 'success')
     return redirect(url_for('my_friends'))
+
+
+# @app.route('/deleteinterest/<string:sport>')
+# def delete_interest(sport):
+#     username = session['id']
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     sports_db = userbase.child('sports/' + sport)
+#     sports_db.delete()
+#     flash('Interest deleted successfully', 'success')
+#     return redirect(url_for('edit_profile'))
 
 
 if __name__ == '__main__':
