@@ -404,6 +404,13 @@ def validate_registration(form, field):
             raise ValidationError('Email has already been used')
         if user[1]['nric'] == field.data:
             raise ValidationError('You have already registered with this NRIC')
+def phone_length(form,field):
+    if field.data == '':
+        pass
+    elif field.data.isalpha():
+        raise ValidationError('Your phone number should only contain numbers')
+    elif len(field.data) != 8:
+        raise ValidationError('Your phone number should contain 8 numbers')
 
 
 class RegistrationForm(Form):
@@ -423,10 +430,10 @@ class RegistrationForm(Form):
         validators.EqualTo('confirmpass', message='Passwords must match')
     ])
     confirmpass = PasswordField('*Confirm Password', [validators.DataRequired()])
-    homephone = StringField('Home Phone Number', validators.Length(min=8, max=8))
-    mobilephone = StringField('Mobile Phone Number', validators.Length(min=8, max=8))
+    homephone = StringField('Home Phone Number', [phone_length])
+    mobilephone = StringField('Mobile Phone Number', [phone_length])
     address = StringField('*Address', [validators.DataRequired()])
-    postalcode = StringField('*Postal Code', [validators.DataRequired, validators.Length(min=6, max=6)])
+    postalcode = StringField('*Postal Code', [validators.DataRequired(), validators.Length(min=6, max=6)])
     newsletter = RadioField('Would you like to receive monthly newsletters from us through email?',
                             choices=[('Y', 'Yes'), ('N', 'No')])
 
@@ -468,6 +475,7 @@ def register():
             'gender': '',
             'currentillness': '',
             'pastillness': '',
+            'healthtips':'yes'
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
