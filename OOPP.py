@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
+from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, \
+    SubmitField, TextAreaField, DateField
 import firebase_admin
 from firebase_admin import credentials, db
 import registration as regist
@@ -7,6 +8,8 @@ from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
+import Nutrition as n
+import Fitness as fit
 import csv
 import g_products as g_pdt
 import w_products as w_pdt
@@ -58,7 +61,43 @@ def gym_fitness():
 @app.route('/medshop')
 def medshop_main():
     website = 'main'
-    return render_template('medshop.html', website=website)
+    list1 = []
+    list2 = []
+    list3 = []
+    list4 = []
+    with open('scrape_files/g_cough_pg1.csv', newline='') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader, None)
+        for data in reader:
+            products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+            list1.append(products)
+            if len(list1) == 6:
+                break
+    with open('scrape_files/g_pain_pg1.csv', newline='', encoding='cp932', errors='ignore') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader, None)
+        for data in reader:
+            products = g_pdt.Products(data[0], data[1], data[2], data[3], data[4], data[5])
+            list2.append(products)
+            if len(list2) == 6:
+                break
+    with open('scrape_files/w_cold_pg1.csv', newline='') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader, None)
+        for data in reader:
+            products = w_pdt.Products(data[0], data[1], data[2], data[3], data[4])
+            list3.append(products)
+            if len(list3) == 6:
+                break
+    with open('scrape_files/w_fever_pg1.csv', newline='') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader, None)
+        for data in reader:
+            products = w_pdt.Products(data[0], data[1], data[2], data[3], data[4])
+            list4.append(products)
+            if len(list4) == 6:
+                break
+    return render_template('medshop.html', website=website,list1=list1,list2=list2,list3=list3,list4=list4)
 
 
 @app.route('/medshop/guardian/<type>')
@@ -246,7 +285,7 @@ def my_friends():
                         friend_update.update({
                             session['user_data']['username']: 'friends'
                         })
-                flash('You have accepted' + add_user + "'s friend request!", 'success')
+                flash('You have accepted ' + add_user + "'s friend request!", 'success')
             elif form.reject.data:
                 add_user = request.form['form-username']
                 key = session['key']
@@ -255,7 +294,7 @@ def my_friends():
                     if user[1]['username'] == add_user:
                         friend_key = user[0]
                         user_ref.child(friend_key).child('friends').child(session['user_data']['username']).delete()
-                flash('You have rejected' + add_user + "'s friend request.", 'danger')
+                flash('You have rejected ' + add_user + "'s friend request.", 'danger')
             return redirect(url_for('my_friends'))
         elif form_name == 'form2':
             search_user = form2.search.data.strip()
@@ -279,7 +318,7 @@ def my_friends():
         pending_list = []
         friends_list = []
         for pending in friends.items():
-            if pending[1] == 'from':
+            if pending[1] == 'to':
                 pending_list.append(pending[0])
         for current in friends.items():
             if current[1] == 'friends':
@@ -296,7 +335,9 @@ class ProfileForm(Form):
     address = StringField('Address')
     postalcode = StringField('Postal Code', [validators.Length(min=6, max=6)])
     about = TextAreaField('About Me')
-    sports = SelectField('Your Interests', choices=[('running', 'Running'), ('swimming','Swimming'), ('badminton', 'Badminton'), ('volleyball', 'Volleyball'), ('soccer', 'Soccer')])
+    sports = SelectField('Your Interests',
+                         choices=[('running', 'Running'), ('swimming', 'Swimming'), ('badminton', 'Badminton'),
+                                  ('volleyball', 'Volleyball'), ('soccer', 'Soccer')])
 
 
 class AccountForm(Form):
@@ -386,13 +427,18 @@ def edit_profile():
 
 
 class formpost(Form):
-    title = StringField('Title:', [validators.length(min=3, max=30), validators.DataRequired()])
+    title = StringField('Title:', [validators.length(min=3), validators.DataRequired()])
     content = TextAreaField('Content:', [validators.DataRequired()])
     type = RadioField('Type:', [validators.DataRequired()],
                       choices=[('F', 'Fitness'), ('N', 'Nutrition'), ('O', 'Other')])
+    # nutrition
+    ingredient = TextAreaField('Ingredient')
+    # exercise
+    exercise = TextAreaField('Exercise:')
+    time = StringField('Duration:')
 
 
-@app.route('/forumpost', methods=['POST', 'GET'])
+@app.route('/forumpost', methods=['GET', 'POST'])
 def foruminput():
     form = formpost(request.form)
     if request.method == 'POST' and form.validate():
@@ -406,7 +452,49 @@ def foruminput():
             'content': forum.get_content(),
             'type': forum.get_type()
         })
-        flash('You have successfully post', 'success')
+        flash('You have successfully posted', 'success')
+        if form.type.data == 'O':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            other = f.Forum(title, content, type)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': other.get_title(),
+                'content': other.get_content(),
+                'type': other.get_type()
+            })
+            flash('You have successfully post', 'success')
+        elif form.type.data == 'N':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            ingredient = form.ingredient.data
+            nutrition = n.Nutrition(title, content, type, ingredient)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': nutrition.get_title(),
+                'content': nutrition.get_content(),
+                'type': nutrition.get_type(),
+                'ingredient': nutrition.get_ingredient()
+            })
+            flash('You have successfully post', 'success')
+        elif form.type.data == 'F':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            exercise = form.exercise.data
+            time = form.time.data
+            fitness = fit.Fitness(title, content, type, exercise, time)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': fitness.get_title(),
+                'content': fitness.get_content(),
+                'type': fitness.get_type(),
+                'exercise': fitness.get_exercise(),
+                'time': fitness.get_time()
+            })
+            flash('You have successfully post', 'success')
         return redirect(url_for('forum'))
     return render_template('forumpost.html', form=form)
 
@@ -417,8 +505,15 @@ def forum():
     list = []
     for post in forumbase:
         eachpost = forumbase[post]
-        forum = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
-        list.append(forum)
+        if eachpost['type'] == 'O':
+            other = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
+            list.append(other)
+        elif eachpost['type'] == 'F':
+            fitness = fit.Fitness(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['exercise'], eachpost['time'])
+            list.append(fitness)
+        elif eachpost['type'] == 'N':
+            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'])
+            list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
 
 
@@ -433,7 +528,7 @@ def validate_registration(form, field):
             raise ValidationError('You have already registered with this NRIC')
 
 
-def phone_length(form,field):
+def phone_length(form, field):
     if field.data == '':
         pass
     elif field.data.isalpha():
@@ -504,7 +599,7 @@ def register():
             'gender': '',
             'currentillness': '',
             'pastillness': '',
-            'healthtips':'yes',
+            'healthtips': 'yes',
             'sports': ''
         })
         flash('You have successfully created an account', 'success')

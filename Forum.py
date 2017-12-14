@@ -4,16 +4,6 @@ class Forum:
         self.__content = content
         self.__type = type
 
-#setter
-    def set_title(self, title):
-        self.__title = title
-
-    def set_content(self, content):
-        self.__content = content
-
-    def set_type(self, type):
-        self.__type = type
-
 #getter
     def get_title(self):
         return self.__title

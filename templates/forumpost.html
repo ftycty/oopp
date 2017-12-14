@@ -40,37 +40,32 @@
                     </div>
                 {% endif %}
                 <form class="form-horizontal" method="POST">
-                    <div class="col-md-6 col-sm-12">
+                    <div class="col-md-12 col-sm-12">
                         <div class="form-group">
                             {{ render_field(form.title, class_="form-control") }}
                         </div>
 
                         <div class="form-group">
-                            {{ render_field(form.content, class_="form-control", rows_="10", cols="60") }}
+                            {{ render_field(form.content, rows_="30", cols="50") }}
                         </div>
                         <div class="form-group">
                             {{ render_field(form.type, class_="radio-inline") }}
                         </div>
                         <div id="nutrition">
                             <div class="form-group">
-                                {{ render_field(form.ingredient, class_="form-control") }}
+                                {{ render_field(form.ingredient, rows_="30", cols="50") }}
                             </div>
                         </div>
-                        <div>
-                            <input type="submit" class="btn btn-primary" value="Post">
+                        <div id="exercise">
+                        <div class="form-group">
+                            {{ render_field(form.exercise, rows_="30", cols="50") }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.time, class_="form-control") }}
                         </div>
                     </div>
-                    <div id="exercise">
-                        <div class="col-md-6 col-sm-12">
-                            <div class="form-group">
-                                {{ render_field(form.exercise, class_="form-control") }}
-                            </div>
-                            <div class="form-group">
-                                {{ render_field(form.sets, class_="form-control") }}
-                            </div>
-                            <div class="form-group">
-                                {{ render_field(form.reps, class_="form-control") }}
-                            </div>
+                        <div>
+                            <input type="submit" class="btn btn-primary" value="Post">
                         </div>
                     </div>
                 </form>
