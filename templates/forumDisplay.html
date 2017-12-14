@@ -1,32 +1,64 @@
 {% extends 'layout.html' %}
-{% block title%}forumDisplay{% endblock %}
-{% block body%}
-{% from "includes/_formhelper.html" import render_field %}
-<div class="container">
-   <div class="row">
-       <div class="col-sm-8 col-xs-12">
-           <div class="panel panel-info">
-               <div class="panel-heading">Health Forum</div>
-               <div class="panel-body">
-                {% for albert in forum %}
-                    <h2>{{ albert.get_title() }}</h2>
-                    <p>{{ albert.get_content() }}</p>
-                {% endfor %}
-               </div>
-           </div>
-       </div>
-       <div class="col-sm-4 col-xs-12">
-           <form class="blog" method="POST">
-               <div class="form-group">
-                    <input type="text" id="search"  class="form-control search_box" autocomplete="off" placeholder="Search Here">
-               </div>
-           </form>
-           <div class="panel panel-info" style="margin-top: 50px">
-               <div class="panel-heading">What is this?</div>
-               <div class="panel-body">A community of people coming together to share thoughts on health and wellness.</div>
-               <div class="panel-body">Want to add a now post?<a href="/forumpost">Click here</a></div>
-           </div>
-       </div>
-   </div>
-</div>
+{% block title %}forumDisplay{% endblock %}
+{% block body %}
+    {% from "includes/_formhelper.html" import render_field %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2 paddingTop20">
+                <nav class="nav-sidebar">
+                    <ul class="nav">
+                        <li>
+                            <div class="inner-addon right-addon enjoy-cssx">
+                                <input type="text" placeholder="Search" class="form-control enjoy-css"/>
+                            </div>
+                        </li>
+                        <li class="nav-divider"></li>
+                        <li><a class="btn icon-btn btn-success" href="/forumpost"><span
+                                class="glyphicon btn-glyphicon glyphicon-plus img-circle text-success"></span>Add a post</a>
+                        </li>
+                        <li class="nav-divider"></li>
+                        <li><a href="javascript:;">Nutrition</a></li>
+                        <li><a href="javascript:;">Fitness</a></li>
+                        <li><a href="javascript:;">Recipes</a></li>
+                        <li class="nav-divider"></li>
+                        <li><a href="/login"><i class="glyphicon glyphicon-off"></i> Sign in</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-10 blogShort">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Health Forum</div>
+                    <div class="panel-body">
+                        {% for i in forum %}
+                            {% if i.get_type() == "N" %}
+                                <div class="col-md-10 blogShort">
+                                    <h1>{{ i.get_title() }}</h1>
+                                    <article>
+                                        <p>{{ i.get_content() }}</p>
+                                        <p>{{ i.get_ingredient() }}</p>
+                                    </article>
+                                </div>
+                            {% elif i.get_type() == "F" %}
+                                <div class="col-md-10 blogShort">
+                                    <h1>{{ i.get_title() }}</h1>
+                                    <article>
+                                        <p>{{ i.get_content() }}</p>
+                                        <p>{{ i.get_time() }}</p>
+                                        <p>{{ i.get_exercise() }}</p>
+                                    </article>
+                                </div>
+                            {% else %}
+                                <div class="col-md-10 blogShort">
+                                    <h1>{{ i.get_title() }}</h1>
+                                    <article>
+                                        <p>{{ i.get_content() }}</p>
+                                    </article>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

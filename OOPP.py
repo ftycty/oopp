@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, SubmitField, TextAreaField, DateField
+from wtforms import Form, StringField, PasswordField, validators, RadioField, SelectField, ValidationError, FileField, \
+    SubmitField, TextAreaField, DateField
 import firebase_admin
 from firebase_admin import credentials, db, storage
 import registration as regist
@@ -7,6 +8,8 @@ from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 import Forum as f
+import Nutrition as n
+import Fitness as fit
 import csv
 import products as pdt
 
@@ -90,7 +93,7 @@ class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
 
 
-@app.route('/profile/<username>', methods=['GET','POST'])
+@app.route('/profile/<username>', methods=['GET', 'POST'])
 def user_profile(username):
     form = AddFriend(request.form)
     userbase = user_ref.get()
@@ -147,7 +150,9 @@ def user_profile(username):
                 except AttributeError:
                     pass
 
-                return render_template('profile.html', form=form, friends_list=friends_list, username=username,fname=fname,lname=lname,birthday=birthday,gender=gender,about=about,friends=friends,current=current_list,past=past_list)
+                return render_template('profile.html', form=form, friends_list=friends_list, username=username,
+                                       fname=fname, lname=lname, birthday=birthday, gender=gender, about=about,
+                                       friends=friends, current=current_list, past=past_list)
 
 
 class RespondFriend(Form):
@@ -230,7 +235,6 @@ def my_friends():
                                form2=form2, form3=form3)
 
 
-
 class ProfileForm(Form):
     gender = SelectField('My Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
     birthday = DateField('My Birthday')
@@ -254,7 +258,7 @@ class PictureForm(Form):
     picture = FileField('Upload Profile Picture')
 
 
-@app.route('/edit_profile', methods=['GET','POST'])
+@app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     key = session['key']
     user_update = user_ref.child(key)
@@ -321,27 +325,63 @@ def edit_profile():
 
 
 class formpost(Form):
-    title = StringField('Title:', [validators.length(min=3, max=30), validators.DataRequired()])
+    title = StringField('Title:', [validators.length(min=3), validators.DataRequired()])
     content = TextAreaField('Content:', [validators.DataRequired()])
     type = RadioField('Type:', [validators.DataRequired()],
                       choices=[('F', 'Fitness'), ('N', 'Nutrition'), ('O', 'Other')])
+    # nutrition
+    ingredient = TextAreaField('Ingredient')
+    # exercise
+    exercise = TextAreaField('Exercise:')
+    time = StringField('Duration:')
 
 
-@app.route('/forumpost', methods=['POST', 'GET'])
+@app.route('/forumpost', methods=['GET', 'POST'])
 def foruminput():
     form = formpost(request.form)
     if request.method == 'POST' and form.validate():
-        title = form.title.data
-        content = form.content.data
-        type = form.type.data
-        forum = f.Forum(title, content, type)
-        forum_db = root.child('postbase')
-        forum_db.push({
-            'title': forum.get_title(),
-            'content': forum.get_content(),
-            'type': forum.get_type()
-        })
-        flash('You have successfully post', 'success')
+        if form.type.data == 'O':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            other = f.Forum(title, content, type)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': other.get_title(),
+                'content': other.get_content(),
+                'type': other.get_type()
+            })
+            flash('You have successfully post', 'success')
+        elif form.type.data == 'N':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            ingredient = form.ingredient.data
+            nutrition = n.Nutrition(title, content, type, ingredient)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': nutrition.get_title(),
+                'content': nutrition.get_content(),
+                'type': nutrition.get_type(),
+                'ingredient': nutrition.get_ingredient()
+            })
+            flash('You have successfully post', 'success')
+        elif form.type.data == 'F':
+            title = form.title.data
+            content = form.content.data
+            type = form.type.data
+            exercise = form.exercise.data
+            time = form.time.data
+            fitness = fit.Fitness(title, content, type, exercise, time)
+            forum_db = root.child('postbase')
+            forum_db.push({
+                'title': fitness.get_title(),
+                'content': fitness.get_content(),
+                'type': fitness.get_type(),
+                'exercise': fitness.get_exercise(),
+                'time': fitness.get_time()
+            })
+            flash('You have successfully post', 'success')
         return redirect(url_for('forum'))
     return render_template('forumpost.html', form=form)
 
@@ -352,10 +392,16 @@ def forum():
     list = []
     for post in forumbase:
         eachpost = forumbase[post]
-        forum = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
-        list.append(forum)
+        if eachpost['type'] == 'O':
+            other = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
+            list.append(other)
+        elif eachpost['type'] == 'F':
+            fitness = fit.Fitness(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['exercise'], eachpost['time'])
+            list.append(fitness)
+        elif eachpost['type'] == 'N':
+            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'])
+            list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
-
 
 def validate_registration(form, field):
     userbase = user_ref.get()
@@ -488,7 +534,9 @@ class RequiredIf(object):
 
 class IllnessForm(Form):
     medtype = RadioField('Which to edit', choices=[('scurrent', 'Current'), ('spast', 'Past')], default='scurrent')
-    illness = SelectField('Type of Illness', [validators.DataRequired()], choices=[('','Select'), ('High Blood Pressure','High Blood Pressure'), ('Diabetes','Diabetes')], default='')
+    illness = SelectField('Type of Illness', [validators.DataRequired()],
+                          choices=[('', 'Select'), ('High Blood Pressure', 'High Blood Pressure'),
+                                   ('Diabetes', 'Diabetes')], default='')
     startdate = DateField('Start Date', [validators.DataRequired()], format='%Y-%m-%d')
     enddate = DateField('End Date', [RequiredIf(medtype='spast')], format='%Y-%m-%d')
 

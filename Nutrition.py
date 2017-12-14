@@ -5,8 +5,5 @@ class Nutrition(Forum):
         Forum.__init__(self, title, content, type)
         self.__ingredient = ingredient
 
-    def set_ingredient(self, ingredient):
-        self.__ingredient = ingredient
-
     def get_ingredient(self):
         return self.__ingredient
