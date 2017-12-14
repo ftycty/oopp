@@ -11,6 +11,7 @@ import Forum as f
 import Nutrition as n
 import Fitness as fit
 import csv
+import json
 import g_products as g_pdt
 import w_products as w_pdt
 
@@ -505,6 +506,7 @@ def forum():
             list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
 
+
 def validate_registration(form, field):
     userbase = user_ref.get()
     for user in userbase.items():
@@ -529,7 +531,7 @@ class RegistrationForm(Form):
     fname = StringField('*First Name', [validators.Length(min=1), validators.DataRequired()])
     lname = StringField('*Last Name', [validators.Length(min=1), validators.DataRequired()])
     username = StringField('*Username',
-                           [validators.Length(min=6, max=20), validators.DataRequired(), validate_registration])
+                           [validators.Length(min=6, max=12), validators.DataRequired(), validate_registration])
     nric = StringField('*NRIC', [validators.DataRequired(), validate_registration])
     email = StringField('*Email Address', [validators.Length(min=6, max=50),
                                            validators.DataRequired(),
@@ -592,7 +594,13 @@ def register():
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+    used_username = []
+    used_email = []
+    userbase = user_ref.get()
+    for user in userbase.items():
+        used_username.append(user[1]['username'])
+        used_email.append(user[1]['email'])
+    return render_template('register.html', form=form, used_username=used_username,used_email=used_email)
 
 
 class LoginForm(Form):
@@ -765,13 +773,24 @@ def connect():
 
             else:
                 flash('Nobody', 'success')
-                return redirect(url_for('my_friends'))
+
+    new_common = str(common).replace('[', '')
+    new1_common = new_common.replace(']', '')
 
     if common != []:
-        flash(common, 'success')
-        return redirect(url_for('my_friends'))
-
+        flash(new1_common.replace("'", '') + ' have similar interests', 'success')
     return redirect(url_for('my_friends'))
+
+
+# @app.route('/deleteinterest/<string:sport>')
+# def delete_interest(sport):
+#     username = session['id']
+#     key = session['key']
+#     userbase = user_ref.child(key)
+#     sports_db = userbase.child('sports/' + sport)
+#     sports_db.delete()
+#     flash('Interest deleted successfully', 'success')
+#     return redirect(url_for('edit_profile'))
 
 
 if __name__ == '__main__':
