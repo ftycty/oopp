@@ -14,6 +14,7 @@ import csv
 import json
 import g_products as g_pdt
 import w_products as w_pdt
+import BMI as b
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -44,9 +45,27 @@ def amenities():
     return render_template('amenities.html')
 
 
-@app.route('/calculator')
+class bmi(Form):
+    weight = StringField('Weight:', [validators.data_required()])
+    height = StringField('Height:', [validators.data_required()])
+
+
+@app.route('/calculator', methods=['GET', 'POST'])
 def calculator():
-    return render_template('calculator.html')
+    key = session['key']
+    user = user_ref.child(key)
+    form = bmi(request.form)
+    if request.method == 'POST' and form.validate():
+        weight = float(form.weight.data)
+        height = float(form.height.data)
+        BMI = b.BMI(weight, height)
+        bmi_db = user.child('BodyMassIndex')
+        bmi_db.update({
+            "BMI": str(BMI.get_bmi())
+        })
+        flash('You have successfully post', 'success')
+        return redirect(url_for('calculator'))
+    return render_template('calculator.html', form=form)
 
 
 @app.route('/contact_us')
@@ -98,7 +117,7 @@ def medshop_main():
             list4.append(products)
             if len(list4) == 6:
                 break
-    return render_template('medshop.html', website=website,list1=list1,list2=list2,list3=list3,list4=list4)
+    return render_template('medshop.html', website=website, list1=list1, list2=list2, list3=list3, list4=list4)
 
 
 @app.route('/medshop/guardian/<type>')
@@ -499,7 +518,8 @@ def forum():
             other = f.Forum(eachpost['title'], eachpost['content'], eachpost['type'])
             list.append(other)
         elif eachpost['type'] == 'F':
-            fitness = fit.Fitness(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['exercise'], eachpost['time'])
+            fitness = fit.Fitness(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['exercise'],
+                                  eachpost['time'])
             list.append(fitness)
         elif eachpost['type'] == 'N':
             nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'])
@@ -600,7 +620,7 @@ def register():
     for user in userbase.items():
         used_username.append(user[1]['username'])
         used_email.append(user[1]['email'])
-    return render_template('register.html', form=form, used_username=used_username,used_email=used_email)
+    return render_template('register.html', form=form, used_username=used_username, used_email=used_email)
 
 
 class LoginForm(Form):
