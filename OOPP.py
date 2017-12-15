@@ -260,6 +260,9 @@ def user_profile(username):
                 except AttributeError and KeyError:
                     pass
 
+                if 'None' in sports_list:
+                    sports_list.remove('None')
+
                 return render_template('profile.html', form=form, friends_list=friends_list, username=username,
                                        pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
                                        gender=gender, about=about, friends=friends, sports=sports_list,
