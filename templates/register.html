@@ -105,6 +105,8 @@
                     $('#username').css({
                         'background-color': '#ff6666'
                     })
+                } else if (username.length <=5) {
+                    alert('Fill in at least 6 characters!');
                 } else if ($.inArray(username, used_username) != -1) {
                     alert('Username has already been taken');
                     $('#username').css({
