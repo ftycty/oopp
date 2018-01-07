@@ -198,6 +198,7 @@
                                             <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
                                             <p>Price : <strong>{{ products.get_price() }}</strong></p>
                                             <p><strong>{{ products.get_offer() }}</strong></p>
+                                            <p>Stock: <strong>{{ products.get_msg() }}</strong> {% if products.get_msg() == '' %}In Stock{% endif %}</p>
                                             <p><a href="https://www.guardian.com.sg{{ products.get_link() }}"
                                                   title="Product" target='_blank'
                                                   onClick="window.open(this.href,'{{ products.get_name() }}',
@@ -218,6 +219,7 @@
                                             <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
                                             <p>Price : <strong>{{ products.get_price() }}</strong></p>
                                             <p><strong>{{ products.get_offer() }}</strong></p>
+                                            <p>Stock: <strong>{{ products.get_msg() }}</strong> {% if products.get_msg() == '' %}In Stock{% endif %}</p>
                                             <p><a href="https://www.guardian.com.sg{{ products.get_link() }}"
                                                   title="Product" target='_blank'
                                                   onClick="window.open(this.href,'{{ products.get_name() }}',
@@ -238,6 +240,7 @@
                                             <h3 style="min-height: 4.5em;">{{ products.get_name() }}</h3>
                                             <p>Price : <strong>{{ products.get_price() }}</strong></p>
                                             <p><strong>{{ products.get_offer() }}</strong></p>
+                                            <p>Stock: <strong>{{ products.get_msg() }}</strong> {% if products.get_msg() == '' %}In Stock{% endif %}</p>
                                             <p><a href="https://www.guardian.com.sg{{ products.get_link() }}"
                                                   title="Product" target='_blank'
                                                   onClick="window.open(this.href,'{{ products.get_name() }}',
@@ -302,21 +305,6 @@
                             </ul>
                         </div>
                     {% endif %}
-                    <!-- /.row -->
-                    {#                <div class="row">#}
-                    {#                    <ul class="pagination alg-right-pad">#}
-                    {#                        <li><a href="#">&laquo;</a></li>#}
-                    {#                        <li><a href="#">1</a></li>#}
-                    {#                        <li><a href="#">2</a></li>#}
-                    {#                        <li><a href="#">3</a></li>#}
-                    {#                        <li><a href="#">4</a></li>#}
-                    {#                        <li><a href="#">5</a></li>#}
-                    {#                        <li><a href="#">&raquo;</a></li>#}
-                    {#                    </ul>#}
-                    {#                </div>#}
-                    <!-- /.row -->
-                    <!-- /.row -->
-                    <!-- /.row -->
                 </div>
                 <!-- /.col -->
             </div>

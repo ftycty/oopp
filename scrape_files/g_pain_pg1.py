@@ -27,12 +27,17 @@ for container in containers:
 
     offer_container = container.findAll('div',{'product-offer'})
     pdt_offer = offer_container[0].text.strip()
+    if pdt_offer == '':
+        pdt_offer = 'No promotion available'
 
     pdt_link = container.div.a['href']
 
     pdt_image = container.div.a.img['src']
 
-    pdt_msg = container.p.text.strip()
+    try:
+        pdt_msg = container.p.text.strip()
+    except:
+        pdt_msg = 'In Stock'
 
     # print('name:',pdt_name)
     # print('price:', pdt_price)
