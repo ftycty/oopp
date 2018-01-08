@@ -4,70 +4,52 @@
     {% from "includes/_formhelper.html" import render_field %}
     <div class="container">
         <div class="row">
-            <div class="col-sm-2 paddingTop20">
+            <div class="col-md-2 paddingTop20">
                 <nav class="nav-sidebar">
                     <ul class="nav">
-                        <li>
-                            <div class="inner-addon right-addon enjoy-cssx">
-                                <input type="text" placeholder="Search" class="form-control enjoy-css"/>
-                            </div>
-                        </li>
                         <li class="nav-divider"></li>
                         {% if session['logged_in'] == True %}
-                        <li>
-                            <a class="btn icon-btn btn-success" href="/forumpost"><span
-                                class="glyphicon btn-glyphicon glyphicon-plus img-circle text-success"></span>Add a post
-                            </a>
-                        </li>
-                        {% else %}
-                         <li>
-                            <a class="btn icon-btn btn-warning" href="/login"><span
-                                class="glyphicon btn-glyphicon glyphicon-plus img-circle text-success"></span>Login to post
-                            </a>
-                        </li>
+                           <li><a href="/forumpost">Post</a></li>
                         {% endif %}
-                        <li class="nav-divider"></li>
                         <li><a href="javascript:;">Nutrition</a></li>
                         <li><a href="javascript:;">Fitness</a></li>
                         <li><a href="javascript:;">Recipes</a></li>
                         <li class="nav-divider"></li>
-                        <li><a href="/login"><i class="glyphicon glyphicon-off"></i> Sign in</a></li>
+                        {% if session['logged_in'] != True %}
+                            <li><a href="/login"><i class="glyphicon glyphicon-off"></i> Sign in</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
             <div class="col-md-10 blogShort">
-                <div class="panel panel-info">
-                    <div class="panel-heading">Health Forum</div>
-                    <div class="panel-body">
-                        {% for i in forum %}
-                            {% if i.get_type() == "N" %}
-                                <div class="col-md-10 blogShort">
-                                    <h1>{{ i.get_title() }}</h1>
-                                    <article>
-                                        <p>{{ i.get_content() }}</p>
-                                        <p>{{ i.get_ingredient() }}</p>
-                                    </article>
-                                </div>
-                            {% elif i.get_type() == "F" %}
-                                <div class="col-md-10 blogShort">
-                                    <h1>{{ i.get_title() }}</h1>
-                                    <article>
-                                        <p>{{ i.get_content() }}</p>
-                                        <p>{{ i.get_time() }}</p>
-                                        <p>{{ i.get_exercise() }}</p>
-                                    </article>
-                                </div>
-                            {% else %}
-                                <div class="col-md-10 blogShort">
-                                    <h1>{{ i.get_title() }}</h1>
-                                    <article>
-                                        <p>{{ i.get_content() }}</p>
-                                    </article>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
+                {% for i in forum %}
+                    {% if i.get_type() == "N" %}
+                        <div>
+                            <article>
+                                <h1>{{ i.get_title() }}</h1>
+                                <p>{{ i.get_content() }}</p>
+                                <p>{{ i.get_ingredient() }}</p>
+                                <p>{{ i.get_method }}</p>
+                            </article>
+                        </div>
+                    {% elif i.get_type() == "F" %}
+                        <div>
+                            <article>
+                                <h1>{{ i.get_title() }}</h1>
+                                <p>{{ i.get_content() }}</p>
+                                <p>{{ i.get_time() }}</p>
+                                <p>{{ i.get_exercise() }}</p>
+                            </article>
+                        </div>
+                    {% else %}
+                        <div>
+                            <article>
+                                <h1>{{ i.get_title() }}</h1>
+                                <p>{{ i.get_content() }}</p>
+                            </article>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
