@@ -44,7 +44,6 @@
                         <div class="form-group">
                             {{ render_field(form.title, class_="form-control") }}
                         </div>
-
                         <div class="form-group">
                             {{ render_field(form.content, rows_="30", cols="50") }}
                         </div>
@@ -55,15 +54,18 @@
                             <div class="form-group">
                                 {{ render_field(form.ingredient, rows_="30", cols="50") }}
                             </div>
+                            <div class="form-group">
+                                {{ render_field(form.method, rows_="30", cols="50") }}
+                            </div>
                         </div>
                         <div id="exercise">
-                        <div class="form-group">
-                            {{ render_field(form.exercise, rows_="30", cols="50") }}
+                            <div class="form-group">
+                                {{ render_field(form.exercise, rows_="30", cols="50") }}
+                            </div>
+                            <div class="form-group">
+                                {{ render_field(form.time, class_="form-control") }}
+                            </div>
                         </div>
-                        <div class="form-group">
-                            {{ render_field(form.time, class_="form-control") }}
-                        </div>
-                    </div>
                         <div>
                             <input type="submit" class="btn btn-primary" value="Post">
                         </div>

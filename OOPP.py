@@ -456,6 +456,7 @@ class formpost(Form):
                       choices=[('F', 'Fitness'), ('N', 'Nutrition'), ('O', 'Other')])
     # nutrition
     ingredient = TextAreaField('Ingredient')
+    method = TextAreaField('Method')
     # exercise
     exercise = TextAreaField('Exercise:')
     time = StringField('Duration:')
@@ -481,14 +482,17 @@ def foruminput():
             title = form.title.data
             content = form.content.data
             type = form.type.data
+            method = form.method.data
             ingredient = form.ingredient.data
-            nutrition = n.Nutrition(title, content, type, ingredient)
+            nutrition = n.Nutrition(title, content, type, ingredient, method)
             forum_db = root.child('postbase')
             forum_db.push({
                 'title': nutrition.get_title(),
                 'content': nutrition.get_content(),
                 'type': nutrition.get_type(),
-                'ingredient': nutrition.get_ingredient()
+                'ingredient': nutrition.get_ingredient(),
+                'method': method.get_method()
+
             })
             flash('You have successfully post', 'success')
         elif form.type.data == 'F':
@@ -525,7 +529,7 @@ def forum():
                                   eachpost['time'])
             list.append(fitness)
         elif eachpost['type'] == 'N':
-            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'])
+            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'], eachpost['method'])
             list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
 
