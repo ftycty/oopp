@@ -80,7 +80,24 @@
                         <input type="hidden" name="form-name" value="form2">
                     </div>
                 </form>
-                <div><a id="connect" class="btn btn-default" href="/connect">Find someone with similar interests</a></div>
+                <div><a id="connect" class="btn btn-default" href="#">Find someone with similar interests</a></div>
+                <div class='wrap'>
+                    {% if common_list != [] %}
+                    <h2>These are the people who have similar interests as you!</h2>
+                    <table class="table table-bordered">
+                        <tbody>
+                        {% for person in common_list %}
+                        <tr>
+                            <td><a href="/profile/{{ person.get_name }}">{{ person.get_name }}</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {% endif %}
+
+                    {% if common_list == [] %}
+                    <h1>We did not find anybody with similar interests as you :(</h1>
+                    {% endif %}
+                </div>
             </div>
 
             <div id='remove-friends' class="tab-pane fade col-md-12">
@@ -97,4 +114,10 @@
             </div>
         </div>
     </div><!--/container -->
+    <script>
+        $('#connect').on('click', function(){
+          $('.wrap, a').toggleClass('active');
+          return false;
+        });
+    </script>
 {% endblock %}

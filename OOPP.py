@@ -7,6 +7,7 @@ import registration as regist
 from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
+from Common import Common
 import Forum as f
 import Nutrition as n
 import Fitness as fit
@@ -284,14 +285,41 @@ class DeleteFriend(Form):
 
 @app.route('/my_friends', methods=['GET', 'POST'])
 def my_friends():
+    userbase = user_ref.get()
+    keys = []
+    my_list = []
+    common = []
+    user_dict = {}
     form = RespondFriend(request.form)
     form2 = SearchFriend(request.form)
     form3 = DeleteFriend(request.form)
     key = session['key']
     friends = user_ref.child(key).child('friends').get()
 
+    for user in userbase.items():
+        if user[1]['username'] == session['id']:
+            my_sport = user[1]['sports']
+            for sport in my_sport:
+                my_list.append(sport)
+
+        if user[1]['username'] != session['id']:
+            keys.append(user[0])
+            sport_list = []
+            user_sport = user[1]['sports']
+            for sport in user_sport:
+                sport_list.append(sport)
+                user_dict[user[0]] = sport_list
+
+    for u in keys:
+        this = user_dict[u]
+        for each in this:
+            if each in my_list:
+                name = userbase[u]['username']
+                c = Common(name)
+                common.append(c)
+                break
+
     if request.method == 'POST' and form.validate():
-        userbase = user_ref.get()
         form_name = request.form['form-name']
         if form_name == 'form':
             if form.accept.data:
@@ -337,6 +365,7 @@ def my_friends():
                     return redirect(url_for('my_friends'))
             flash('You do not have ' + delete_user + ' as a friend!', 'danger')
             return redirect(url_for('my_friends'))
+
     else:
         pending_list = []
         friends_list = []
@@ -346,8 +375,9 @@ def my_friends():
         for current in friends.items():
             if current[1] == 'friends':
                 friends_list.append(current[0])
+
         return render_template('friends.html', pending_list=pending_list, friends_list=friends_list, form=form,
-                               form2=form2, form3=form3)
+                               form2=form2, form3=form3, common_list=common)
 
 
 class ProfileForm(Form):
@@ -768,45 +798,38 @@ def delete_past(illness):
     return redirect(url_for('user_profile', username=username))
 
 
-@app.route('/connect')
-def connect():
-    userbase = user_ref.get()
-    keys = []
-    my_list = []
-    common = []
-    user_dict = {}
-
-    for user in userbase.items():
-        if user[1]['username'] == session['id']:
-            my_sport = user[1]['sports']
-            for sport in my_sport:
-                my_list.append(sport)
-
-        if user[1]['username'] != session['id']:
-            keys.append(user[0])
-            sport_list = []
-            user_sport = user[1]['sports']
-            for sport in user_sport:
-                sport_list.append(sport)
-                user_dict[user[0]] = sport_list
-
-    for u in keys:
-        this = user_dict[u]
-        for each in this:
-            if each in my_list:
-                name = userbase[u]['username']
-                common.append(name)
-                break
-
-            else:
-                flash('Nobody', 'success')
-
-    new_common = str(common).replace('[', '')
-    new1_common = new_common.replace(']', '')
-
-    if common != []:
-        flash(new1_common.replace("'", '') + ' have similar interests', 'success')
-    return redirect(url_for('my_friends'))
+# @app.route('/connect')
+# def connect():
+#     userbase = user_ref.get()
+#     keys = []
+#     my_list = []
+#     common = []
+#     user_dict = {}
+#
+#     for user in userbase.items():
+#         if user[1]['username'] == session['id']:
+#             my_sport = user[1]['sports']
+#             for sport in my_sport:
+#                 my_list.append(sport)
+#
+#         if user[1]['username'] != session['id']:
+#             keys.append(user[0])
+#             sport_list = []
+#             user_sport = user[1]['sports']
+#             for sport in user_sport:
+#                 sport_list.append(sport)
+#                 user_dict[user[0]] = sport_list
+#
+#     for u in keys:
+#         this = user_dict[u]
+#         for each in this:
+#             if each in my_list:
+#                 name = userbase[u]['username']
+#                 c = Common(name)
+#                 common.append(c)
+#                 break
+#
+#     return redirect(url_for('my_friends'))
 
 
 # @app.route('/deleteinterest/<string:sport>')
