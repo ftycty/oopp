@@ -843,10 +843,7 @@ def delete_past(illness):
 #     return redirect(url_for('edit_profile'))
 
 
-#if __name__ == '__main__':
-#    app.secret_key = 'secret123'
-#    app.run(port='80')
-
 if __name__ == '__main__':
     app.secret_key = 'secret123'
-    app.run(debug=True)
+    app.run(port='80')
+
