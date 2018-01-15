@@ -521,7 +521,7 @@ def foruminput():
                 'content': nutrition.get_content(),
                 'type': nutrition.get_type(),
                 'ingredient': nutrition.get_ingredient(),
-                'method': method.get_method()
+                'method': nutrition.get_method()
 
             })
             flash('You have successfully post', 'success')
@@ -843,6 +843,10 @@ def delete_past(illness):
 #     return redirect(url_for('edit_profile'))
 
 
+#if __name__ == '__main__':
+#    app.secret_key = 'secret123'
+#    app.run(port='80')
+
 if __name__ == '__main__':
     app.secret_key = 'secret123'
-    app.run(port='80')
+    app.run(debug=True)
