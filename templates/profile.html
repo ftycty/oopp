@@ -15,11 +15,11 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading">{{ fname }} {{ lname }}</div>
                     <div class="panel-body">
-                        {% if (birthday != '') %}
+                        {% if (birthday != '') or (birthday == 'None') %}
                             <p>Birthday: {{ birthday }}</p>
                         {% endif %}
 
-                        {% if (gender != '') %}
+                        {% if (gender != '') or (birthday == 'None') %}
                             <p>Gender: {{ gender }}</p>
                         {% endif %}
 
