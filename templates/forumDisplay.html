@@ -24,14 +24,20 @@
                         </li>
                         <li class="nav-divider"></li>
                         <h2>Catagories</h2>
-                        <li><a data-toggle="tab" href="#Nutrition">Nutrition</a></li>
+                        <li class="active "><a data-toggle="tab" href="#Nutrition">Nutrition</a></li>
                         <li><a data-toggle="tab" href="#Fitness">Fitness</a></li>
                         <li><a data-toggle="tab" href="#Others">Others</a></li>
                     {% else %}
                         <li>
-                            <a href="javascript:;">
+                            <a href="/login">
                                 Sign In <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
                             </a>
+                        </li>
+                        <li class="nav-divider"></li>
+                        <h2>Catagories</h2>
+                        <li class="active" ><a data-toggle="tab" href="#Nutrition">Nutrition</a></li>
+                        <li><a data-toggle="tab" href="#Fitness">Fitness</a></li>
+                        <li><a data-toggle="tab" href="#Others">Others</a></li>
                         </li>
                     {% endif %}
                 </ul>
@@ -41,11 +47,11 @@
             <div class="tab-content">
                 {% for i in forum %}
                     {% if i.get_type() == "N" %}
-                        <div id="Nutrition" class="tab-pane fadeInRight">
+                        <div id="Nutrition" class="tab-pane fadeInRight active">
                             <h2>{{ i.get_title() }}</h2>
                             <p>{{ i.get_content() }}</p>
-                            <p>{{ i.get_ingredient() }}</p>
-                            <p>{{ i.get_method() }}</p>
+                            <pre>{{ i.get_ingredient() }}</pre>
+                            <pre>1.{{ i.get_method() }}</pre>
                         </div>
                     {% elif i.get_type() == "F" %}
                         <div id="Fitness" class="tab-pane fadeInRight">
@@ -53,7 +59,7 @@
                             <h2>{{ i.get_title() }}</h2>
                             <p>{{ i.get_content() }}</p>
                             <p>{{ i.get_time() }}</p>
-                            <p>{{ i.get_exercise() }}</p>
+                            <pre>{{ i.get_exercise() }}</pre>
                         </div>
                     {% else %}
                         <div id="Others" class="tab-pane fadeInRight">
@@ -62,7 +68,26 @@
                         </div>
                     {% endif %}
                 {% endfor %}
+                <div class="container">
+
+                </div>
+                <div id="disqus_thread"></div>
+                <script>
+                    var disqus_config = function () {
+                        this.page.url = PAGE_URL;
+                        this.page.identifier = this.page.category_id = '3';
+                    };
+                    (function () { // DON'T EDIT BELOW THIS LINE
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://healthforum-1.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments
+                    powered by Disqus.</a></noscript>
             </div>
         </div>
     </div>
+    <script id="dsq-count-scr" src="//healthforum-1.disqus.com/count.js" async></script>
 {% endblock %}

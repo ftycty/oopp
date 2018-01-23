@@ -9,12 +9,17 @@
         <a class="navbar-brand" href="/">WeabOOPP</a>
     </div>
     <div id='navbar'class="collapse navbar-collapse navbar-right">
+
         <ul class="nav navbar-nav">
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fitness <i class="fa fa-angle-down"></i></a>
                 <ul class="dropdown-menu">
-                    <li><a href="/gym_fitness">Gyms in Singapore</a></li>
-                    <li><a href="/calculator">BMI and Calories Calculator</a></li>
+                     {% if session['logged_in'] == True %}
+                        <li><a href="/gym_fitness">Gyms in Singapore</a></li>
+                        <li><a href="/calculator">BMI and Calories Calculator</a></li>
+                     {% else %}
+                        <li><a href="/gym_fitness">Gyms in Singapore</a></li>
+                     {% endif %}
                 </ul>
             </li>
             <li class="dropdown">

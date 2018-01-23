@@ -1,5 +1,6 @@
 from Forum import Forum
 
+
 class Nutrition(Forum):
     def __init__(self, title, content, type, ingredient, method):
         Forum.__init__(self, title, content, type)

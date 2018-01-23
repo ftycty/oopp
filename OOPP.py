@@ -484,9 +484,10 @@ class formpost(Form):
     content = TextAreaField('Content:', [validators.DataRequired()])
     type = RadioField('Type:', [validators.DataRequired()],
                       choices=[('F', 'Fitness'), ('N', 'Nutrition'), ('O', 'Other')])
+    posttime = DateField('Date and Time:', format='%Y-%m-%d %H:%M:%S')
     # nutrition
-    ingredient = TextAreaField('Ingredient')
-    method = TextAreaField('Method')
+    ingredient = TextAreaField('Ingredients:')
+    method = TextAreaField('Methods:')
     # exercise
     exercise = TextAreaField('Exercise:')
     time = StringField('Duration:')
@@ -559,7 +560,8 @@ def forum():
                                   eachpost['time'])
             list.append(fitness)
         elif eachpost['type'] == 'N':
-            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'], eachpost['method'])
+            nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'],
+                            eachpost['method'])
             list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
 
@@ -846,4 +848,3 @@ def delete_past(illness):
 if __name__ == '__main__':
     app.secret_key = 'secret123'
     app.run(port='80')
-
