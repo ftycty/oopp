@@ -17,7 +17,7 @@ import g_products as g_pdt
 import w_products as w_pdt
 import BMI as b
 import time
-import dietplanner as d
+import diet_traget as d
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
