@@ -16,6 +16,8 @@ import json
 import g_products as g_pdt
 import w_products as w_pdt
 import BMI as b
+import time
+import dietplanner as d
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -64,9 +66,38 @@ def calculator():
         bmi_db.update({
             "BMI": str(BMI.get_bmi())
         })
-        flash('You have successfully post', 'success')
+        flash('You have successfully input your BMI', 'success')
         return redirect(url_for('calculator'))
     return render_template('calculator.html', form=form)
+
+
+class dietplanner(Form):
+    totalcalories = StringField('Total targeted calories(per day):', [validators.data_required()])
+    proteins = StringField('Targeted amount Proteins:', [validators.data_required()], render_kw={"placeholder": "in grams"})
+    carbohydrates = StringField('Targeted amount Carbohydrates:', [validators.data_required()], render_kw={"placholder": "in grams"})
+    fats = StringField('Targeted amount Fats:', [validators.data_required()], render_kw={"placeholder": "in grams"})
+
+@app.route('/diet_planner', methods=['GET', 'POST'])
+def diet_planner():
+    key = session['key']
+    user = user_ref.child(key)
+    form = dietplanner(request.form)
+    if request.method == "POST" and form.validate():
+        total_calories = form.totalcalories.data
+        proteins = form.proteins.data
+        carbohydrates = form.carbohydrates.data
+        fats = form.fats.data
+        diet = d.diet(total_calories, proteins, carbohydrates, fats)
+        diet_target_db = user.child("diet_target")
+        diet_target_db.update({
+            "total_calories": diet.get_totalcalories(),
+            "proteins": diet.get_proteins(),
+            "carbohydrates": diet.get_carbs(),
+            "fats": diet.get_fats()
+        })
+        flash('You successfully updated your diet target', 'success')
+        return redirect(url_for('home'))
+    return render_template('Dietplanner.html', form=form )
 
 
 @app.route('/contact_us')
@@ -493,6 +524,9 @@ class formpost(Form):
     time = StringField('Duration:')
 
 
+timepost = time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime())
+
+
 @app.route('/forumpost', methods=['GET', 'POST'])
 def foruminput():
     form = formpost(request.form)
@@ -561,7 +595,7 @@ def forum():
             list.append(fitness)
         elif eachpost['type'] == 'N':
             nutrition = n.Nutrition(eachpost['title'], eachpost['content'], eachpost['type'], eachpost['ingredient'],
-                            eachpost['method'])
+                                    eachpost['method'])
             list.append(nutrition)
     return render_template('forumDisplay.html', forum=list)
 
@@ -847,4 +881,4 @@ def delete_past(illness):
 
 if __name__ == '__main__':
     app.secret_key = 'secret123'
-    app.run(port='80')
+    app.run(debug=True)
