@@ -878,7 +878,7 @@ def delete_past(illness):
 #     flash('Interest deleted successfully', 'success')
 #     return redirect(url_for('edit_profile'))
 
+app.secret_key = 'secret123'
 
 if __name__ == '__main__':
-    app.secret_key = 'secret123'
-    app.run(debug=True)
+    app.run(port='80',debug=True)
