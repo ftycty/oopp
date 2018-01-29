@@ -1,3 +1,4 @@
+{#
 {% extends 'layout.html' %}
 {% block title %}FAQ{% endblock %}
 {% block body %}
@@ -75,4 +76,126 @@
             </div>
         </div>
     </div>
+{% endblock %}#}
+
+
+{% extends 'layout.html' %}
+{% block title%}Faq{% endblock %}
+{% block body %}
+<!--TopSection-->
+<section class="our-focus bgcolor-2" id="section2">
+    <div class="container">
+        <div class="section-header">
+            <h2 id="first_header" class="wow fadeInUp">Welcome to Weaboopp Helpdesk</h2>
+            <div id="first_header_subheader" class="sub-heading wow fadeInUp">
+                We are here to help!
+            </div>
+        </div>
+        <div class="row focuses">
+            <a href="#">
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="single-focus white-bg diffuse-shadow red-line-bottom wow fadeInUp" data-wow-offset="30" data-wow-duration="1.5s" data-wow-delay="0.15s">
+                        <div class="icon red-text">
+                            <img src="../static/images/custom/chat.png">
+                        </div>
+                        <h5 id="second_header">Talk to us</h5>
+                        <p id="second_header_subheader">
+                            Chat with us online! You can also arrange a time for us to contact you when you're free!
+                        </p>
+                    </div>
+                </div>
+            </a>
+            <a href="mailto:weaboopp@gmail.com">
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="single-focus white-bg diffuse-shadow green-line-bottom wow fadeInUp" data-wow-offset="30" data-wow-duration="1.5s" data-wow-delay="0.15s">
+                        <div class="icon green-text">
+                            <img src="../static/images/custom/email.png" style="height: 200px; width: 200px">
+                        </div>
+                        <h5 id="third_header">Email us</h5>
+                        <p id="third_header_subheader">
+                            Having trouble learning? No worries, simply drop us an email and we'll get back to you right away!
+                        </p>
+                    </div>
+                </div>
+            </a>
+            <a href="#">
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="single-focus white-bg diffuse-shadow purple-line-bottom wow fadeInUp" data-wow-offset="30" data-wow-duration="1.5s" data-wow-delay="0.15s">
+                        <div class="icon purple-text">
+                            <img src="../static/images/custom/feedback.png">
+                        </div>
+                        <h5 id="fourth_header">Feedback</h5>
+                        <p id="fourth_header_subheader">
+                            We're always looking for areas of improvement and you can help by giving us your feedback!
+                        </p>
+                    </div>
+                </div>
+            </a>
+            <a href="#">
+                <div class="col-lg-3 col-sm-6 col-xs-12">
+                    <div class="single-focus white-bg diffuse-shadow yellow-line-bottom wow fadeInUp" data-wow-offset="30" data-wow-duration="1.5s" data-wow-delay="0.15s">
+                        <div class="icon yellow-text">
+                            <img src="../static/images/custom/Faq.png" >
+                        </div>
+                        <h5 id="fifth_header">F.A.Q</h5>
+                        <p id="fifth_header_subheader">
+                            Take a look at some of the frequently asked questions as well as answers to the questions!
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!--FAQ-->
+<section class="work-steps" id="section5">
+    <div class="container">
+        <div class="section-header">
+            <h2 id="faq_header" class="wow fadeInUp">FAQ</h2>
+            <div class="sub-heading wow fadeInUp" id="faq_header_subheader">
+                These are the questions that are frequently asked.
+            </div>
+        </div>
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                            what is this Website about?</a>
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        We are a group of student coming together to rise awareness of health and wellness to all young and old.
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                            Is registation free?</a>
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        Yes!! It is free  you can sign up here. <a href="register.html">click here</a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                            what can I gain from this website</a>
+                    </h4>
+                </div>
+                <div id="collapse3" class="panel-collapse collapse">
+                    <div class="panel-body">You are able to find out about how to improve your lifestyle</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
