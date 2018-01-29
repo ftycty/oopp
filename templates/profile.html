@@ -39,7 +39,14 @@
                         {% if ((birthday and gender and about)=='') %}
                             <p><em>This person should be more descriptive!</em></p>
                         {% endif %}
-
+                        {% if ((BMI != [])) %}
+                            <p>Current BMI:</p>
+                            <ul>
+                            {% for BMI in bmi %}
+                                <li>{{ BMI.get_BMI() }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
                         {% if session['id']==username %}
                             <a class="btn btn-default" href="/edit_profile">Edit Profile</a>
                         {% endif %}
@@ -163,13 +170,17 @@
                 </div>
             </div>
             <div class="panel panel-warning">
-                <div class="panel-heading">Favourited Workouts</div>
-                <div><button type="button" class="btn btn-primary btn-xs">Add New</button></div>
+                <div class="panel-heading">Diet goals</div>
                 <div class="panel-body">
+                    {% for d in dietTarget %}
                     <ul>
-                        <li></li>
+                        <li>Total calories: {{d.get_totalcalories()}}</li>
+                        <li>Target carbohydrates: {{ d.get_carbs() }}</li>
+                        <li>Target proteins: {{ d.get_proteins() }}</li>
+                        <li>Total fats: {{ d.get_fats() }}</li>
                     </ul>
                 </div>
+                    {% endfor %}
             </div>
         </div>
     </div>

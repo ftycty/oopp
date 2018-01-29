@@ -17,7 +17,8 @@ import g_products as g_pdt
 import w_products as w_pdt
 import BMI as b
 import time
-import diet_traget as d
+import diet_target as d
+import bmigetter as bmi_getter
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -73,9 +74,12 @@ def calculator():
 
 class dietplanner(Form):
     totalcalories = StringField('Total targeted calories(per day):', [validators.data_required()])
-    proteins = StringField('Targeted amount Proteins:', [validators.data_required()], render_kw={"placeholder": "in grams"})
-    carbohydrates = StringField('Targeted amount Carbohydrates:', [validators.data_required()], render_kw={"placholder": "in grams"})
+    proteins = StringField('Targeted amount Proteins:', [validators.data_required()],
+                           render_kw={"placeholder": "in grams"})
+    carbohydrates = StringField('Targeted amount Carbohydrates:', [validators.data_required()],
+                                render_kw={"placholder": "in grams"})
     fats = StringField('Targeted amount Fats:', [validators.data_required()], render_kw={"placeholder": "in grams"})
+
 
 @app.route('/diet_planner', methods=['GET', 'POST'])
 def diet_planner():
@@ -97,7 +101,7 @@ def diet_planner():
         })
         flash('You successfully updated your diet target', 'success')
         return redirect(url_for('home'))
-    return render_template('Dietplanner.html', form=form )
+    return render_template('Dietplanner.html', form=form)
 
 
 @app.route('/contact_us')
@@ -222,6 +226,8 @@ def user_profile(username):
     current_list = []
     past_list = []
     sports_list = []
+    diet_list = []
+    bmi_list = []
     if request.method == 'POST':
         add_user = request.form['form-add']
         key = session['key']
@@ -291,14 +297,34 @@ def user_profile(username):
                         pass
                 except AttributeError and KeyError:
                     pass
-
+                try:
+                    carbs = user[1]['diet_target']['carbohydrates']
+                    proteins = user[1]['diet_target']['proteins']
+                    totalcal = user[1]['diet_target']['total_calories']
+                    fats = user[1]['diet_target']['fats']
+                    try:
+                        dietTar = d.diet(totalcal, proteins, carbs, fats)
+                        diet_list.append(dietTar)
+                    except AttributeError:
+                        print('error')
+                except AttributeError and KeyError:
+                    pass
+                try:
+                    BodyMassIndex = user[1]['BodyMassIndex']['BMI']
+                    try:
+                        Bodyindex = bmi_getter.bmi_getter(BodyMassIndex)
+                        bmi_list.append(Bodyindex)
+                    except AttributeError:
+                        pass
+                except AttributeError and KeyError:
+                    pass
                 if 'None' in sports_list:
                     sports_list.remove('None')
 
                 return render_template('profile.html', form=form, friends_list=friends_list, username=username,
                                        pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
                                        gender=gender, about=about, friends=friends, sports=sports_list,
-                                       current=current_list, past=past_list)
+                                       current=current_list, past=past_list, dietTarget=diet_list, bmi=bmi_list)
 
 
 class RespondFriend(Form):
@@ -881,4 +907,4 @@ def delete_past(illness):
 app.secret_key = 'secret123'
 
 if __name__ == '__main__':
-    app.run(port='80',debug=True)
+    app.run(debug=True)
