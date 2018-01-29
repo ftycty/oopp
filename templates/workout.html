@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% block title %}Fav workout{% endblock %}
+{% block body %}
+    {% from "includes/_formhelper.html" import render_field %}
+    <div class="container">
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                        {% for error in field_errors %}
+                            <li>{{ form[field_name].label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="col-sm-offset-2" style="margin-top: 140px">
+            <h2>Favourite Workout</h2>
+            <p>In here you can add your favourite workout to your profile for you and your friends to see!</p>
+        </div>
+        <div>
+            <form class="form-horizontal" method="POST">
+                <div class="col-sm-12">
+                    {{ render_field(form.favworkout, class_="form-control col-sm-pull-2") }}
+                </div>
+                <div class="col-sm-12" style="margin-top: 20px">
+                    {{ render_field(form.frequency, class_="form-control col-sm-pull-2", placeholder="eg.Once a week, Once every month") }}
+                </div>
+                <div class="col-sm-12" style="margin-top: 20px">
+                    {{ render_field(form.duration, class_="form-control col-sm-pull-2") }}
+                </div>
+                <div class="col-sm-offset-7" style="margin-bottom: 200px">
+                    <input type="submit" class="btn btn-primary" value="Add">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

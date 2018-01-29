@@ -47,3 +47,19 @@
     background-color:#34ca78;
     border-color: #34ca78;
 }
+/*header for faq*/
+.icon {
+    font-size :60px;
+    padding-top : 5px;
+    color:#39a50b;
+
+}
+.big-title6 {
+    font-size: 5em;
+    color: #212121;
+    text-align: center;
+    text-transform: capitalize;
+    font-weight: 700;
+    letter-spacing: 1px;
+    position: relative;
+}

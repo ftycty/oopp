@@ -19,6 +19,7 @@ import BMI as b
 import time
 import diet_target as d
 import bmigetter as bmi_getter
+import favworkout as fav
 
 cred = credentials.Certificate('cred/oopp-53405-firebase-adminsdk-82c85-5582818dd3.json')
 default_app = firebase_admin.initialize_app(cred, {
@@ -32,6 +33,21 @@ user_ref = db.reference('userbase')
 forum_ref = db.reference('postbase')
 
 app = Flask(__name__)
+
+
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
+
+
+@app.route('/contact_us')
+def contact_us():
+    return render_template('contact_us.html')
+
+
+@app.route('/gym_fitness')
+def gym_fitness():
+    return render_template('gym_fitness.html')
 
 
 @app.route('/')
@@ -78,7 +94,7 @@ class dietplanner(Form):
                            render_kw={"placeholder": "in grams"})
     carbohydrates = StringField('Targeted amount Carbohydrates:', [validators.data_required()],
                                 render_kw={"placholder": "in grams"})
-    fats = StringField('Targeted amount Fats:', [validators.data_required()], render_kw={"placeholder": "in grams"})
+    fats = StringField('Targeted amount Fats:', [validators.data_required()])
 
 
 @app.route('/diet_planner', methods=['GET', 'POST'])
@@ -100,19 +116,46 @@ def diet_planner():
             "fats": diet.get_fats()
         })
         flash('You successfully updated your diet target', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('user_profile', username=session['id']))
     return render_template('Dietplanner.html', form=form)
 
 
-@app.route('/contact_us')
-def contact_us():
-    return render_template('contact_us.html')
+class favworkout(Form):
+    favworkout = StringField("Workout:", [validators.data_required()])
+    frequency = StringField("Frequency:", [validators.data_required()])
+    duration = StringField("Estimated duration:", [validators.data_required()])
 
 
-@app.route('/gym_fitness')
-def gym_fitness():
-    return render_template('gym_fitness.html')
+@app.route('/workout', methods=['GET', 'POST'])
+def workout():
+    key = session['key']
+    user = user_ref.child(key)
+    form = favworkout(request.form)
+    if request.method == "POST" and form.validate():
+        freq = form.frequency.data
+        duration = form.duration.data
+        favwork = form.favworkout.data
+        work = fav.f_workout(favwork, freq, duration)
+        workout_db = user.child("fav_workout")
+        workout_detail_db = workout_db.child(form.favworkout.data)
+        workout_detail_db.update({
+            "freq": work.get_freq(),
+            "duration": work.get_duration()
+        })
+        flash('You successfully added your favourite workout', 'success')
+        return redirect(url_for('user_profile', username=session['id']))
+    return render_template('workout.html', form=form)
 
+
+@app.route('/deleteworkout/<string:favourite>', methods=['POST'])
+def delete_workout(favourite):
+    username = session['id']
+    key = session['key']
+    userbase = user_ref.child(key)
+    fav_work_db = userbase.child('fav_workout/' + favourite)
+    fav_work_db.delete()
+    flash('Favourite workout deleted successfully', 'success')
+    return redirect(url_for('user_profile', username=username))
 
 @app.route('/medshop')
 def medshop_main():
@@ -210,11 +253,6 @@ def medshop_watsons(type, page='1'):
     return render_template('medshop.html', pdt=list, website=website, type=type, page=page)
 
 
-@app.route('/faq')
-def faq():
-    return render_template('faq.html')
-
-
 class AddFriend(Form):
     friend_name = SubmitField('Add Friend')
 
@@ -228,6 +266,7 @@ def user_profile(username):
     sports_list = []
     diet_list = []
     bmi_list = []
+    favworkout_list = []
     if request.method == 'POST':
         add_user = request.form['form-add']
         key = session['key']
@@ -306,7 +345,7 @@ def user_profile(username):
                         dietTar = d.diet(totalcal, proteins, carbs, fats)
                         diet_list.append(dietTar)
                     except AttributeError:
-                        print('error')
+                        pass
                 except AttributeError and KeyError:
                     pass
                 try:
@@ -318,13 +357,27 @@ def user_profile(username):
                         pass
                 except AttributeError and KeyError:
                     pass
+                try:
+                    fa = user[1]['fav_workout']
+                    try:
+                        for f_work in fa.items():
+                            fwork = f_work[0]
+                            freq = f_work[1]['freq']
+                            duration = f_work[1]['duration']
+                            favorite = fav.f_workout(fwork, freq, duration)
+                            favworkout_list.append(favorite)
+                    except AttributeError:
+                       pass
+                except AttributeError and KeyError:
+                    pass
                 if 'None' in sports_list:
                     sports_list.remove('None')
 
                 return render_template('profile.html', form=form, friends_list=friends_list, username=username,
                                        pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
                                        gender=gender, about=about, friends=friends, sports=sports_list,
-                                       current=current_list, past=past_list, dietTarget=diet_list, bmi=bmi_list)
+                                       current=current_list, past=past_list, dietTarget=diet_list, bmi=bmi_list,
+                                       favworkout=favworkout_list)
 
 
 class RespondFriend(Form):
