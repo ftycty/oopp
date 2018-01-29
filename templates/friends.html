@@ -82,17 +82,20 @@
                 </form>
                 <div><a id="connect" class="btn btn-default" href="#">Find someone with similar interests</a></div>
                 <div class='wrap'>
-                    {% if common_list != [] %}
-                    <h2>These are the people who have similar interests as you!</h2>
-                    <table class="table table-bordered">
-                        <tbody>
-                        {% for person in common_list %}
-                        <tr>
-                            <td><a href="/profile/{{ person.get_name }}">{{ person.get_name }}</a></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    {% endif %}
+                    <div class="content">
+                        {% if common_list != [] %}
+                        <h2>These are the people who have similar interests as you!</h2>
+                        <table class="table table-bordered">
+                            <tbody>
+                            {% for person in common_list %}
+                            <tr>
+                                <td><a href="/profile/{{ person.get_name() }}">{{ person.get_name() }}</a></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
 
                     {% if common_list == [] %}
                     <h1>We did not find anybody with similar interests as you :(</h1>

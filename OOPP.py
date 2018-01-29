@@ -8,6 +8,8 @@ from wtforms.fields.html5 import DateField
 from PastIllness import PastIllness
 from CurrentIllness import CurrentIllness
 from Common import Common
+from Event import Event
+from firebase_admin import credentials, db
 import Forum as f
 import Nutrition as n
 import Fitness as fit
@@ -16,6 +18,9 @@ import json
 import g_products as g_pdt
 import w_products as w_pdt
 import BMI as b
+import datetime
+import firebase_admin
+import os
 import time
 import diet_traget as d
 
@@ -217,11 +222,33 @@ class AddFriend(Form):
 
 @app.route('/profile/<username>', methods=['GET', 'POST'])
 def user_profile(username):
+    key = session['key']
+    username_cal = session['id']
     form = AddFriend(request.form)
     userbase = user_ref.get()
+    userbase_cal = user_ref.child(key)
+    user_cal = userbase_cal.get()
     current_list = []
     past_list = []
     sports_list = []
+    form_cal = CalendarForm(request.form)
+    event_list = []
+    if request.method == 'POST':
+        if form_cal.event.data != "" and form_cal.date.data != "":
+            events_db = userbase_cal.child('events')
+            event_db = events_db.child(form_cal.event.data)
+            event_db.update({
+                'date': str(form_cal.date.data),
+            })
+
+        return redirect(url_for('user_profile', username=username_cal))
+
+    try:
+        for i in user_cal['events'].items():
+            event = Event(i[0], i[1]['date'])
+            event_list.append(event)
+    except:
+        pass
     if request.method == 'POST':
         add_user = request.form['form-add']
         key = session['key']
@@ -298,7 +325,7 @@ def user_profile(username):
                 return render_template('profile.html', form=form, friends_list=friends_list, username=username,
                                        pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
                                        gender=gender, about=about, friends=friends, sports=sports_list,
-                                       current=current_list, past=past_list)
+                                       current=current_list, past=past_list, events=event_list, form_cal=form_cal)
 
 
 class RespondFriend(Form):
@@ -342,7 +369,10 @@ def my_friends():
                 user_dict[user[0]] = sport_list
 
     for u in keys:
-        this = user_dict[u]
+        try:
+            this = user_dict[u]
+        except KeyError:
+            continue
         for each in this:
             if each in my_list:
                 name = userbase[u]['username']
@@ -683,7 +713,8 @@ def register():
             'currentillness': '',
             'pastillness': '',
             'healthtips': 'yes',
-            'sports': ''
+            'sports': '',
+            'events': '',
         })
         flash('You have successfully created an account', 'success')
         return redirect(url_for('login'))
@@ -834,40 +865,6 @@ def delete_past(illness):
     return redirect(url_for('user_profile', username=username))
 
 
-# @app.route('/connect')
-# def connect():
-#     userbase = user_ref.get()
-#     keys = []
-#     my_list = []
-#     common = []
-#     user_dict = {}
-#
-#     for user in userbase.items():
-#         if user[1]['username'] == session['id']:
-#             my_sport = user[1]['sports']
-#             for sport in my_sport:
-#                 my_list.append(sport)
-#
-#         if user[1]['username'] != session['id']:
-#             keys.append(user[0])
-#             sport_list = []
-#             user_sport = user[1]['sports']
-#             for sport in user_sport:
-#                 sport_list.append(sport)
-#                 user_dict[user[0]] = sport_list
-#
-#     for u in keys:
-#         this = user_dict[u]
-#         for each in this:
-#             if each in my_list:
-#                 name = userbase[u]['username']
-#                 c = Common(name)
-#                 common.append(c)
-#                 break
-#
-#     return redirect(url_for('my_friends'))
-
-
 # @app.route('/deleteinterest/<string:sport>')
 # def delete_interest(sport):
 #     username = session['id']
@@ -878,7 +875,14 @@ def delete_past(illness):
 #     flash('Interest deleted successfully', 'success')
 #     return redirect(url_for('edit_profile'))
 
+
+class CalendarForm(Form):
+    task = StringField(' ', render_kw={"placeholder": "Add Task"})
+    event = StringField(' ', render_kw={"placeholder": "Event"})
+    date = DateField(' ', format='%Y-%m-%d', render_kw={"placeholder": "Date of Event"})
+
+
 app.secret_key = 'secret123'
 
 if __name__ == '__main__':
-    app.run(port='80',debug=True)
+    app.run(debug=True)

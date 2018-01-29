@@ -1,0 +1,221 @@
+{% block topscript %}
+<style>
+    button{
+        border-radius: 100px;
+    }
+    h4, span{
+        margin:5px;
+        font-size: 20px;
+    }
+    p{
+        margin:5px;
+    }
+    h5{
+        font-size: 15px;
+    }
+    h3{
+        margin:5px;
+        font-size:25px;
+    }
+    span{
+        color:red;
+        font-weight: bold;
+    }
+
+    .todo{
+        background-color: #EEE;
+        border: 10px;
+        margin: 10px;
+        width: 450px;
+        float: left;
+        border-radius: 6px;
+        padding: 10px;
+    }
+    .cal{
+        background-color: #EEE;
+        float: left;
+        width: 800px;
+        margin: 10px;
+        padding: 10px;
+        border-radius: 6px;
+    }
+    .cal h4{
+        white-space: nowrap;
+        font-size: 32px;
+        font-weight: 100;
+        margin-bottom: 10px;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    hr{
+        margin-top:10px;
+        margin-bottom: 10px;
+    }
+    #task{
+        width: 270px;
+    }
+
+    #tag{
+        width: 75px;
+    }
+
+    #today {
+        width: 190px;
+    }
+
+</style>
+<script>
+    var today = new Date();
+    var dateToday = today.getDate();
+    var monthToday = today.getMonth() + 1;
+    var yearToday = today.getFullYear();
+    var daysInMonth = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+    var num = 0;
+    function getCalender(){
+        var monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var today = new Date();
+        var date = today.getDate() + ' ' + monthNames[today.getMonth() + 1] + ' ' + today.getFullYear();
+        document.getElementById("date").innerHTML = "<h4 style='font-size:30px; color:purple; text-align:center'>" + date + "</h4>";
+    }
+
+    function FillThisDay(dateNow){
+        var data = [];
+
+        {% for i in events %}
+        var loop = [];
+        var date = Number({{ i.get_date()[8:10] }});
+        var month = Number({{ i.get_date()[5:7] }});
+        var event = "{{ i.get_event() }}";
+        loop.push(date);
+        loop.push(month);
+        loop.push(event);
+        data.push(loop);
+        {% endfor %}
+        {% for i in events %}
+            curMonth = parseInt({{ i.get_date()[5:7] }});
+            currYear = parseInt({{ i.get_date()[0:4] }});
+            currDate = parseInt({{ i.get_date()[8:10] }});
+            if (curMonth >= monthToday) {
+                if (currYear == yearToday) {
+                    if (currDate == parseInt(dateNow)) {
+                        num = num + 1;
+                        document.write("<p><span id='current_date" + String(num) + "'>{{ i.get_date()[8:10] }}/{{ i.get_date()[5:7] }}</span><span2 id='current_event" + String(num) + "'>{{ i.get_event() }}</span2><span3 id='diff" + String(num) + "'>(" + (parseInt({{ i.get_date()[8:10] }}) - dateToday) + " days left" + ")</span3></p>");
+                    }
+                }
+            }
+        {% endfor %}
+    }
+
+
+    function displaymsg(msg){
+        if(document.getElementById(msg).style.display == "none"){
+            document.getElementById(msg).style.display = "block";
+        }else{
+            document.getElementById(msg).style.display = "none";
+        }
+    }
+
+    function generateCalender(){
+        var today = new Date();
+        var s = "<div style='display:inline;'>";
+        for(i = 1;i <= daysInMonth[monthToday];i ++) {
+            if(i == today.getDate()){
+                s += String("<p id='today' style='display:inline; background-color:red; color:white;padding:5px;' onclick='generator(" + i + ")'>" + i + "</p>")
+            }
+            else
+                s += String("<p id='other" + i + "' style='display:inline' onclick='generator(" + i + ")'>" + i + "</p>");
+        }
+        s += "</div>";
+        document.write("<b>" + s + "</b>")
+    }
+
+    function generator(i){
+        var calendar_script = document.getElementById('calendar_script');
+        calendar_script.innerHTML = "generator(" + i + ");";
+        var data = [];
+
+        {% for i in events %}
+        var loop = [];
+        var date = Number({{ i.get_date()[8:10] }});
+        var month = Number({{ i.get_date()[5:7] }});
+        var event = "{{ i.get_event() }}";
+        var no = 0;
+        loop.push(date);
+        loop.push(month);
+        loop.push(event);
+        data.push(loop);
+        {% endfor %}
+        {% for i in events %}
+            curMonth = parseInt({{ i.get_date()[5:7] }});
+            currYear = parseInt({{ i.get_date()[0:4] }});
+            currDate = parseInt({{ i.get_date()[8:10] }});
+            if (curMonth >= monthToday) {
+                if (currYear == yearToday) {
+                    if (currDate == parseInt(i)) {
+                        no = no + 1;
+                        document.getElementById('current_date' + String(no)).innerHTML = "{{ i.get_date()[8:10] }}/{{ i.get_date()[5:7] }}";
+                        document.getElementById('current_event' + String(no)).innerHTML = "{{ i.get_event() }}";
+                        document.getElementById('diff' + String(no)).innerHTML = "(" + (parseInt({{ i.get_date()[8:10] }}) - dateToday) + " days left" + ")";
+                    }
+                }
+            }
+        {% endfor %}
+        var difference = num - no;
+        if (difference > 0){
+            for (d = no + 1; d <= num; d++){
+                document.getElementById('current_date' + String(d)).innerHTML = "";
+                document.getElementById('current_event' + String(d)).innerHTML = "";
+                document.getElementById('diff' + String(d)).innerHTML = "";
+            }
+        }
+    }
+</script>
+{% endblock %}
+{% block body %}
+{% from "includes/_formhelper.html" import render_field %}
+
+<div style="padding-bottom: 40%; margin-left: 20%">
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                    {% for error in field_errors %}
+                        <li>{{ form[field_name].label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <div class="cal">
+        <h4 id="date"></h4>
+
+        <div>
+            <script type="text/javascript">generateCalender();</script>
+        </div>
+
+        <script type="text/javascript">getCalender();</script>
+
+        <br/>
+
+        <div>
+            <form method="POST">
+                <form class="form-group">
+                    <form class="form-row">
+                        <span style="margin: 5px; width: 80px" id="datecal">{{ render_field(form_cal.date) }}</span>
+                        <span style="margin: 5px; width: 450px;" id="eventcal">{{ render_field(form_cal.event) }}</span>
+                        <input type="submit" class="btn btn-theme" value="Add" style="margin: 5px;">
+                    </form>
+                </form>
+            </form>
+        </div>
+
+        <div>
+            <h3>Today</h3>
+            <div style="overflow-y: auto; height:240px;">
+                <script type="text/javascript" id="calendar_script">FillThisDay(dateToday);</script>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
