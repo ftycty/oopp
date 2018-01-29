@@ -141,32 +141,7 @@
                         </tbody>
                     </table>
                     <div><a class="btn btn-default" href="/illnessinput">Add New</a></div>
-                </div>
-                            <tbody>
-                            {% for c_illness in current %}
-                                <tr>
-                                    <td>{{ c_illness.get_illness() }}</td>
-                                    <td>{{ c_illness.get_startdate() }}</td>
-                                    <td>
-                                        <form action="{{ url_for('delete_current', illness=c_illness.get_illness()) }}"
-                                              method="post">
-                                            <input type="submit" value="Delete" class="btn btn-danger"
-                                                   onclick="return confirm('Are you sure you want to delete this item?');">
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="2"><em>This person does not have any current illnesses.</em></td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        {% if (session['id'] == username) %}
-                            <div><a class="btn btn-default" href="/illnessinput">Add New</a></div>
-                        {% endif %}
-                    </div>
-
+                        
                     <div id="past-illnesses" class="tab-pane fade">
                         <table class="table table-bordered">
                             <thead>
@@ -206,29 +181,6 @@
                         {% endif %}
                     </div>
                 </div>
-                        <tbody>
-                        {% for p_illness in past %}
-                        <tr>
-                            <td>{{ p_illness.get_illness() }}</td>
-                            <td>{{ p_illness.get_startdate() }}</td>
-                            <td>{{ p_illness.get_enddate() }}</td>
-                            <td>
-                                <form action="{{url_for('delete_past', illness=p_illness.get_illness())}}" method="post">
-                                    <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="3"><em>This person does not have any past illnesses.</em></td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <div><a class="btn btn-default" href="/illnessinput">Add New</a></div>
-                </div>
-            </div>
-        {% endif %}
 
                 <div class="panel panel-warning">
                     <div class="panel-heading">Medicine</div>
@@ -302,39 +254,14 @@
                             </div>
                         {% endfor %}
                 </div>
+                <div class="panel panel-warning" style="width: 770px">
+                <div class="panel-heading">Calendar</div>
+                    {% include "calendar.html" %}
+                </div>
+            {% endif %}
             </div>
         </div>
     </section><!--/#portfolio-item-->
-            <div class="panel panel-warning" style="width: 770px">
-                <div class="panel-heading">Medicine</div>
-                <div><button type="button" class="btn btn-primary btn-xs">Add New</button></div>
-                <div class="panel-body">
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="panel panel-warning" style="width: 770px">
-                <div class="panel-heading">Diet goals</div>
-                <div class="panel-body">
-                    {% for d in dietTarget %}
-                    <ul>
-                        <li>Total calories: {{d.get_totalcalories()}}</li>
-                        <li>Target carbohydrates: {{ d.get_carbs() }}</li>
-                        <li>Target proteins: {{ d.get_proteins() }}</li>
-                        <li>Total fats: {{ d.get_fats() }}</li>
-                    </ul>
-                </div>
-                    {% endfor %}
-            </div>
-        <div class="panel panel-warning" style="width: 770px">
-            <div class="panel-heading">Calendar</div>
-            {% include "calendar.html" %}
-        </div>
-        </div>
-    </div>
-</section><!--/#portfolio-item-->
 {% endblock %}
 {% block botscript %}
     {#<script>#}
