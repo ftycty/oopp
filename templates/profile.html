@@ -77,40 +77,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-8 col-md-8 col-sm-8">
+            <div  class="col-lg-8 col-md-8 col-sm-8">
+            {% if (session['id'] == username) %}
                 <ul class="nav nav-pills nav-justified">
                     <li class="active"><a data-toggle="pill" href="#current-illnesses">Current Illnesses</a></li>
                     <li><a data-toggle="pill" href="#past-illnesses">Past Illnesses</a></li>
                 </ul>
-                        {% if (session['id'] != username and session['logged_in'] == True and username not in friends_list and username not in pending_list) %}
-                            <form method="POST">
-                                {{ form.friend_name(class='form-control') }}
-                                <input type="hidden" name="form-add" value="{{ username }}">
-                            </form>
-                        {% elif (session['id'] != username and username in friends_list) %}
-                            <p class="btn btn-info disabled" style="cursor: default;">You are friends with {{ username }}</p>
-                        {% elif (session['id'] != username and username in pending_list) %}
-                            <p class="btn btn-danger disabled" style="cursor: default;">You have already added {{ username }}</p>
-                        {% endif %}
-
-                    </div>
-                </div>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">Useful Links</div>
-                    <div class="panel-body col-sm-9">
-                        <li><a href="#">Diet Planner</a></li>
-                        <li><a href="#">Calendar</a></li>
-                        <li><a href="/forumdisplay">Forum</a></li>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div  class="col-lg-8 col-md-8 col-sm-8">
-        {% if (session['id'] == username) %}
-            <ul class="nav nav-pills nav-justified">
-                <li class="active"><a data-toggle="pill" href="#current-illnesses">Current Illnesses</a></li>
-                <li><a data-toggle="pill" href="#past-illnesses">Past Illnesses</a></li>
-            </ul>
 
                 <div class="tab-content">
                     <div id="current-illnesses" class="tab-pane fade in active">
