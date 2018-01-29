@@ -33,9 +33,7 @@
     }
     .cal{
         background-color: #EEE;
-        float: left;
-        width: 800px;
-        margin: 10px;
+        width: 770px;
         padding: 10px;
         border-radius: 6px;
     }
@@ -173,9 +171,9 @@
 </script>
 {% endblock %}
 {% block body %}
-{% from "includes/_formhelper.html" import render_field %}
+{% from "includes/_formhelper_calendar.html" import render_field %}
 
-<div style="padding-bottom: 40%; margin-left: 20%">
+<div>
     {% if form.errors %}
         <div class="alert alert-danger">
             <ul>
@@ -204,13 +202,13 @@
                     <form class="form-row">
                         <span style="margin: 5px; width: 80px" id="datecal">{{ render_field(form_cal.date) }}</span>
                         <span style="margin: 5px; width: 450px;" id="eventcal">{{ render_field(form_cal.event) }}</span>
-                        <input type="submit" class="btn btn-theme" value="Add" style="margin: 5px;">
+                        <input type="submit" class="btn btn-theme" value="Add">
                     </form>
                 </form>
             </form>
         </div>
 
-        <div>
+        <div style="margin-top: 20px">
             <h3>Today</h3>
             <div style="overflow-y: auto; height:240px;">
                 <script type="text/javascript" id="calendar_script">FillThisDay(dateToday);</script>

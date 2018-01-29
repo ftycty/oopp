@@ -149,7 +149,7 @@
             </div>
         {% endif %}
 
-            <div class="panel panel-warning">
+            <div class="panel panel-warning" style="width: 770px">
                 <div class="panel-heading">Medicine</div>
                 <div><button type="button" class="btn btn-primary btn-xs">Add New</button></div>
                 <div class="panel-body">
@@ -158,16 +158,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="panel panel-warning">
-                <div class="panel-heading">Upcoming Appointment</div>
-                <div><button type="button" class="btn btn-primary btn-xs">Add New</button></div>
-                <div class="panel-body">
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="panel panel-warning">
+
+            <div class="panel panel-warning" style="width: 770px">
                 <div class="panel-heading">Diet goals</div>
                 <div class="panel-body">
                     {% for d in dietTarget %}
@@ -180,10 +172,13 @@
                 </div>
                     {% endfor %}
             </div>
+        <div class="panel panel-warning" style="width: 770px">
+            <div class="panel-heading">Calendar</div>
+            {% include "calendar.html" %}
+        </div>
         </div>
     </div>
 </section><!--/#portfolio-item-->
-{% include "calendar.html" %}
 {% endblock %}
 {% block botscript %}
 {#<script>#}

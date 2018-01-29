@@ -890,15 +890,14 @@ def delete_past(illness):
     return redirect(url_for('user_profile', username=username))
 
 
-# @app.route('/deleteinterest/<string:sport>')
-# def delete_interest(sport):
-#     username = session['id']
-#     key = session['key']
-#     userbase = user_ref.child(key)
-#     sports_db = userbase.child('sports/' + sport)
-#     sports_db.delete()
-#     flash('Interest deleted successfully', 'success')
-#     return redirect(url_for('edit_profile'))
+@app.route('/deleteinterest/<string:sport>')
+def delete_interest(sport):
+    key = session['key']
+    userbase = user_ref.child(key)
+    sports_db = userbase.child('sports/' + sport)
+    sports_db.delete()
+    flash('Interest deleted successfully', 'success')
+    return redirect(url_for('edit_profile'))
 
 
 class CalendarForm(Form):
