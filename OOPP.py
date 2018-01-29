@@ -907,4 +907,4 @@ def delete_past(illness):
 app.secret_key = 'secret123'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port="80", debug=True)
