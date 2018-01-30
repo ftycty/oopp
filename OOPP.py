@@ -402,7 +402,7 @@ def user_profile(username):
                                        pending_list=pending_list, fname=fname, lname=lname, birthday=birthday,
                                        gender=gender, about=about, friends=friends, sports=sports_list,
                                        current=current_list, past=past_list, events=event_list, form_cal=form_cal,
-                                       dietTarget=diet_list, bmi=bmi_list)
+                                       dietTarget=diet_list, bmi=bmi_list, favworkout=favworkout_list)
 
 
 class RespondFriend(Form):
@@ -961,4 +961,4 @@ class CalendarForm(Form):
 app.secret_key = 'secret123'
 
 if __name__ == '__main__':
-    app.run(port="80", debug=True)
+    app.run(port='80' ,debug=True)
