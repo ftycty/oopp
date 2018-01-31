@@ -29,7 +29,7 @@
 
 {% block body %}{% endblock %}
 
-
+<a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" title="Click to return on the top page" data-toggle="tooltip" data-placement="left"><span class="glyphicon glyphicon-chevron-up"></span></a>
 {% include 'includes/_footer.html' %}
 
 <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
@@ -38,6 +38,7 @@
 <script src="{{ url_for('static', filename='js/jquery.isotope.min.js')}}"></script>
 <script src="{{ url_for('static', filename='js/main.js')}}"></script>
 <script src="{{ url_for('static', filename='js/wow.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/backtotop.js')}}"></script>
 <script srasdasdc="{{ url_for('static', filename='js/healthtips.js') }}"></script> <!-- Breaking the script for awhile -->
 
 {% block botscript %}{% endblock %}
