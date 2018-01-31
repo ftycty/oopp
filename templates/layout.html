@@ -4,42 +4,48 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
     <!-- core CSS -->
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/font-awesome.min.css')}}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/animate.min.css')}}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/prettyPhoto.css')}}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/responsive.css')}}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/custom.css')}}" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/ico/favicon.ico')}}">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ url_for('static', filename='images/ico/apple-touch-icon-144-precomposed.png')}}">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='images/ico/apple-touch-icon-114-precomposed.png')}}">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='images/ico/apple-touch-icon-72-precomposed.png')}}">
-    <link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/ico/apple-touch-icon-57-precomposed.png')}}">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/prettyPhoto.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/responsive.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/ico/favicon.ico') }}">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144"
+          href="{{ url_for('static', filename='images/ico/apple-touch-icon-144-precomposed.png') }}">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114"
+          href="{{ url_for('static', filename='images/ico/apple-touch-icon-114-precomposed.png') }}">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"
+          href="{{ url_for('static', filename='images/ico/apple-touch-icon-72-precomposed.png') }}">
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ url_for('static', filename='images/ico/apple-touch-icon-57-precomposed.png') }}">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-
+    {% block topscript %}{% endblock %}
 </head>
 <body>
-
-{% block topscript %}{% endblock %}
 
 {% include 'includes/_navbar.html' %}
 {% include 'includes/_messages.html' %}
 
-
+{% block carousel %}{% endblock %}
 {% block body %}{% endblock %}
 
-<a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" title="Click to return on the top page" data-toggle="tooltip" data-placement="left"><span class="glyphicon glyphicon-chevron-up"></span></a>
+<a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button"
+   title="Click to return on the top page" data-toggle="tooltip" data-placement="left"><span
+        class="glyphicon glyphicon-chevron-up"></span></a>
+
 {% include 'includes/_footer.html' %}
 
-<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
-<script src="{{ url_for('static', filename='js/jquery.prettyPhoto.js')}}"></script>
-<script src="{{ url_for('static', filename='js/jquery.isotope.min.js')}}"></script>
-<script src="{{ url_for('static', filename='js/main.js')}}"></script>
-<script src="{{ url_for('static', filename='js/wow.min.js')}}"></script>
-<script src="{{ url_for('static', filename='js/backtotop.js')}}"></script>
-<script srasdasdc="{{ url_for('static', filename='js/healthtips.js') }}"></script> <!-- Breaking the script for awhile -->
+<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.prettyPhoto.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/backtotop.js') }}"></script>
+<script srasdasdc="{{ url_for('static', filename='js/healthtips.js') }}"></script>
+<!-- Breaking the script for awhile -->
 
 {% block botscript %}{% endblock %}
 

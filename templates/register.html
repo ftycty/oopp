@@ -2,8 +2,8 @@
 {% block title %}Registration{% endblock %}
 {% block body %}
     {% from "includes/_formhelper.html" import render_field %}
-    <div class="container mtb">
-        <div class="center wow fadeInDown">
+    <div class="container">
+        <div class="center fadeInDown">
             <h2>Registration Page</h2>
         </div>
         <div class="row">
@@ -86,7 +86,7 @@
                         <p>*Mandatory to fill in</p>
                     </div>
 
-                    <input type="submit" class="btn btn-theme" value="Register">
+                    <input type="submit" class="btn btn-theme center-block" value="Register">
 
                 </form>
             </div><!-- /col-lg-8 -->
@@ -105,7 +105,7 @@
                     $('#username').css({
                         'background-color': '#ff6666'
                     })
-                } else if (username.length <=5) {
+                } else if (username.length <= 5) {
                     alert('Fill in at least 6 characters!');
                 } else if ($.inArray(username, used_username) != -1) {
                     alert('Username has already been taken');
@@ -138,17 +138,17 @@
                     })
                 }
             });
-        {% if form.errors %}
-            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-                {% for error in field_errors %}
-                    {% if form[field_name].id != 'newsletter' %}
-                        $('#{{ form[field_name].id }}').css({
-                            'background-color': '#ff6666'
-                        });
-                    {% endif %}
+            {% if form.errors %}
+                {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                    {% for error in field_errors %}
+                        {% if form[field_name].id != 'newsletter' %}
+                            $('#{{ form[field_name].id }}').css({
+                                'background-color': '#ff6666'
+                            });
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-        {% endif %}
+            {% endif %}
         });
 
     </script>

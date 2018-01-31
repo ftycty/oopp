@@ -1,0 +1,168 @@
+{% extends 'layout.html' %}
+{% block title %}Campaigns{% endblock %}
+{% block body %}
+    {% from "includes/_formhelper.html" import render_field %}
+    <div class="container">
+        <div class="center wow fadeInDown">
+            <h2>Upcoming Campaigns</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#NHLC2018" id="NHLC2018"><img src="static/images/custom/campaigns/NHLC2018.jpg" height="300px"
+                                                       width="450px"></a>
+            </div>
+            <div class="col-md-6">
+                <h3>National Healthy Lifestyle Campaign 2018</h3>
+                <hr>
+                <p>Focusing on four key areas — mental well-being, physical activity, nutrition and screening — visitors
+                    will be able to take away new tips and learn facts about simple ways to keep healthy.</p>
+                <p><strong>Venue:</strong> NHLC exhibition@Suntec City Convention & Exhibition Centre, level 4<br/>
+                    <strong>Admission:</strong> Free<br/>
+                    <strong>Website:</strong> <a href="https://www.healthhub.sg" target="_blank">https://www.healthhub.sg</a><br/>
+                    <strong>When:</strong> Mar 2018, 11am- 9pm<br/>
+                </p>
+                {% if session['logged_in'] %}
+                    {% if 'NHLC2018' in interest_list %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-danger center-block" value="Remove Interest">
+                            <input type="hidden" name="type" value="remove">
+                            <input type="hidden" name="form-name" value="form1-remove">
+                            <input type="hidden" name="form1-remove" value="NHLC2018">
+                        </form>
+                    {% else %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-info center-block" value="Im Interested!">
+                            <input type="hidden" name="type" value="add">
+                            <input type="hidden" name="form-name" value="form1-add">
+                            <input type="hidden" name="form1-add" value="NHLC2018">
+                            <input type="hidden" name="NHLC2018" value="National Healthy Lifestyle Campaign 2018">
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#TRCFF" id="TRCFF"><img src="static/images/custom/campaigns/TRCFF.jpg" height="300px"
+                                                 width="450px"></a>
+            </div>
+            <div class="col-md-6">
+                <h3>The Right Choice Family Fest</h3>
+                <hr>
+                <p>Calling for families! Have a blast at The Right Choice Family Fest, where exciting games and
+                    activities awaits.
+                    Themed around the topic of healthy eating, it will be a test of the children’s skills, senses and
+                    smarts, as they strive to emerge victorious at the games.
+                    Pick up tips on food and nutrition along the way, and learn more about the different food groups as
+                    you and your family navigate the maze of activities.
+                    At the end of the day, make The Right Choice when it comes to you and your family’s food
+                    choices.</p>
+                <p><strong>Venue:</strong> Westgate (area outside Samsung)<br/>
+                    <strong>Admission:</strong> Free<br/>
+                    <strong>Website:</strong> <a href="https://www.therightchoice.sg" target="_blank">www.therightchoice.sg</a><br/>
+                    <strong>When:</strong> 18 Mar 2018, 12noon - 9pm<br/>
+                </p>
+                {% if session['logged_in'] %}
+                    {% if 'TRCFF' in interest_list %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-danger center-block" value="Remove Interest">
+                            <input type="hidden" name="type" value="remove">
+                            <input type="hidden" name="form-name" value="form2-remove">
+                            <input type="hidden" name="form2-remove" value="TRCFF">
+                        </form>
+                    {% else %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-info center-block" value="Im Interested!">
+                            <input type="hidden" name="type" value="add">
+                            <input type="hidden" name="form-name" value="form2-add">
+                            <input type="hidden" name="form2-add" value="TRCFF">
+                            <input type="hidden" name="TRCFF" value="The Right Choice Family Fest">
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#HLFSG" id="HLFSG"><img src="static/images/custom/campaigns/HLFSG.jpg" height="300px"
+                                                 width="450px"></a>
+            </div>
+            <div class="col-md-6">
+                <h3>Healthy Lifestyle Festival SG</h3>
+                <hr>
+                <p>Enjoying life is about staying healthy and having fun doing it. At Healthy Lifestyle Festival SG,
+                    health tips and good habits come to you in a carnival full of activities.
+                    Head down with your family and learn how to make life healthier, while enjoying it to the fullest.Be
+                    there for our Grand Finale—the most healthy fun you can have in one place!</p>
+                <p><strong>Venue</strong>: Singapore Sports Hub & Kallang Wave Mall<br/>
+                    <strong>Admission:</strong> Free<br/>
+                    <strong>Website:</strong> <a
+                            href="https://www.healthhub.sg/programmes/101/healthy-lifestyle-festival-sg"
+                            target="_blank">www.healthhub.sg/programmes/101/healthy-lifestyle-festival-sg</a><br/>
+                    <strong>When:</strong> 17-19 June 2018, 11am – 8.30pm<br/>
+                </p>
+                {% if session['logged_in'] %}
+                    {% if 'HLFSG' in interest_list %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-danger center-block" value="Remove Interest">
+                            <input type="hidden" name="type" value="remove">
+                            <input type="hidden" name="form-name" value="form3-remove">
+                            <input type="hidden" name="form3-remove" value="HLFSG">
+                        </form>
+                    {% else %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-info center-block" value="Im Interested!">
+                            <input type="hidden" name="type" value="add">
+                            <input type="hidden" name="form-name" value="form3-add">
+                            <input type="hidden" name="form3-add" value="HLFSG">
+                            <input type="hidden" name="HLFSG" value="Healthy Lifestyle Festival SG">
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#HLFSG" id="HLFSG"><img src="static/images/custom/campaigns/EDSH.jpg" height="300px"
+                                                 width="450px"></a>
+            </div>
+            <div class="col-md-6">
+                <h3>Eat, Drink, Shop Healthy</h3>
+                <hr>
+                <p>The Eat, Drink and Shop Healthy campaign is redefining the saying, ‘Health is Wealth’.
+                    Simply opt for healthier option dishes from our partners - ParaThai, Pasta Fresca, Pizza Hut,
+                    Saybons, Souperlicious, Swensen’s and QQ Rice - and stand a chance to win $8,888 in cash and
+                    more.
+                    Come on, start eating healthier today!</p>
+                <p><strong>Venue</strong>: N/A <br/>
+                    <strong>Admission:</strong> N/A <br/>
+                    <strong>Website:</strong> <a
+                            href="http://gethealthy.sg/eatdrinkshop"
+                            target="_blank">www.gethealthy.sg/eatdrinkshop</a><br/>
+                    <strong>When:</strong> 28 July - 28 October 2018<br/>
+                </p>
+                {% if session['logged_in'] %}
+                    {% if 'EDSH' in interest_list %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-danger center-block" value="Remove Interest">
+                            <input type="hidden" name="type" value="remove">
+                            <input type="hidden" name="form-name" value="form4-remove">
+                            <input type="hidden" name="form4-remove" value="EDSH">
+                        </form>
+                    {% else %}
+                        <form method="POST">
+                            <input type="submit" class="btn btn-info center-block" value="Im Interested!">
+                            <input type="hidden" name="type" value="add">
+                            <input type="hidden" name="form-name" value="form4-add">
+                            <input type="hidden" name="form4-add" value="EDSH">
+                            <input type="hidden" name="EDSH" value="Eat, Drink and Shop Healthy">
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div><!--/container -->
+{% endblock %}

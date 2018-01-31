@@ -2,9 +2,11 @@
 {% block title %}Contact Us{% endblock %}
 {% block body %}
 
-<iframe id="contactwrap" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.9760193574853!2d139.77227026525938!3d35.702207730189436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188ea73ea6f4ff%3A0x5eb9f1e50fe061e3!2sAkihabara%2C+Taito%2C+Tokyo+110-0006%2C+Japan!5e0!3m2!1sen!2ssg!4v1509943360637" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe><!--/gmap_area -->
+    <iframe id="contactwrap"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.9760193574853!2d139.77227026525938!3d35.702207730189436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188ea73ea6f4ff%3A0x5eb9f1e50fe061e3!2sAkihabara%2C+Taito%2C+Tokyo+110-0006%2C+Japan!5e0!3m2!1sen!2ssg!4v1509943360637"
+            width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe><!--/gmap_area -->
 
-<div class="container mtb">
+    <div class="container">
         <div class="row">
             <div class="col-lg-8">
                 <h4>Provide us with your feedback!</h4>
@@ -21,12 +23,14 @@
 
                     <div class="form-group">
                         <label for="Email">Email address</label>
-                        <input type="email" class="form-control" id="email" name="_replyto" placeholder="Your email" required>
+                        <input type="email" class="form-control" id="email" name="_replyto" placeholder="Your email"
+                               required>
                     </div>
 
                     <div class="form-group">
                         <label for="Message">Message</label>
-                        <textarea class="form-control" id="message" rows="3" name="Message" placeholder="Your message" required></textarea>
+                        <textarea class="form-control" id="message" rows="3" name="Message" placeholder="Your message"
+                                  required></textarea>
                     </div>
 
                     <input type="hidden" name="_subject" value="New Feedback!">
@@ -42,38 +46,41 @@
                 <div class="hline"></div>
                 <br/>
                 <p class="contacttextsize">
-                    Do follow our social pages as we will post updates to our service on our Facebook, Twitter and Instagram!<br/>
+                    Do follow our social pages as we will post updates to our service on our Facebook, Twitter and
+                    Instagram!<br/>
                     <a href="#"><i class="fa fa-facebook" style="padding-right:5px;"></i>Facebook</a><br/>
                     <a href="#"><i class="fa fa-twitter" style="padding-right:5px;"></i>Twitter</a><br/>
                     <a href="#"><i class="fa fa-instagram" style="padding-right:5px;"></i>Instagram</a><br/>
-                 </p>
+                </p>
             </div>
 
 
         </div><!--/row -->
     </div><!--/container -->
-<script>
-    var $contactForm = $('#contact-form');
-    $contactForm.submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: '//formspree.io/mirzaanaqihaizan@gmail.com',
-            method: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            beforeSend: function() {
-                $contactForm.append('<div class="alert alert--loading" style="margin-left:0%">Sending message…</div>');
-            },
-            success: function(data) {
-                $contactForm.find('.alert--loading').hide();
-                $contactForm.append('<div class="alert alert--success" style="margin-left:0%">Message sent!</div>');
-                $(location).attr('href', '/contact_us')
-            },
-            error: function(err) {
-                $contactForm.find('.alert--loading').hide();
-                $contactForm.append('<div class="alert alert--error" style="margin-left:0%">Ops, there was an error.</div>');
-            }
+{% endblock %}
+{% block botscript %}
+    <script>
+        var $contactForm = $('#contact-form');
+        $contactForm.submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '//formspree.io/mirzaanaqihaizan@gmail.com',
+                method: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                beforeSend: function () {
+                    $contactForm.append('<div class="alert alert--loading" style="margin-left:0%">Sending message…</div>');
+                },
+                success: function (data) {
+                    $contactForm.find('.alert--loading').hide();
+                    $contactForm.append('<div class="alert alert--success" style="margin-left:0%">Message sent!</div>');
+                    $(location).attr('href', '/contact_us')
+                },
+                error: function (err) {
+                    $contactForm.find('.alert--loading').hide();
+                    $contactForm.append('<div class="alert alert--error" style="margin-left:0%">Ops, there was an error.</div>');
+                }
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}

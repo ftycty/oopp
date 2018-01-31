@@ -2,7 +2,7 @@
 {% block title %}Friends{% endblock %}
 {% block body %}
     {% from "includes/_formhelper.html" import render_field %}
-    <div class="container mtb" style="padding-bottom: 225px">
+    <div class="container">
         <div class="center wow fadeInDown">
             <h2>My Friends</h2>
         </div>
@@ -25,7 +25,9 @@
                     <tbody>
                     {% for friends in friends_list %}
                         <tr>
-                            <td><a href="{{ url_for('user_profile',username=friends) }}">{{ friends }}</a></td>
+                            <td><a href="{{ url_for('user_profile',username=friends) }}">{{ friends }}</a><a
+                                    href="{{ url_for('compose_msg',username=friends) }}"><span
+                                    class="glyphicon glyphicon-envelope pull-right"></span></a></td>
                         </tr>
                     {% else %}
                         <tr>
@@ -84,21 +86,21 @@
                 <div class='wrap'>
                     <div class="content">
                         {% if common_list != [] %}
-                        <h2>These are the people who have similar interests as you!</h2>
-                        <table class="table table-bordered">
-                            <tbody>
-                            {% for person in common_list %}
-                            <tr>
-                                <td><a href="/profile/{{ person.get_name() }}">{{ person.get_name() }}</a></td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                            <h2>These are the people who have similar interests as you!</h2>
+                            <table class="table table-bordered">
+                                <tbody>
+                                {% for person in common_list %}
+                                    <tr>
+                                        <td><a href="/profile/{{ person.get_name() }}">{{ person.get_name() }}</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         {% endif %}
                     </div>
 
                     {% if common_list == [] %}
-                    <h1>We did not find anybody with similar interests as you :(</h1>
+                        <h1>We did not find anybody with similar interests as you :(</h1>
                     {% endif %}
                 </div>
             </div>
@@ -118,9 +120,9 @@
         </div>
     </div><!--/container -->
     <script>
-        $('#connect').on('click', function(){
-          $('.wrap, a').toggleClass('active');
-          return false;
+        $('#connect').on('click', function () {
+            $('.wrap, a').toggleClass('active');
+            return false;
         });
     </script>
 {% endblock %}

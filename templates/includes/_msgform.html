@@ -1,0 +1,6 @@
+{% macro render_field(field) %}
+  {{ field.label(class_="control-label") }}
+   <div>
+       {{ field(**kwargs)|safe }}
+   </div>
+{% endmacro %}
